@@ -4,7 +4,7 @@
 
 An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
 
-[Download test APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-byd/)
+[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
 
 ## What has been tested
 

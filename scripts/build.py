@@ -5,8 +5,8 @@ import json
 ROOT=Path(__file__).resolve().parents[1]
 CONTENT=json.loads((ROOT/'scripts/content.json').read_text())
 LABELS={'en':'English','uk':'Українська','ru':'Русский','ar':'العربية','zh-Hans':'简体中文'}
-SITE='https://romanchukg-cloud.github.io/spotify-byd/'
-REPO='https://github.com/romanchukg-cloud/spotify-byd'
+SITE='https://romanchukg-cloud.github.io/spotify-android-head-units/'
+REPO='https://github.com/romanchukg-cloud/spotify-android-head-units'
 RELEASE=REPO+'/releases/tag/v5.5.0-byd-unified-test.1'
 SHA='0e057caf7f3a7962da0ba73207b16a7f699cc8b3220d198d9102bf60654d3d65'
 def route(lang):return '' if lang=='en' else lang+'/'

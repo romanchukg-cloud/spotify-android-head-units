@@ -6,7 +6,7 @@
 
 مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.
 
-[تنزيل ملف APK التجريبي](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-byd/ar/)
+[تنزيل ملف APK التجريبي](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
 
 ## ما الذي تم اختباره؟
 

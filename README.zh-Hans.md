@@ -4,7 +4,7 @@
 
 适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
 
-[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-byd/zh-Hans/)
+[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
 
 ## 已完成的测试
 

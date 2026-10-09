@@ -4,7 +4,7 @@
 
 Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.
 
-[Скачать тестовый APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify для Android-магнитол](https://romanchukg-cloud.github.io/spotify-byd/ru/)
+[Скачать тестовый APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify для Android-магнитол](https://romanchukg-cloud.github.io/spotify-android-head-units/ru/)
 
 ## Что уже проверено
 
