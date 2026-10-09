@@ -1,16 +1,18 @@
-# Spotify для BYD
+# Spotify для Android-магнітол
 
 [English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-Spotify Automotive та інтерфейс BYD об’єднані в одному APK. Одна установка, одна іконка, штатний вхід Spotify.
+Експериментальний плеєр Spotify Automotive для Android-магнітол. Інтерфейс на основі BYD та музичний сервіс об’єднані в одному APK з однією іконкою і штатним входом Spotify.
 
-[Завантажити тестовий APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify для BYD](https://romanchukg-cloud.github.io/spotify-byd/uk/)
+[Завантажити тестовий APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify для Android-магнітол](https://romanchukg-cloud.github.io/spotify-byd/uk/)
 
 ## Що вже перевірено
 
 На емуляторі Android 35 перевірено встановлення, запуск інтерфейсу, підключення до внутрішнього сервісу й відкриття екрана входу.
 
 **В автомобілі цей єдиний APK ще не перевірено.** Звук, каталог після входу, кермо, закриття під час відтворення та офлайн-завантаження потребують перевірки.
+
+Потрібен Android 9 або новіший. Сумісність із магнітолами інших виробників ще не перевірена; це не універсальна збірка.
 
 ## Як встановити
 

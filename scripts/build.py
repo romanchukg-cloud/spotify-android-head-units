@@ -39,7 +39,7 @@ for lang,c in CONTENT.items():
 <div class="meta">{e(c['meta'])}</div></header>
 <div class="grid">{cards}</div>
 <section><h2>{e(c['testedTitle'])}</h2><p>{e(c['tested'])}</p>
-<p><strong>{e(c['pendingStrong'])}</strong> {e(c['pending'])}</p></section>
+<p><strong>{e(c['pendingStrong'])}</strong> {e(c['pending'])}</p><p>{e(c['compatibility'])}</p></section>
 <section><h2>{e(c['installTitle'])}</h2><ol>{steps}</ol></section>
 <section><h2>{e(c['verifyTitle'])}</h2><p>{e(c['verify'])}</p><code dir="ltr">{SHA}</code></section>
 <footer>{e(c['footer'])}</footer>
@@ -48,7 +48,7 @@ for lang,c in CONTENT.items():
  dest=ROOT/'docs'/route(lang)/'index.html';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(html)
  readme='README.md' if lang=='en' else f'README.{lang}.md'
  languages=' · '.join(f'[{LABELS[k]}]('+('README.md' if k=='en' else f'README.{k}.md')+')' for k in CONTENT)
- markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({RELEASE}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n## {c['installTitle']}\n\n"
+ markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({RELEASE}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n{c['compatibility']}\n\n## {c['installTitle']}\n\n"
  markdown+='\n'.join(f'{i}. {s}' for i,s in enumerate(c['steps'],1))
  markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`Spotify-5.5.0-BYD-unified-test.apk` · 57 243 570 bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
  if lang=='ar':markdown='<div dir="rtl">\n\n'+markdown+'\n</div>\n'

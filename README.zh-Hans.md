@@ -1,16 +1,18 @@
-# 适用于比亚迪的 Spotify
+# 适用于 Android 车机的 Spotify
 
 [English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-将 Spotify Automotive 与比亚迪界面整合到一个 APK 中。一次安装，一个图标，使用 Spotify 标准登录流程。
+适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
 
-[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 适用于比亚迪的 Spotify](https://romanchukg-cloud.github.io/spotify-byd/zh-Hans/)
+[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-byd/zh-Hans/)
 
 ## 已完成的测试
 
 已在 Android 35 模拟器上验证安装、界面启动、连接内部服务及打开登录页面。
 
 **此整合版 APK 尚未在车辆上测试。** 音频、登录后的内容、方向盘按键、播放时关闭应用以及离线下载仍需测试。
+
+需要 Android 9 或更高版本。尚未验证其他厂商车机的兼容性；此版本并非适用于所有设备的通用版本。
 
 ## 安装方法
 

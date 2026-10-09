@@ -1,16 +1,18 @@
-# Spotify for BYD
+# Spotify for Android Head Units
 
 [English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-Spotify Automotive and the BYD interface combined in one APK. One installation, one icon, and the standard Spotify sign-in flow.
+An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
 
-[Download test APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify for BYD](https://romanchukg-cloud.github.io/spotify-byd/)
+[Download test APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-byd/)
 
 ## What has been tested
 
 Installation, interface startup, connection to the internal service, and opening the sign-in screen have been tested on an Android 35 emulator.
 
 **This single APK has not yet been tested in a car.** Audio, the catalog after sign-in, steering-wheel controls, closing the app during playback, and offline downloads still need testing.
+
+Android 9 or newer is required. Compatibility with other manufacturers and head units has not yet been verified; this is not a universal build.
 
 ## How to install
 

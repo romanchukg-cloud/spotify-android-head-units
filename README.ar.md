@@ -1,18 +1,20 @@
 <div dir="rtl">
 
-# Spotify لسيارات BYD
+# Spotify لوحدات الوسائط العاملة بنظام Android
 
 [English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-يجمع ملف APK واحد بين Spotify Automotive وواجهة BYD. تثبيت واحد، وأيقونة واحدة، وتسجيل الدخول المعتاد إلى Spotify.
+مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.
 
-[تنزيل ملف APK التجريبي](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify لسيارات BYD](https://romanchukg-cloud.github.io/spotify-byd/ar/)
+[تنزيل ملف APK التجريبي](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-byd/ar/)
 
 ## ما الذي تم اختباره؟
 
 تم اختبار التثبيت وتشغيل الواجهة والاتصال بالخدمة الداخلية وفتح شاشة تسجيل الدخول على محاكي Android 35.
 
 **لم يتم اختبار ملف APK الموحّد هذا داخل السيارة بعد.** لا يزال الصوت والمحتوى بعد تسجيل الدخول وأزرار المقود وإغلاق التطبيق أثناء التشغيل والتنزيل للاستماع دون اتصال بحاجة إلى اختبار.
+
+يتطلب Android 9 أو أحدث. لم يتم التحقق بعد من التوافق مع وحدات الوسائط من الشركات الأخرى؛ هذا الإصدار ليس متوافقًا مع جميع الأجهزة.
 
 ## طريقة التثبيت
 
