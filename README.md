@@ -1,32 +1,34 @@
-# Spotify для BYD
+# Spotify for BYD
 
-Експериментальна адаптація Spotify Automotive 5.5.0 з інтерфейсом BYD в одному APK. Один пакет `com.spotify.music`, одна іконка. Окремий додаток інтерфейсу BYD не потрібен.
+[English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-[Завантажити тестову збірку](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [Сторінка проєкту](https://romanchukg-cloud.github.io/spotify-byd/)
+Spotify Automotive and the BYD interface combined in one APK. One installation, one icon, and the standard Spotify sign-in flow.
 
-## Стан перевірки
+[Download test APK](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify for BYD](https://romanchukg-cloud.github.io/spotify-byd/)
 
-На емуляторі Android 35 перевірено встановлення, запуск інтерфейсу, підключення до внутрішнього сервісу та відкриття штатного входу Spotify через QR-код.
+## What has been tested
 
-Єдиний APK ще не перевірено в автомобілі: відтворення, Home/Recents після входу, кнопки керма, закриття під час музики та офлайн-завантаження потребують перевірки. Результати попередньої збірки з двох додатків не підтверджують роботу цієї збірки.
+Installation, interface startup, connection to the internal service, and opening the sign-in screen have been tested on an Android 35 emulator.
 
-## Встановлення
+**This single APK has not yet been tested in a car.** Audio, the catalog after sign-in, steering-wheel controls, closing the app during playback, and offline downloads still need testing.
 
-1. Завантажте APK з Releases і перенесіть у мультимедійну систему.
-2. Якщо встановлено нашу попередню тестову збірку Spotify з тим самим підписом, встановіть як оновлення без видалення, щоб спробувати зберегти авторизацію. Інші підписи несумісні з оновленням.
-3. Відкрийте Spotify. За потреби натисніть LOG IN, відскануйте QR-код телефоном і підтвердьте вхід.
-4. Перевірте відтворення й керування. Старий окремий інтерфейс BYD видаляйте після успішної перевірки нового APK.
+## How to install
 
-Потрібен Android 9 або новіший; сумісність конкретної прошивки не гарантована. Це неофіційна тестова адаптація. Функції облікового запису визначаються Spotify.
+1. Download the APK from GitHub Releases and transfer it to the infotainment system.
+2. Update our previous test build with the same signature without uninstalling it: your sign-in may be preserved. Builds signed with a different key cannot be updated this way.
+3. Open Spotify and sign in using the QR code if needed.
+4. Check music playback and controls. Remove the old separate BYD interface only after the new APK passes these checks.
 
-## Файл
+Android 9+ · 54.6 MiB · unofficial adaptation
 
-`Spotify-5.5.0-BYD-unified-test.apk` · 57 243 570 байтів
+## Verify the file
 
-SHA-256:
+`Spotify-5.5.0-BYD-unified-test.apk` · 57 243 570 bytes
+
+SHA-256 of the current test build:
 
 ```text
 0e057caf7f3a7962da0ba73207b16a7f699cc8b3220d198d9102bf60654d3d65
 ```
 
-Репозиторій містить сторінку та опис; APK розміщено у Releases. Spotify і BYD є торговельними марками відповідних власників.
+Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.

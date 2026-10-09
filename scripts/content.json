@@ -1,0 +1,47 @@
+{
+ "en": {
+  "name":"Spotify for BYD", "title":"Spotify for BYD — one app", "description":"Experimental Spotify 5.5.0 with the BYD interface in a single APK.",
+  "badge":"Experimental build · 5.5.0", "headline":"Familiar interface.", "highlight":"One app.", "intro":"Spotify Automotive and the BYD interface combined in one APK. One installation, one icon, and the standard Spotify sign-in flow.",
+  "download":"Download test APK", "meta":"Android 9+ · 54.6 MiB · unofficial adaptation", "languages":"Language",
+  "cards":[["One APK","The interface and music service run within a single installed package."],["QR sign-in","Tap LOG IN, scan the code with your phone, and confirm your Spotify sign-in."],["BYD interface","The familiar player layout without mandatory permissions for vehicle systems."]],
+  "testedTitle":"What has been tested", "tested":"Installation, interface startup, connection to the internal service, and opening the sign-in screen have been tested on an Android 35 emulator.", "pendingStrong":"This single APK has not yet been tested in a car.", "pending":"Audio, the catalog after sign-in, steering-wheel controls, closing the app during playback, and offline downloads still need testing.",
+  "installTitle":"How to install", "steps":["Download the APK from GitHub Releases and transfer it to the infotainment system.","Update our previous test build with the same signature without uninstalling it: your sign-in may be preserved. Builds signed with a different key cannot be updated this way.","Open Spotify and sign in using the QR code if needed.","Check music playback and controls. Remove the old separate BYD interface only after the new APK passes these checks."],
+  "verifyTitle":"Verify the file", "verify":"SHA-256 of the current test build:", "footer":"Unofficial experimental project. Spotify and BYD are trademarks of their respective owners."
+ },
+ "uk": {
+  "name":"Spotify для BYD", "title":"Spotify для BYD — один додаток", "description":"Експериментальний Spotify 5.5.0 з інтерфейсом BYD в одному APK.",
+  "badge":"Експериментальна збірка · 5.5.0", "headline":"Звичний інтерфейс.", "highlight":"Один додаток.", "intro":"Spotify Automotive та інтерфейс BYD об’єднані в одному APK. Одна установка, одна іконка, штатний вхід Spotify.",
+  "download":"Завантажити тестовий APK", "meta":"Android 9+ · 54,6 MiB · неофіційна адаптація", "languages":"Мова",
+  "cards":[["Один APK","Інтерфейс і музичний сервіс працюють усередині одного встановленого пакета."],["Вхід через QR","Натисніть LOG IN, скануйте код телефоном і підтвердьте вхід у Spotify."],["Інтерфейс BYD","Знайомий вигляд плеєра без обов’язкових дозволів на системи автомобіля."]],
+  "testedTitle":"Що вже перевірено", "tested":"На емуляторі Android 35 перевірено встановлення, запуск інтерфейсу, підключення до внутрішнього сервісу й відкриття екрана входу.", "pendingStrong":"В автомобілі цей єдиний APK ще не перевірено.", "pending":"Звук, каталог після входу, кермо, закриття під час відтворення та офлайн-завантаження потребують перевірки.",
+  "installTitle":"Як встановити", "steps":["Завантажте APK з GitHub Releases і перенесіть у мультимедійну систему.","Нашу попередню тестову збірку з тим самим підписом оновлюйте без видалення: авторизація може зберегтися. Збірки з іншим підписом так не оновляться.","Відкрийте Spotify й за потреби увійдіть через QR-код.","Перевірте музику та керування. Старий окремий інтерфейс BYD видаляйте після успішної перевірки нового APK."],
+  "verifyTitle":"Перевірка файлу", "verify":"SHA-256 поточної тестової збірки:", "footer":"Неофіційний експериментальний проєкт. Spotify та BYD — торговельні марки відповідних власників."
+ },
+ "ru": {
+  "name":"Spotify для BYD", "title":"Spotify для BYD — одно приложение", "description":"Экспериментальный Spotify 5.5.0 с интерфейсом BYD в одном APK.",
+  "badge":"Экспериментальная сборка · 5.5.0", "headline":"Знакомый интерфейс.", "highlight":"Одно приложение.", "intro":"Spotify Automotive и интерфейс BYD объединены в одном APK. Одна установка, один значок, стандартный вход Spotify.",
+  "download":"Скачать тестовый APK", "meta":"Android 9+ · 54,6 MiB · неофициальная адаптация", "languages":"Язык",
+  "cards":[["Один APK","Интерфейс и музыкальный сервис работают внутри одного установленного пакета."],["Вход по QR-коду","Нажмите LOG IN, отсканируйте код телефоном и подтвердите вход в Spotify."],["Интерфейс BYD","Знакомый вид плеера без обязательных разрешений на системы автомобиля."]],
+  "testedTitle":"Что уже проверено", "tested":"На эмуляторе Android 35 проверены установка, запуск интерфейса, подключение к внутреннему сервису и открытие экрана входа.", "pendingStrong":"Этот единый APK ещё не проверен в автомобиле.", "pending":"Звук, каталог после входа, кнопки руля, закрытие во время воспроизведения и офлайн-загрузка требуют проверки.",
+  "installTitle":"Как установить", "steps":["Скачайте APK из GitHub Releases и перенесите в мультимедийную систему.","Нашу предыдущую тестовую сборку с той же подписью обновляйте без удаления: авторизация может сохраниться. Сборки с другой подписью так не обновятся.","Откройте Spotify и при необходимости войдите по QR-коду.","Проверьте музыку и управление. Удаляйте старый отдельный интерфейс BYD только после успешной проверки нового APK."],
+  "verifyTitle":"Проверка файла", "verify":"SHA-256 текущей тестовой сборки:", "footer":"Неофициальный экспериментальный проект. Spotify и BYD — товарные знаки соответствующих владельцев."
+ },
+ "ar": {
+  "name":"Spotify لسيارات BYD", "title":"Spotify لسيارات BYD — تطبيق واحد", "description":"نسخة تجريبية من Spotify 5.5.0 بواجهة BYD في ملف APK واحد.",
+  "badge":"إصدار تجريبي · 5.5.0", "headline":"الواجهة المألوفة.", "highlight":"تطبيق واحد.", "intro":"يجمع ملف APK واحد بين Spotify Automotive وواجهة BYD. تثبيت واحد، وأيقونة واحدة، وتسجيل الدخول المعتاد إلى Spotify.",
+  "download":"تنزيل ملف APK التجريبي", "meta":"Android 9 أو أحدث · 54.6 MiB · تعديل غير رسمي", "languages":"اللغة",
+  "cards":[["ملف APK واحد","تعمل الواجهة وخدمة الموسيقى ضمن حزمة تطبيق واحدة مثبتة."],["الدخول عبر رمز QR","اضغط على LOG IN، وامسح الرمز بهاتفك، ثم أكّد تسجيل الدخول إلى Spotify."],["واجهة BYD","واجهة المشغّل المألوفة دون اشتراط أذونات الوصول إلى أنظمة السيارة."]],
+  "testedTitle":"ما الذي تم اختباره؟", "tested":"تم اختبار التثبيت وتشغيل الواجهة والاتصال بالخدمة الداخلية وفتح شاشة تسجيل الدخول على محاكي Android 35.", "pendingStrong":"لم يتم اختبار ملف APK الموحّد هذا داخل السيارة بعد.", "pending":"لا يزال الصوت والمحتوى بعد تسجيل الدخول وأزرار المقود وإغلاق التطبيق أثناء التشغيل والتنزيل للاستماع دون اتصال بحاجة إلى اختبار.",
+  "installTitle":"طريقة التثبيت", "steps":["نزّل ملف APK من GitHub Releases وانقله إلى نظام الوسائط في السيارة.","يمكن تحديث نسختنا التجريبية السابقة التي تحمل التوقيع نفسه دون إزالتها، وقد تبقى جلسة تسجيل الدخول محفوظة. لا يمكن تحديث النسخ ذات التوقيع المختلف بهذه الطريقة.","افتح Spotify وسجّل الدخول عبر رمز QR عند الحاجة.","تحقّق من تشغيل الموسيقى وأدوات التحكم. لا تزل تطبيق واجهة BYD القديم المنفصل إلا بعد نجاح اختبار ملف APK الجديد."],
+  "verifyTitle":"التحقق من الملف", "verify":"بصمة SHA-256 للإصدار التجريبي الحالي:", "footer":"مشروع تجريبي غير رسمي. Spotify وBYD علامتان تجاريتان لمالكيهما المعنيين."
+ },
+ "zh-Hans": {
+  "name":"适用于比亚迪的 Spotify", "title":"比亚迪 Spotify — 一个应用", "description":"将 Spotify 5.5.0 与比亚迪界面整合为一个 APK 的实验版本。",
+  "badge":"实验版本 · 5.5.0", "headline":"熟悉的界面。", "highlight":"一个应用。", "intro":"将 Spotify Automotive 与比亚迪界面整合到一个 APK 中。一次安装，一个图标，使用 Spotify 标准登录流程。",
+  "download":"下载测试版 APK", "meta":"Android 9 及以上 · 54.6 MiB · 非官方适配", "languages":"语言",
+  "cards":[["一个 APK","界面和音乐服务在同一个已安装的应用包内运行。"],["扫码登录","点击 LOG IN，用手机扫描二维码，然后确认登录 Spotify。"],["比亚迪界面","保留熟悉的播放器界面，无需强制授予车辆系统访问权限。"]],
+  "testedTitle":"已完成的测试", "tested":"已在 Android 35 模拟器上验证安装、界面启动、连接内部服务及打开登录页面。", "pendingStrong":"此整合版 APK 尚未在车辆上测试。", "pending":"音频、登录后的内容、方向盘按键、播放时关闭应用以及离线下载仍需测试。",
+  "installTitle":"安装方法", "steps":["从 GitHub Releases 下载 APK，并传输到车载多媒体系统。","如果已安装我们之前使用相同签名的测试版本，请直接更新，无需卸载，登录状态可能保留。签名不同的版本无法通过此方式更新。","打开 Spotify，按需扫码登录。","检查音乐播放和控制功能。确认新 APK 工作正常后，再卸载原来独立的比亚迪界面应用。"],
+  "verifyTitle":"文件校验", "verify":"当前测试版本的 SHA-256：", "footer":"非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。"
+ }
+}
