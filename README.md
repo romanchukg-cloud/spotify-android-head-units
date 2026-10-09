@@ -4,13 +4,13 @@
 
 An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
 
-[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
+[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-unified-test.2) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
 
 ## What has been tested
 
-Installation, interface startup, connection to the internal service, and opening the sign-in screen have been tested on an Android 35 emulator.
+Tested on BYD DiLink5 with Android 12: updating with sign-in preserved, Home, Recents, Library and playlist tracks. Music continued while opening playlists, and selecting a track started playback. The user confirmed that closing the app stops music. QR sign-in was also tested on an Android 35 emulator.
 
-**This single APK has not yet been tested in a car.** Audio, the catalog after sign-in, steering-wheel controls, closing the app during playback, and offline downloads still need testing.
+**Experimental test release .2.** Steering-wheel controls, offline downloads and other head units still need testing.
 
 Android 9 or newer is required. Compatibility with other manufacturers and head units has not yet been verified; this is not a universal build.
 
@@ -25,12 +25,12 @@ Android 9+ · 54.6 MiB · unofficial adaptation
 
 ## Verify the file
 
-`Spotify-5.5.0-BYD-unified-test.apk` · 57 243 570 bytes
+`Spotify-5.5.0-BYD-unified-test.apk` · 57 247 666 bytes
 
 SHA-256 of the current test build:
 
 ```text
-0e057caf7f3a7962da0ba73207b16a7f699cc8b3220d198d9102bf60654d3d65
+0fa0b0d9eb5b9b95c989b59f751c838d0b318d9b481ff788572f2d9e5635a124
 ```
 
 Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.

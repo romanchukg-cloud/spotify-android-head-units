@@ -7,8 +7,8 @@ CONTENT=json.loads((ROOT/'scripts/content.json').read_text())
 LABELS={'en':'English','uk':'Українська','ru':'Русский','ar':'العربية','zh-Hans':'简体中文'}
 SITE='https://romanchukg-cloud.github.io/spotify-android-head-units/'
 REPO='https://github.com/romanchukg-cloud/spotify-android-head-units'
-RELEASE=REPO+'/releases/tag/v5.5.0-byd-unified-test.1'
-SHA='0e057caf7f3a7962da0ba73207b16a7f699cc8b3220d198d9102bf60654d3d65'
+RELEASE=REPO+'/releases/tag/v5.5.0-unified-test.2'
+SHA='0fa0b0d9eb5b9b95c989b59f751c838d0b318d9b481ff788572f2d9e5635a124'
 def route(lang):return '' if lang=='en' else lang+'/'
 for lang,c in CONTENT.items():
  prefix='' if lang=='en' else '../'
@@ -50,7 +50,7 @@ for lang,c in CONTENT.items():
  languages=' · '.join(f'[{LABELS[k]}]('+('README.md' if k=='en' else f'README.{k}.md')+')' for k in CONTENT)
  markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({RELEASE}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n{c['compatibility']}\n\n## {c['installTitle']}\n\n"
  markdown+='\n'.join(f'{i}. {s}' for i,s in enumerate(c['steps'],1))
- markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`Spotify-5.5.0-BYD-unified-test.apk` · 57 243 570 bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
+ markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`Spotify-5.5.0-BYD-unified-test.apk` · 57 247 666 bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
  if lang=='ar':markdown='<div dir="rtl">\n\n'+markdown+'\n</div>\n'
  (ROOT/readme).write_text(markdown)
 print('Generated 5 pages and 5 READMEs. English is the default.')

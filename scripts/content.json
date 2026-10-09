@@ -25,9 +25,9 @@
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Installation, interface startup, connection to the internal service, and opening the sign-in screen have been tested on an Android 35 emulator.",
-    "pendingStrong": "This single APK has not yet been tested in a car.",
-    "pending": "Audio, the catalog after sign-in, steering-wheel controls, closing the app during playback, and offline downloads still need testing.",
+    "tested": "Tested on BYD DiLink5 with Android 12: updating with sign-in preserved, Home, Recents, Library and playlist tracks. Music continued while opening playlists, and selecting a track started playback. The user confirmed that closing the app stops music. QR sign-in was also tested on an Android 35 emulator.",
+    "pendingStrong": "Experimental test release .2.",
+    "pending": "Steering-wheel controls, offline downloads and other head units still need testing.",
     "installTitle": "How to install",
     "steps": [
       "Download the APK from GitHub Releases and transfer it to the infotainment system.",
@@ -66,9 +66,9 @@
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "На емуляторі Android 35 перевірено встановлення, запуск інтерфейсу, підключення до внутрішнього сервісу й відкриття екрана входу.",
-    "pendingStrong": "В автомобілі цей єдиний APK ще не перевірено.",
-    "pending": "Звук, каталог після входу, кермо, закриття під час відтворення та офлайн-завантаження потребують перевірки.",
+    "tested": "Перевірено на BYD DiLink5 з Android 12: оновлення зі збереженням входу, Home, Recents, Library і треки в плейлистах. Під час відкриття плейлистів музика продовжувала грати; вибір треку запускав відтворення. Користувач підтвердив, що закриття додатка зупиняє музику. Вхід за QR-кодом також перевірено на емуляторі Android 35.",
+    "pendingStrong": "Експериментальний тестовий реліз .2.",
+    "pending": "Кнопки на кермі, офлайн-завантаження та інші магнітоли ще потребують перевірки.",
     "installTitle": "Як встановити",
     "steps": [
       "Завантажте APK з GitHub Releases і перенесіть у мультимедійну систему.",
@@ -107,9 +107,9 @@
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "На эмуляторе Android 35 проверены установка, запуск интерфейса, подключение к внутреннему сервису и открытие экрана входа.",
-    "pendingStrong": "Этот единый APK ещё не проверен в автомобиле.",
-    "pending": "Звук, каталог после входа, кнопки руля, закрытие во время воспроизведения и офлайн-загрузка требуют проверки.",
+    "tested": "Проверено на BYD DiLink5 с Android 12: обновление с сохранением входа, Home, Recents, Library и треки в плейлистах. При открытии плейлистов музыка продолжала играть; выбор трека запускал воспроизведение. Пользователь подтвердил, что закрытие приложения останавливает музыку. Вход по QR-коду также проверен на эмуляторе Android 35.",
+    "pendingStrong": "Экспериментальный тестовый релиз .2.",
+    "pending": "Кнопки на руле, офлайн-загрузка и другие магнитолы ещё требуют проверки.",
     "installTitle": "Как установить",
     "steps": [
       "Скачайте APK из GitHub Releases и перенесите в мультимедийную систему.",
@@ -148,9 +148,9 @@
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "تم اختبار التثبيت وتشغيل الواجهة والاتصال بالخدمة الداخلية وفتح شاشة تسجيل الدخول على محاكي Android 35.",
-    "pendingStrong": "لم يتم اختبار ملف APK الموحّد هذا داخل السيارة بعد.",
-    "pending": "لا يزال الصوت والمحتوى بعد تسجيل الدخول وأزرار المقود وإغلاق التطبيق أثناء التشغيل والتنزيل للاستماع دون اتصال بحاجة إلى اختبار.",
+    "tested": "تم الاختبار على BYD DiLink5 بنظام Android 12: التحديث مع الاحتفاظ بتسجيل الدخول، وأقسام Home وRecents وLibrary ومسارات قوائم التشغيل. استمرت الموسيقى أثناء فتح قوائم التشغيل، وبدأ التشغيل عند اختيار مسار. أكد المستخدم أن إغلاق التطبيق يوقف الموسيقى. تم أيضاً اختبار تسجيل الدخول برمز QR على محاكي Android 35.",
+    "pendingStrong": "إصدار اختباري تجريبي .2.",
+    "pending": "لا تزال أزرار عجلة القيادة والتنزيلات دون اتصال ووحدات السيارات الأخرى بحاجة إلى الاختبار.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "نزّل ملف APK من GitHub Releases وانقله إلى نظام الوسائط في السيارة.",
@@ -189,9 +189,9 @@
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "已在 Android 35 模拟器上验证安装、界面启动、连接内部服务及打开登录页面。",
-    "pendingStrong": "此整合版 APK 尚未在车辆上测试。",
-    "pending": "音频、登录后的内容、方向盘按键、播放时关闭应用以及离线下载仍需测试。",
+    "tested": "已在搭载 Android 12 的 BYD DiLink5 上测试：更新后保留登录状态，Home、Recents、Library 和播放列表曲目正常加载。打开播放列表时音乐继续播放，选择曲目后可开始播放。用户确认关闭应用会停止音乐。二维码登录也已在 Android 35 模拟器上测试。",
+    "pendingStrong": "实验性测试版本 .2。",
+    "pending": "方向盘按键、离线下载及其他车机仍需测试。",
     "installTitle": "安装方法",
     "steps": [
       "从 GitHub Releases 下载 APK，并传输到车载多媒体系统。",

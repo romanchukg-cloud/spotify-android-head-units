@@ -4,13 +4,13 @@
 
 适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
 
-[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-byd-unified-test.1) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
+[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-unified-test.2) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
 
 ## 已完成的测试
 
-已在 Android 35 模拟器上验证安装、界面启动、连接内部服务及打开登录页面。
+已在搭载 Android 12 的 BYD DiLink5 上测试：更新后保留登录状态，Home、Recents、Library 和播放列表曲目正常加载。打开播放列表时音乐继续播放，选择曲目后可开始播放。用户确认关闭应用会停止音乐。二维码登录也已在 Android 35 模拟器上测试。
 
-**此整合版 APK 尚未在车辆上测试。** 音频、登录后的内容、方向盘按键、播放时关闭应用以及离线下载仍需测试。
+**实验性测试版本 .2。** 方向盘按键、离线下载及其他车机仍需测试。
 
 需要 Android 9 或更高版本。尚未验证其他厂商车机的兼容性；此版本并非适用于所有设备的通用版本。
 
@@ -25,12 +25,12 @@ Android 9 及以上 · 54.6 MiB · 非官方适配
 
 ## 文件校验
 
-`Spotify-5.5.0-BYD-unified-test.apk` · 57 243 570 bytes
+`Spotify-5.5.0-BYD-unified-test.apk` · 57 247 666 bytes
 
 当前测试版本的 SHA-256：
 
 ```text
-0e057caf7f3a7962da0ba73207b16a7f699cc8b3220d198d9102bf60654d3d65
+0fa0b0d9eb5b9b95c989b59f751c838d0b318d9b481ff788572f2d9e5635a124
 ```
 
 非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。
