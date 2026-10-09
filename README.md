@@ -2,7 +2,7 @@
 
 Експериментальна адаптація Spotify Automotive 5.5.0 з інтерфейсом BYD в одному APK. Один пакет `com.spotify.music`, одна іконка. Окремий додаток інтерфейсу BYD не потрібен.
 
-[Завантажити тестову збірку](https://github.com/romanchukg-cloud/spotify-byd/releases/latest) · [Сторінка проєкту](https://romanchukg-cloud.github.io/spotify-byd/)
+[Завантажити тестову збірку](https://github.com/romanchukg-cloud/spotify-byd/releases/tag/v5.5.0-byd-unified-test.1) · [Сторінка проєкту](https://romanchukg-cloud.github.io/spotify-byd/)
 
 ## Стан перевірки
 
