@@ -1,2 +1,1 @@
 PASS: delayed process death, UI acknowledgement, failed/blocked launch retry, process restriction, cancelled coordinator, account transition rejects UI/transport/wake resume, encryption, tamper rejection, duplicate prevention, rename, IPC redaction, active removal guard, unknown restore, write failure recovery, restart recovery, QR cancellation return, two synthetic accounts A-B-A and inactive removal. SDK auth store mocked; real two-account switching unverified.
-
