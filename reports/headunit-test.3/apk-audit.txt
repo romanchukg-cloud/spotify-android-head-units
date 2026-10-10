@@ -1,0 +1,43 @@
+W: Skipping package group: com.spotify.music
+W: Could not decode attr value, using undecoded value instead: ns=android, name=theme, value=0x7f12000a
+W: Could not decode attr value, using undecoded value instead: ns=android, name=label, value=0x7f11002e
+W: Could not decode attr value, using undecoded value instead: ns=android, name=icon, value=0x7f0e0000
+W: Could not decode attr value, using undecoded value instead: ns=android, name=resource, value=0x7f140002
+W: Could not decode attr value, using undecoded value instead: ns=android, name=label, value=0x7f11020a
+W: Could not decode attr value, using undecoded value instead: ns=android, name=resource, value=0x7f140001
+W: Could not decode attr value, using undecoded value instead: ns=android, name=enabled, value=0x7f050002
+W: Could not decode attr value, using undecoded value instead: ns=android, name=enabled, value=0x7f050004
+W: Could not decode attr value, using undecoded value instead: ns=android, name=enabled, value=0x7f050003
+W: Could not decode attr value, using undecoded value instead: ns=android, name=enabled, value=0x7f050002
+W: Could not decode attr value, using undecoded value instead: ns=android, name=value, value=0x7f0b000a
+W: Could not decode attr value, using undecoded value instead: ns=android, name=label, value=0x7f11002e
+W: Could not decode attr value, using undecoded value instead: ns=android, name=resource, value=0x7f100000
+W: Could not decode attr value, using undecoded value instead: ns=android, name=theme, value=0x7f120193
+W: Could not decode attr value, using undecoded value instead: ns=android, name=label, value=0x7f1101f9
+APK Spotify-5.5.0-HeadUnit-test.3.apk
+SHA256 9dc4a3bbd99eabee77ab6b47576f0b431966386c5866e055801d61d78dac059b
+PASS Package / minimum API — minSdk=28
+PASS Optional automotive feature
+PASS Legacy Back dispatch
+PASS Privacy metadata
+PASS Boot permission
+PASS Private settings / playback components
+PASS One cold-start media receiver
+PASS No vendor restore service
+PASS Helper / relocated UI present
+PASS Vendor (BYD) coupling — 10 entry-guarded methods; 4 listeners only constructed behind profile guard
+PASS External controller policy hook
+PASS Binder death does not close gate
+PASS BYD legacy UI trust gated
+PASS Explicit transport commands unblocked
+PASS Settings entry / density context
+PASS Landscape / portrait resources
+PASS DEX version compatible with Android 9 — {'classes.dex': 39, 'classes2.dex': 39, 'classes3.dex': 39}
+PASS UI translations uk — 34 strings, missing=[]
+PASS UI translations ru — 34 strings, missing=[]
+PASS UI translations ar — 34 strings, missing=[]
+PASS UI translations zh-rCN — 34 strings, missing=[]
+PASS APK signature
+PASS ZIP / native 16 KiB alignment
+RESULT 23 PASS, 0 FAIL
+LIMIT: static policy checks do not validate login, audio, all SDK API calls, or real head-unit firmware.

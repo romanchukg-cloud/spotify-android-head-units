@@ -1,0 +1,110 @@
+{
+  "28": [
+    {
+      "screen": "800x480-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1024x600-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1280x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1920x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "768x1024-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    }
+  ],
+  "30": [
+    {
+      "screen": "800x480-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1024x600-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1280x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1920x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "768x1024-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    }
+  ],
+  "33": [
+    {
+      "screen": "800x480-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1024x600-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1280x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1920x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "768x1024-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    }
+  ],
+  "35": [
+    {
+      "screen": "800x480-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1024x600-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1280x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "1920x720-240",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    },
+    {
+      "screen": "768x1024-160",
+      "logged_out_login_visible": true,
+      "settings_visible": true
+    }
+  ]
+}

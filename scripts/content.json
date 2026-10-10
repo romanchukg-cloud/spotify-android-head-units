@@ -8,7 +8,7 @@
     "highlight": "One app.",
     "intro": "An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.",
     "download": "Download test APK",
-    "meta": "Android 9+ · 54.6 MiB · unofficial adaptation",
+    "meta": "Android 9+ · 55.2 MiB · unofficial adaptation",
     "languages": "Language",
     "cards": [
       [
@@ -25,9 +25,9 @@
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Tested on BYD DiLink5 with Android 12: updating with sign-in preserved, Home, Recents, Library and playlist tracks. Music continued while opening playlists, and selecting a track started playback. The user confirmed that closing the app stops music. QR sign-in was also tested on an Android 35 emulator.",
-    "pendingStrong": "Experimental test release .2.",
-    "pending": "Steering-wheel controls, offline downloads and other head units still need testing.",
+    "tested": "Headunit-test.3: static APK audit 23 PASS / 0 FAIL; 16 policy checks on ordinary Android 9, 11, 13 and 15 emulators. Logged-out login and settings screens checked at 800×480@160, 1024×600@160, 1280×720@240, 1920×720@240 and 768×1024 portrait. An independent MediaBrowserCompat client connects to the root with external control enabled and is rejected when disabled. Android 11 reboot clears the close gate and sends the resume request. The earlier test.2 was tested on BYD DiLink5; those results do not certify this new build.",
+    "pendingStrong": "Experimental headunit-test.3.",
+    "pending": "Signed-in Home, Library, playlists, audio, closed/dead-process media controls, Now Playing Back navigation, actual resume after sleep/reboot, offline downloads and BYD DiLink5 regression still need verification. The multi-account experiment is not included.",
     "installTitle": "How to install",
     "steps": [
       "Download the APK from GitHub Releases and transfer it to the infotainment system.",
@@ -38,7 +38,9 @@
     "verifyTitle": "Verify the file",
     "verify": "SHA-256 of the current test build:",
     "footer": "Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.",
-    "compatibility": "Android 9 or newer is required. Compatibility with other manufacturers and head units has not yet been verified; this is not a universal build."
+    "compatibility": "Android 9+ (API 28) is required; Android 8 is a later phase. BYD, AAOS and GENERIC profiles are implemented; only GENERIC was tested in this build. Real head units from other manufacturers and AAOS remain unverified.",
+    "sourceTitle": "Source code and validation",
+    "source": "Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs."
   },
   "uk": {
     "name": "Spotify для Android-магнітол",
@@ -49,7 +51,7 @@
     "highlight": "Один додаток.",
     "intro": "Експериментальний плеєр Spotify Automotive для Android-магнітол. Інтерфейс на основі BYD та музичний сервіс об’єднані в одному APK з однією іконкою і штатним входом Spotify.",
     "download": "Завантажити тестовий APK",
-    "meta": "Android 9+ · 54,6 MiB · неофіційна адаптація",
+    "meta": "Android 9+ · 55,2 MiB · неофіційна адаптація",
     "languages": "Мова",
     "cards": [
       [
@@ -66,9 +68,9 @@
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Перевірено на BYD DiLink5 з Android 12: оновлення зі збереженням входу, Home, Recents, Library і треки в плейлистах. Під час відкриття плейлистів музика продовжувала грати; вибір треку запускав відтворення. Користувач підтвердив, що закриття додатка зупиняє музику. Вхід за QR-кодом також перевірено на емуляторі Android 35.",
-    "pendingStrong": "Експериментальний тестовий реліз .2.",
-    "pending": "Кнопки на кермі, офлайн-завантаження та інші магнітоли ще потребують перевірки.",
+    "tested": "Headunit-test.3: аудит APK — 23 PASS / 0 FAIL; 16 перевірок логіки на звичайних емуляторах Android 9, 11, 13 і 15. Екран входу без авторизації та налаштування перевірені на 800×480@160, 1024×600@160, 1280×720@240, 1920×720@240 і 768×1024 у портреті. Окремий клієнт MediaBrowserCompat отримує корінь, коли зовнішнє керування дозволене, та відмову, коли вимкнене. Перезавантаження Android 11 скидає блокування й відправляє запит відновлення. Попередня test.2 перевірялася на BYD DiLink5; це не підтверджує роботу нової збірки.",
+    "pendingStrong": "Експериментальна headunit-test.3.",
+    "pending": "Ще не перевірені Home, медіатека, плейлисти й звук після входу, медіакнопки при закритому або мертвому процесі, «Назад» із Now Playing, фактичне відновлення після сну/перезавантаження, офлайн-завантаження та регресія BYD DiLink5. Експеримент із кількома акаунтами не включений.",
     "installTitle": "Як встановити",
     "steps": [
       "Завантажте APK з GitHub Releases і перенесіть у мультимедійну систему.",
@@ -79,7 +81,9 @@
     "verifyTitle": "Перевірка файлу",
     "verify": "SHA-256 поточної тестової збірки:",
     "footer": "Неофіційний експериментальний проєкт. Spotify та BYD — торговельні марки відповідних власників.",
-    "compatibility": "Потрібен Android 9 або новіший. Сумісність із магнітолами інших виробників ще не перевірена; це не універсальна збірка."
+    "compatibility": "Потрібен Android 9+ (API 28); Android 8 — наступний етап. Реалізовані профілі BYD, AAOS і GENERIC; у цій збірці перевірений лише GENERIC. Реальні магнітоли інших виробників та AAOS ще не перевірені.",
+    "sourceTitle": "Вихідний код і перевірки",
+    "source": "Наш Java-код інтеграції, патчі, скрипти складання, аудит і тести емуляторів доступні в репозиторії. Закритий SDK Spotify та інтерфейс BYD є локальними вхідними файлами складання."
   },
   "ru": {
     "name": "Spotify для Android-магнитол",
@@ -90,7 +94,7 @@
     "highlight": "Одно приложение.",
     "intro": "Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.",
     "download": "Скачать тестовый APK",
-    "meta": "Android 9+ · 54,6 MiB · неофициальная адаптация",
+    "meta": "Android 9+ · 55,2 MiB · неофициальная адаптация",
     "languages": "Язык",
     "cards": [
       [
@@ -107,9 +111,9 @@
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Проверено на BYD DiLink5 с Android 12: обновление с сохранением входа, Home, Recents, Library и треки в плейлистах. При открытии плейлистов музыка продолжала играть; выбор трека запускал воспроизведение. Пользователь подтвердил, что закрытие приложения останавливает музыку. Вход по QR-коду также проверен на эмуляторе Android 35.",
-    "pendingStrong": "Экспериментальный тестовый релиз .2.",
-    "pending": "Кнопки на руле, офлайн-загрузка и другие магнитолы ещё требуют проверки.",
+    "tested": "Headunit-test.3: аудит APK — 23 PASS / 0 FAIL; 16 проверок логики на обычных эмуляторах Android 9, 11, 13 и 15. Экран входа без авторизации и настройки проверены на 800×480@160, 1024×600@160, 1280×720@240, 1920×720@240 и 768×1024 в портрете. Отдельный клиент MediaBrowserCompat получает корень при разрешённом внешнем управлении и отказ при выключенном. Перезагрузка Android 11 сбрасывает блокировку и отправляет запрос восстановления. Предыдущая test.2 проверялась на BYD DiLink5; это не подтверждает работу новой сборки.",
+    "pendingStrong": "Экспериментальная headunit-test.3.",
+    "pending": "Ещё не проверены Home, медиатека, плейлисты и звук после входа, медиакнопки при закрытом или мёртвом процессе, «Назад» из Now Playing, фактическое восстановление после сна/перезагрузки, офлайн-загрузки и регрессия BYD DiLink5. Эксперимент с несколькими аккаунтами не включён.",
     "installTitle": "Как установить",
     "steps": [
       "Скачайте APK из GitHub Releases и перенесите в мультимедийную систему.",
@@ -120,7 +124,9 @@
     "verifyTitle": "Проверка файла",
     "verify": "SHA-256 текущей тестовой сборки:",
     "footer": "Неофициальный экспериментальный проект. Spotify и BYD — товарные знаки соответствующих владельцев.",
-    "compatibility": "Требуется Android 9 или новее. Совместимость с магнитолами других производителей ещё не проверена; это не универсальная сборка."
+    "compatibility": "Требуется Android 9+ (API 28); Android 8 — следующий этап. Реализованы профили BYD, AAOS и GENERIC; в этой сборке проверен только GENERIC. Реальные магнитолы других производителей и AAOS ещё не проверены.",
+    "sourceTitle": "Исходный код и проверки",
+    "source": "Наш Java-код интеграции, патчи, скрипты сборки, аудит и тесты эмуляторов доступны в репозитории. Закрытый SDK Spotify и интерфейс BYD — локальные входные файлы сборки."
   },
   "ar": {
     "name": "Spotify لوحدات الوسائط العاملة بنظام Android",
@@ -131,7 +137,7 @@
     "highlight": "تطبيق واحد.",
     "intro": "مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.",
     "download": "تنزيل ملف APK التجريبي",
-    "meta": "Android 9 أو أحدث · 54.6 MiB · تعديل غير رسمي",
+    "meta": "Android 9+ · 55.2 MiB · تعديل غير رسمي",
     "languages": "اللغة",
     "cards": [
       [
@@ -148,9 +154,9 @@
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "تم الاختبار على BYD DiLink5 بنظام Android 12: التحديث مع الاحتفاظ بتسجيل الدخول، وأقسام Home وRecents وLibrary ومسارات قوائم التشغيل. استمرت الموسيقى أثناء فتح قوائم التشغيل، وبدأ التشغيل عند اختيار مسار. أكد المستخدم أن إغلاق التطبيق يوقف الموسيقى. تم أيضاً اختبار تسجيل الدخول برمز QR على محاكي Android 35.",
-    "pendingStrong": "إصدار اختباري تجريبي .2.",
-    "pending": "لا تزال أزرار عجلة القيادة والتنزيلات دون اتصال ووحدات السيارات الأخرى بحاجة إلى الاختبار.",
+    "tested": "headunit-test.3: اجتاز تدقيق APK عدد 23 فحصًا دون إخفاق، و16 فحصًا للمنطق على محاكيات Android 9 و11 و13 و15 العادية. تم فحص شاشة تسجيل الدخول قبل المصادقة والإعدادات بدقات 800×480@160 و1024×600@160 و1280×720@240 و1920×720@240 و768×1024 عموديًا. يتصل عميل MediaBrowserCompat مستقل بالجذر عند السماح بالتحكم الخارجي ويُرفض عند تعطيله. إعادة تشغيل Android 11 تمسح بوابة الإغلاق وترسل طلب الاستئناف. اختبارات BYD DiLink5 السابقة تخص test.2 ولا تؤكد هذه النسخة الجديدة.",
+    "pendingStrong": "نسخة headunit-test.3 تجريبية.",
+    "pending": "لم يتم التحقق بعد من Home والمكتبة وقوائم التشغيل والصوت بعد تسجيل الدخول، أو أزرار الوسائط مع إغلاق الواجهة أو موت العملية، أو الرجوع من Now Playing، أو الاستئناف الفعلي بعد السكون وإعادة التشغيل، أو التنزيل دون اتصال، أو اختبارات BYD DiLink5. تجربة الحسابات المتعددة غير مضمنة.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "نزّل ملف APK من GitHub Releases وانقله إلى نظام الوسائط في السيارة.",
@@ -161,7 +167,9 @@
     "verifyTitle": "التحقق من الملف",
     "verify": "بصمة SHA-256 للإصدار التجريبي الحالي:",
     "footer": "مشروع تجريبي غير رسمي. Spotify وBYD علامتان تجاريتان لمالكيهما المعنيين.",
-    "compatibility": "يتطلب Android 9 أو أحدث. لم يتم التحقق بعد من التوافق مع وحدات الوسائط من الشركات الأخرى؛ هذا الإصدار ليس متوافقًا مع جميع الأجهزة."
+    "compatibility": "يتطلب Android 9 أو أحدث (API 28)؛ دعم Android 8 مرحلة لاحقة. تم تنفيذ ملفات BYD وAAOS وGENERIC، لكن تم اختبار GENERIC فقط في هذه النسخة. لم يتم التحقق من وحدات الشركات الأخرى أو AAOS الفعلية.",
+    "sourceTitle": "الشيفرة المصدرية والتحقق",
+    "source": "تتوفر شيفرة Java الخاصة بالتكامل وسكربتات التعديل والبناء والتدقيق واختبارات المحاكيات في المستودع. خدمة Spotify وواجهة BYD المغلقتان تُستخدمان كمدخلات بناء محلية."
   },
   "zh-Hans": {
     "name": "适用于 Android 车机的 Spotify",
@@ -172,7 +180,7 @@
     "highlight": "一个应用。",
     "intro": "适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。",
     "download": "下载测试版 APK",
-    "meta": "Android 9 及以上 · 54.6 MiB · 非官方适配",
+    "meta": "Android 9+ · 55.2 MiB · 非官方适配",
     "languages": "语言",
     "cards": [
       [
@@ -189,9 +197,9 @@
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "已在搭载 Android 12 的 BYD DiLink5 上测试：更新后保留登录状态，Home、Recents、Library 和播放列表曲目正常加载。打开播放列表时音乐继续播放，选择曲目后可开始播放。用户确认关闭应用会停止音乐。二维码登录也已在 Android 35 模拟器上测试。",
-    "pendingStrong": "实验性测试版本 .2。",
-    "pending": "方向盘按键、离线下载及其他车机仍需测试。",
+    "tested": "headunit-test.3：APK 静态审计 23 项通过、0 项失败；在普通 Android 9、11、13、15 模拟器上完成 16 项逻辑检查。在 800×480@160、1024×600@160、1280×720@240、1920×720@240 和 768×1024 竖屏上检查未登录界面及设置。独立 MediaBrowserCompat 客户端在允许外部控制时连接根目录，禁用后被拒绝。Android 11 重启会清除关闭状态并发送恢复请求。此前 BYD DiLink5 的测试结果属于 test.2，不能证明新版本已通过实车验证。",
+    "pendingStrong": "headunit-test.3 实验版本。",
+    "pending": "登录后的 Home、媒体库、播放列表、音频，界面关闭或进程死亡后的媒体键，Now Playing 返回导航，休眠或重启后的实际恢复播放，离线下载及 BYD DiLink5 回归测试仍待验证。本版本不包含多账户实验。",
     "installTitle": "安装方法",
     "steps": [
       "从 GitHub Releases 下载 APK，并传输到车载多媒体系统。",
@@ -202,6 +210,8 @@
     "verifyTitle": "文件校验",
     "verify": "当前测试版本的 SHA-256：",
     "footer": "非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。",
-    "compatibility": "需要 Android 9 或更高版本。尚未验证其他厂商车机的兼容性；此版本并非适用于所有设备的通用版本。"
+    "compatibility": "需要 Android 9+（API 28）；Android 8 属于后续阶段。已实现 BYD、AAOS、GENERIC 配置，本次仅验证 GENERIC。其他品牌的真实车机及 AAOS 尚未验证。",
+    "sourceTitle": "源代码与验证",
+    "source": "仓库提供我们的 Java 集成代码、补丁与构建脚本、审计工具及模拟器测试源码。闭源 Spotify 后端和 BYD 界面作为本地构建输入。"
   }
 }

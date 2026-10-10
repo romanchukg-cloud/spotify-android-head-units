@@ -4,15 +4,15 @@
 
 适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
 
-[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-unified-test.2) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
+[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.3) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
 
 ## 已完成的测试
 
-已在搭载 Android 12 的 BYD DiLink5 上测试：更新后保留登录状态，Home、Recents、Library 和播放列表曲目正常加载。打开播放列表时音乐继续播放，选择曲目后可开始播放。用户确认关闭应用会停止音乐。二维码登录也已在 Android 35 模拟器上测试。
+headunit-test.3：APK 静态审计 23 项通过、0 项失败；在普通 Android 9、11、13、15 模拟器上完成 16 项逻辑检查。在 800×480@160、1024×600@160、1280×720@240、1920×720@240 和 768×1024 竖屏上检查未登录界面及设置。独立 MediaBrowserCompat 客户端在允许外部控制时连接根目录，禁用后被拒绝。Android 11 重启会清除关闭状态并发送恢复请求。此前 BYD DiLink5 的测试结果属于 test.2，不能证明新版本已通过实车验证。
 
-**实验性测试版本 .2。** 方向盘按键、离线下载及其他车机仍需测试。
+**headunit-test.3 实验版本。** 登录后的 Home、媒体库、播放列表、音频，界面关闭或进程死亡后的媒体键，Now Playing 返回导航，休眠或重启后的实际恢复播放，离线下载及 BYD DiLink5 回归测试仍待验证。本版本不包含多账户实验。
 
-需要 Android 9 或更高版本。尚未验证其他厂商车机的兼容性；此版本并非适用于所有设备的通用版本。
+需要 Android 9+（API 28）；Android 8 属于后续阶段。已实现 BYD、AAOS、GENERIC 配置，本次仅验证 GENERIC。其他品牌的真实车机及 AAOS 尚未验证。
 
 ## 安装方法
 
@@ -21,16 +21,22 @@
 3. 打开 Spotify，按需扫码登录。
 4. 检查音乐播放和控制功能。确认新 APK 工作正常后，再卸载原来独立的比亚迪界面应用。
 
-Android 9 及以上 · 54.6 MiB · 非官方适配
+Android 9+ · 55.2 MiB · 非官方适配
 
 ## 文件校验
 
-`Spotify-5.5.0-BYD-unified-test.apk` · 57 247 666 bytes
+`Spotify-5.5.0-HeadUnit-test.3.apk` · 57 835 520 bytes
 
 当前测试版本的 SHA-256：
 
 ```text
-0fa0b0d9eb5b9b95c989b59f751c838d0b318d9b481ff788572f2d9e5635a124
+9dc4a3bbd99eabee77ab6b47576f0b431966386c5866e055801d61d78dac059b
 ```
 
 非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。
+
+## 源代码与验证
+
+仓库提供我们的 Java 集成代码、补丁与构建脚本、审计工具及模拟器测试源码。闭源 Spotify 后端和 BYD 界面作为本地构建输入。
+
+[Java / build](adapter/) · [已完成的测试](reports/headunit-test.3.md)
