@@ -10,6 +10,13 @@ public class Runner extends Instrumentation {
   else if(mode.equals("prepare-reboot")){HeadUnitPreferences.store().edit().putBoolean("was_playing",true).putBoolean("shutdown_playing",true).commit();PlaybackGate.change(c,true);Thread.sleep(30000);}
   else if(mode.equals("after-reboot")){ok(!PlaybackGate.blocked(c),"reboot clears persisted close gate");}
   else if(mode.equals("prime-cold")){MediaSession session=new MediaSession(c,"HU transport fixture");session.setFlags(3);PlaybackGate.register(c,session);PlaybackGate.receiver(session,null);session.setPlaybackState(new PlaybackState.Builder().setState(PlaybackState.STATE_PLAYING,0,1).setActions(PlaybackState.ACTION_PLAY|PlaybackState.ACTION_PAUSE|PlaybackState.ACTION_SKIP_TO_NEXT|PlaybackState.ACTION_SKIP_TO_PREVIOUS|PlaybackState.ACTION_PLAY_PAUSE).build());session.setActive(true);Thread.sleep(3000);android.os.Process.killProcess(android.os.Process.myPid());}
+  else if(mode.equals("accounts-ui")){
+   if(args.getString("seed","false").equals("true")){
+    Class<?> vault=Class.forName("local.spotify.unified.ProfileVault");java.lang.reflect.Constructor<?> ctor=vault.getDeclaredConstructor(Context.class);ctor.setAccessible(true);Object disk=ctor.newInstance(c);
+    org.json.JSONArray profiles=new org.json.JSONArray();for(int i=0;i<2;i++)profiles.put(new org.json.JSONObject().put("id","synthetic-"+i).put("name",i==0?"Synthetic driver A — long display name":"Synthetic driver B").put("user","synthetic-"+i).put("credential","AQID"));
+    java.lang.reflect.Method write=vault.getDeclaredMethod("write",org.json.JSONObject.class);write.setAccessible(true);write.invoke(disk,new org.json.JSONObject().put("version",1).put("profiles",profiles));
+   }
+   c.startActivity(new Intent().setClassName(c.getPackageName(),"local.bydui.com.vivid.spotify.MainActivity").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));Thread.sleep(4000);c.startActivity(new Intent(c,HeadUnitSettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));Thread.sleep(60000);}
   else if(mode.equals("settings")){c.startActivity(new Intent(c,HeadUnitSettingsActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));Thread.sleep(15000);}
   else if(mode.equals("stop-close")){Bundle b=new Bundle();b.putBoolean("stop_close",Boolean.parseBoolean(args.getString("value","false")));HeadUnitSettings.call(c,"set",b);}
   else if(mode.equals("external")){Bundle b=new Bundle();b.putBoolean("external",Boolean.parseBoolean(args.getString("value","true")));HeadUnitSettings.call(c,"set",b);}

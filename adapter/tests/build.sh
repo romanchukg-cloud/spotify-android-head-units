@@ -19,7 +19,7 @@ for name in ('test','client'):
  with zipfile.ZipFile(f'out/{name}-unsigned.apk','a') as z:
   z.write(f'out/{name}dex/classes.dex','classes.dex')
   if name=='client':
-   with zipfile.ZipFile('../Spotify-5.5.0-HeadUnit-test.3.apk') as sdk:z.writestr('classes2.dex',sdk.read('classes.dex'))
+   with zipfile.ZipFile('../Spotify-5.5.0-HeadUnit-test.4.apk') as sdk:z.writestr('classes2.dex',sdk.read('classes.dex'))
 PY
 for NAME in test client; do
  "$BT/zipalign" -f 4 "out/$NAME-unsigned.apk" "out/$NAME-aligned.apk"

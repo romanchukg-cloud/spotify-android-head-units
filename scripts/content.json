@@ -22,17 +22,22 @@
       [
         "Car-friendly interface",
         "Based on the BYD player interface, without mandatory permissions for BYD vehicle systems."
+      ],
+      [
+        "Accounts in settings",
+        "Open Head unit settings → Accounts to add an account with QR sign-in, rename saved accounts or switch between them."
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Headunit-test.3: static APK audit 23 PASS / 0 FAIL; 16 policy checks on ordinary Android 9, 11, 13 and 15 emulators. Logged-out login and settings screens checked at 800×480@160, 1024×600@160, 1280×720@240, 1920×720@240 and 768×1024 portrait. An independent MediaBrowserCompat client connects to the root with external control enabled and is rejected when disabled. Android 11 reboot clears the close gate and sends the resume request. The earlier test.2 was tested on BYD DiLink5; those results do not certify this new build.",
-    "pendingStrong": "Experimental headunit-test.3.",
-    "pending": "Signed-in Home, Library, playlists, audio, closed/dead-process media controls, Now Playing Back navigation, actual resume after sleep/reboot, offline downloads and BYD DiLink5 regression still need verification. The multi-account experiment is not included.",
+    "tested": "Headunit-test.4: APK audit 26 PASS / 0 FAIL. Android 9 and 15 emulator checks cover head-unit policies, logged-out screens and settings in five viewports, plus encrypted storage, rollback, restart recovery and switching two synthetic accounts. These tests do not validate Spotify server authentication for two real accounts.",
+    "pendingStrong": "Experimental headunit-test.4.",
+    "pending": "Signed-in browsing and audio, a real A → B → A account switch, offline downloads, steering-wheel controls, actual sleep/reboot audio restoration and BYD/AAOS hardware regression still need verification.",
     "installTitle": "How to install",
     "steps": [
       "Download the APK from GitHub Releases and transfer it to the infotainment system.",
       "Update our previous test build with the same signature without uninstalling it: your sign-in may be preserved. Builds signed with a different key cannot be updated this way.",
       "Open Spotify and sign in using the QR code if needed.",
+      "To add another driver: Head unit settings → Accounts → Add account · QR. Switching stops playback and restarts the player.",
       "Check music playback and controls. Remove the old separate BYD interface only after the new APK passes these checks."
     ],
     "verifyTitle": "Verify the file",
@@ -65,17 +70,22 @@
       [
         "Автомобільний інтерфейс",
         "На основі плеєра BYD, без обов’язкових дозволів на системи автомобіля BYD."
+      ],
+      [
+        "Акаунти в налаштуваннях",
+        "Відкрийте Налаштування магнітоли → Акаунти, щоб додати акаунт через QR-код, перейменувати збережені акаунти або переключитися між ними."
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Headunit-test.3: аудит APK — 23 PASS / 0 FAIL; 16 перевірок логіки на звичайних емуляторах Android 9, 11, 13 і 15. Екран входу без авторизації та налаштування перевірені на 800×480@160, 1024×600@160, 1280×720@240, 1920×720@240 і 768×1024 у портреті. Окремий клієнт MediaBrowserCompat отримує корінь, коли зовнішнє керування дозволене, та відмову, коли вимкнене. Перезавантаження Android 11 скидає блокування й відправляє запит відновлення. Попередня test.2 перевірялася на BYD DiLink5; це не підтверджує роботу нової збірки.",
-    "pendingStrong": "Експериментальна headunit-test.3.",
-    "pending": "Ще не перевірені Home, медіатека, плейлисти й звук після входу, медіакнопки при закритому або мертвому процесі, «Назад» із Now Playing, фактичне відновлення після сну/перезавантаження, офлайн-завантаження та регресія BYD DiLink5. Експеримент із кількома акаунтами не включений.",
+    "tested": "Headunit-test.4: аудит APK — 26 PASS / 0 FAIL. На емуляторах Android 9 і 15 перевіряються логіка магнітоли, екрани без авторизації та налаштування в п’яти розмірах, шифроване сховище, відкат помилок, перезапуск і перемикання двох синтетичних акаунтів. Ці тести не підтверджують авторизацію двох справжніх акаунтів на сервері Spotify.",
+    "pendingStrong": "Експериментальна headunit-test.4.",
+    "pending": "Ще не перевірені перегляд і звук після входу, справжнє перемикання A → B → A, офлайн-завантаження, кнопки керма, фактичне відновлення звуку після сну/перезавантаження та регресія на BYD/AAOS.",
     "installTitle": "Як встановити",
     "steps": [
       "Завантажте APK з GitHub Releases і перенесіть у мультимедійну систему.",
       "Нашу попередню тестову збірку з тим самим підписом оновлюйте без видалення: авторизація може зберегтися. Збірки з іншим підписом так не оновляться.",
       "Відкрийте Spotify й за потреби увійдіть через QR-код.",
+      "Щоб додати іншого водія: Налаштування магнітоли → Акаунти → Додати акаунт · QR. Перемикання зупиняє музику й перезапускає плеєр.",
       "Перевірте музику та керування. Старий окремий інтерфейс BYD видаляйте після успішної перевірки нового APK."
     ],
     "verifyTitle": "Перевірка файлу",
@@ -108,17 +118,22 @@
       [
         "Автомобильный интерфейс",
         "На основе плеера BYD, без обязательных разрешений на системы автомобиля BYD."
+      ],
+      [
+        "Аккаунты в настройках",
+        "Откройте Настройки магнитолы → Аккаунты, чтобы добавить аккаунт по QR-коду, переименовать сохранённые аккаунты или переключиться между ними."
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Headunit-test.3: аудит APK — 23 PASS / 0 FAIL; 16 проверок логики на обычных эмуляторах Android 9, 11, 13 и 15. Экран входа без авторизации и настройки проверены на 800×480@160, 1024×600@160, 1280×720@240, 1920×720@240 и 768×1024 в портрете. Отдельный клиент MediaBrowserCompat получает корень при разрешённом внешнем управлении и отказ при выключенном. Перезагрузка Android 11 сбрасывает блокировку и отправляет запрос восстановления. Предыдущая test.2 проверялась на BYD DiLink5; это не подтверждает работу новой сборки.",
-    "pendingStrong": "Экспериментальная headunit-test.3.",
-    "pending": "Ещё не проверены Home, медиатека, плейлисты и звук после входа, медиакнопки при закрытом или мёртвом процессе, «Назад» из Now Playing, фактическое восстановление после сна/перезагрузки, офлайн-загрузки и регрессия BYD DiLink5. Эксперимент с несколькими аккаунтами не включён.",
+    "tested": "Headunit-test.4: аудит APK — 26 PASS / 0 FAIL. На эмуляторах Android 9 и 15 проверяются логика магнитолы, экраны без авторизации и настройки в пяти размерах, шифрованное хранилище, откат ошибок, перезапуск и переключение двух синтетических аккаунтов. Эти тесты не подтверждают авторизацию двух настоящих аккаунтов на сервере Spotify.",
+    "pendingStrong": "Экспериментальная headunit-test.4.",
+    "pending": "Ещё не проверены просмотр и звук после входа, настоящее переключение A → B → A, офлайн-загрузки, кнопки руля, фактическое восстановление звука после сна/перезагрузки и регрессия на BYD/AAOS.",
     "installTitle": "Как установить",
     "steps": [
       "Скачайте APK из GitHub Releases и перенесите в мультимедийную систему.",
       "Нашу предыдущую тестовую сборку с той же подписью обновляйте без удаления: авторизация может сохраниться. Сборки с другой подписью так не обновятся.",
       "Откройте Spotify и при необходимости войдите по QR-коду.",
+      "Чтобы добавить другого водителя: Настройки магнитолы → Аккаунты → Добавить аккаунт · QR. Переключение останавливает музыку и перезапускает плеер.",
       "Проверьте музыку и управление. Удаляйте старый отдельный интерфейс BYD только после успешной проверки нового APK."
     ],
     "verifyTitle": "Проверка файла",
@@ -151,17 +166,22 @@
       [
         "واجهة مناسبة للسيارة",
         "مستندة إلى واجهة مشغّل BYD، دون اشتراط أذونات الوصول إلى أنظمة سيارات BYD."
+      ],
+      [
+        "الحسابات في الإعدادات",
+        "افتح إعدادات الوحدة الرئيسية ← الحسابات لإضافة حساب عبر رمز QR أو إعادة تسمية الحسابات المحفوظة أو التبديل بينها."
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "headunit-test.3: اجتاز تدقيق APK عدد 23 فحصًا دون إخفاق، و16 فحصًا للمنطق على محاكيات Android 9 و11 و13 و15 العادية. تم فحص شاشة تسجيل الدخول قبل المصادقة والإعدادات بدقات 800×480@160 و1024×600@160 و1280×720@240 و1920×720@240 و768×1024 عموديًا. يتصل عميل MediaBrowserCompat مستقل بالجذر عند السماح بالتحكم الخارجي ويُرفض عند تعطيله. إعادة تشغيل Android 11 تمسح بوابة الإغلاق وترسل طلب الاستئناف. اختبارات BYD DiLink5 السابقة تخص test.2 ولا تؤكد هذه النسخة الجديدة.",
-    "pendingStrong": "نسخة headunit-test.3 تجريبية.",
-    "pending": "لم يتم التحقق بعد من Home والمكتبة وقوائم التشغيل والصوت بعد تسجيل الدخول، أو أزرار الوسائط مع إغلاق الواجهة أو موت العملية، أو الرجوع من Now Playing، أو الاستئناف الفعلي بعد السكون وإعادة التشغيل، أو التنزيل دون اتصال، أو اختبارات BYD DiLink5. تجربة الحسابات المتعددة غير مضمنة.",
+    "tested": "Headunit-test.4: تدقيق APK بنتيجة 26 PASS / 0 FAIL. تشمل اختبارات محاكيات Android 9 و15 سياسات الوحدة والشاشات قبل تسجيل الدخول والإعدادات بخمسة أحجام، والتخزين المشفر والتراجع عند الخطأ وإعادة التشغيل والتبديل بين حسابين اصطناعيين. لا تؤكد هذه الاختبارات مصادقة حسابين حقيقيين لدى Spotify.",
+    "pendingStrong": "نسخة headunit-test.4 تجريبية.",
+    "pending": "لم يتم التحقق بعد من التصفح والصوت بعد تسجيل الدخول، والتبديل الحقيقي A → B → A، والتنزيلات دون اتصال، وأزرار المقود، واستعادة الصوت بعد السكون أو إعادة التشغيل، والتوافق الفعلي مع BYD وAAOS.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "نزّل ملف APK من GitHub Releases وانقله إلى نظام الوسائط في السيارة.",
       "يمكن تحديث نسختنا التجريبية السابقة التي تحمل التوقيع نفسه دون إزالتها، وقد تبقى جلسة تسجيل الدخول محفوظة. لا يمكن تحديث النسخ ذات التوقيع المختلف بهذه الطريقة.",
       "افتح Spotify وسجّل الدخول عبر رمز QR عند الحاجة.",
+      "لإضافة سائق آخر: إعدادات الوحدة الرئيسية ← الحسابات ← إضافة حساب · QR. يوقف التبديل الموسيقى ويعيد تشغيل المشغل.",
       "تحقّق من تشغيل الموسيقى وأدوات التحكم. لا تزل تطبيق واجهة BYD القديم المنفصل إلا بعد نجاح اختبار ملف APK الجديد."
     ],
     "verifyTitle": "التحقق من الملف",
@@ -194,17 +214,22 @@
       [
         "车载界面",
         "基于比亚迪播放器界面，无需强制授予比亚迪车辆系统访问权限。"
+      ],
+      [
+        "设置中的账号",
+        "打开主机设置 → 账号，可通过二维码添加账号、重命名已保存的账号或切换账号。"
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "headunit-test.3：APK 静态审计 23 项通过、0 项失败；在普通 Android 9、11、13、15 模拟器上完成 16 项逻辑检查。在 800×480@160、1024×600@160、1280×720@240、1920×720@240 和 768×1024 竖屏上检查未登录界面及设置。独立 MediaBrowserCompat 客户端在允许外部控制时连接根目录，禁用后被拒绝。Android 11 重启会清除关闭状态并发送恢复请求。此前 BYD DiLink5 的测试结果属于 test.2，不能证明新版本已通过实车验证。",
-    "pendingStrong": "headunit-test.3 实验版本。",
-    "pending": "登录后的 Home、媒体库、播放列表、音频，界面关闭或进程死亡后的媒体键，Now Playing 返回导航，休眠或重启后的实际恢复播放，离线下载及 BYD DiLink5 回归测试仍待验证。本版本不包含多账户实验。",
+    "tested": "Headunit-test.4：APK 审计 26 PASS / 0 FAIL。Android 9 和 15 模拟器测试涵盖主机策略、五种尺寸下的未登录界面和设置、加密存储、错误回滚、重启恢复以及两个合成账号的切换。这些测试不代表已验证两个真实 Spotify 账号的服务器认证。",
+    "pendingStrong": "headunit-test.4 实验版本。",
+    "pending": "登录后的浏览和音频、真实账号 A → B → A 切换、离线下载、方向盘控制、休眠或重启后的实际音频恢复，以及 BYD/AAOS 硬件回归仍待验证。",
     "installTitle": "安装方法",
     "steps": [
       "从 GitHub Releases 下载 APK，并传输到车载多媒体系统。",
       "如果已安装我们之前使用相同签名的测试版本，请直接更新，无需卸载，登录状态可能保留。签名不同的版本无法通过此方式更新。",
       "打开 Spotify，按需扫码登录。",
+      "添加其他驾驶员：主机设置 → 账号 → 添加账号 · QR。切换时会停止音乐并重启播放器。",
       "检查音乐播放和控制功能。确认新 APK 工作正常后，再卸载原来独立的比亚迪界面应用。"
     ],
     "verifyTitle": "文件校验",

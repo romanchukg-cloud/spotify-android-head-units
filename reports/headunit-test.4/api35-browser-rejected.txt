@@ -1,0 +1,40 @@
+--------- beginning of main
+10-10 11:00:01.722  8373  8373 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:02.200  8419  8419 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:02.691  8039  8039 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:00:02.691  8373  8373 I SpotifyHU: Playback state=7
+10-10 11:00:06.861  8039  8039 I HU_BROWSER: SUSPENDED connection
+10-10 11:00:07.010  8527  8527 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:22.465  8039  8039 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:00:22.903  8628  8628 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:23.658  8697  8697 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:23.733  8628  8628 I SpotifyHU: Playback state=7
+10-10 11:00:23.740  8039  8039 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:00:28.008  8039  8039 I HU_BROWSER: SUSPENDED connection
+10-10 11:00:28.119  8791  8791 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:43.681  8877  8877 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:44.688  8933  8933 I SpotifyHU: Device profile=GENERIC
+10-10 11:00:45.044  8877  8877 I SpotifyHU: Playback state=7
+10-10 11:00:49.405  9035  9035 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:04.773  8039  8039 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:04.972  8039  8039 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:05.480  9136  9136 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:06.173  9204  9204 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:06.417  8039  8039 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:01:06.438  9136  9136 I SpotifyHU: Playback state=7
+10-10 11:01:10.568  8039  8039 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:10.735  9297  9297 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:24.791  8039  8039 I HU_BROWSER: TIMEOUT connection
+10-10 11:01:26.300  9387  9387 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:26.659  9417  9417 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:27.103  9417  9417 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:01:27.104  9387  9387 I SpotifyHU: Playback state=7
+10-10 11:01:29.548  9417  9417 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:29.652  9492  9492 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:30.260  9531  9531 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:30.496  9547  9547 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:30.629  9547  9547 W SpotifyHU: Controller rejected package=hu.browser
+10-10 11:01:30.639  9531  9531 I HU_BROWSER: REJECTED connection
+10-10 11:01:30.935  9547  9547 I SpotifyHU: Playback state=7
+10-10 11:01:31.653  9547  9587 I SpotifyHU: Playback state=8
+10-10 11:01:31.658  9547  9587 W SpotifyHU: Playback start blocked (ForegroundServiceStartNotAllowedException)

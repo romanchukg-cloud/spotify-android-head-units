@@ -7,7 +7,7 @@ import android.util.Log;
 import java.util.*;
 public final class PlaybackGate {
   private static Context context;
-  private static volatile boolean closed;
+  private static volatile boolean closed,accountTransition;
   private static final Map<MediaSession,PendingIntent> sessions = new WeakHashMap<>();
   private static IBinder uiLease;
   private static IBinder.DeathRecipient uiDeath;
@@ -46,8 +46,11 @@ public final class PlaybackGate {
     try { return trustedLocalUi(c,c.getPackageManager().getApplicationInfo(name,0).uid,name); }
     catch(android.content.pm.PackageManager.NameNotFoundException e) { return false; }
   }
-  public static boolean blocked() { return closed; }
-  public static boolean blocked(Context c) { init(c); return closed; }
+  public static boolean accountTransition() { return accountTransition || (context!=null && local.spotify.unified.DriverProfiles.restartPending(context)); }
+  public static synchronized void beginAccountTransition(Context c) { init(c);accountTransition=true;local.spotify.unified.HeadUnitRuntime.explicitPause(c);change(c,true); }
+  public static synchronized void abortAccountTransition(Context c) { accountTransition=false;change(c,false); }
+  public static boolean blocked() { return closed || accountTransition(); }
+  public static boolean blocked(Context c) { init(c); return closed || accountTransition(); }
   public static synchronized void register(Context c,MediaSession session) { init(c); sessions.put(session,mediaReceiver(c)); }
   public static synchronized void active(MediaSession session,boolean value) { session.setActive(value); }
   public static synchronized void receiver(MediaSession session,PendingIntent receiver) { if(receiver==null)receiver=mediaReceiver(context); sessions.put(session,receiver); session.setMediaButtonReceiver(receiver); }
@@ -55,7 +58,7 @@ public final class PlaybackGate {
     Intent i=new Intent(Intent.ACTION_MEDIA_BUTTON).setClass(c,local.spotify.unified.HeadUnitMediaReceiver.class);
     return PendingIntent.getBroadcast(c,73,i,PendingIntent.FLAG_UPDATE_CURRENT|(Build.VERSION.SDK_INT>=31?PendingIntent.FLAG_MUTABLE:0));
   }
-  public static void userPlay() { if(context!=null && closed) change(context,false); }
+  public static void userPlay() { if(!accountTransition() && context!=null && closed) change(context,false); }
   public static void mediaButton(Intent i) {
     android.view.KeyEvent e=i==null?null:i.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
     if(e==null)return;Log.i("SpotifyHU","Session key="+e.getKeyCode()+" action="+e.getAction());
@@ -63,6 +66,7 @@ public final class PlaybackGate {
   }
   public static synchronized void change(Context c,boolean value) {
     init(c);
+    if(!value && accountTransition())return;
     // Commit before acknowledging the synchronous cross-package call.
     if(!context.getSharedPreferences("local_close_gate",0).edit().putBoolean("closed",value).commit()) throw new IllegalStateException("Cannot persist playback gate");
     closed=value;

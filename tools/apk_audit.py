@@ -62,6 +62,10 @@ check('Binder death does not close gate','binderDied()V' in death and 'PlaybackG
 check('BYD legacy UI trust gated',all('HeadUnitProfile;->isByd()Z' in x for x in methods(gate) if ' trustedLocalUi(' in x) and ' trustedLocalUi(' in gate)
 blocked=[k for k in ('Lbd/j;','Landroid/support/v4/media/session/MediaSessionCompat$Callback$MediaSessionCallbackApi21;') if 'PlaybackGate;->blocked()Z' in files.get(k,'')]
 check('Explicit transport commands unblocked',not blocked and 'PlaybackGate;->userPlay()V' in files.get('Lbd/j;',''))
+profiles=component('provider','local.spotify.unified.ProfilesProvider');coordinator=component('activity','local.spotify.unified.ProfilesActivity')
+check('Private accounts / isolated coordinator',profiles is not None and profiles.get(A+'exported')=='false' and coordinator is not None and coordinator.get(A+'exported')=='false' and coordinator.get(A+'process')==':profiles' and coordinator.get(A+'taskAffinity')=='com.spotify.music.profiles' and app.get(A+'allowBackup')=='false')
+check('Account storage / settings entry','DriverProfiles;->bindCandidate(' in files.get('Lca/c;','') and 'Llocal/spotify/unified/ProfilesActivity;' in files.get('Llocal/spotify/unified/HeadUnitSettingsActivity;','') and 'Landroid/security/keystore/KeyGenParameterSpec$Builder;' in files.get('Llocal/spotify/unified/ProfileVault;',''))
+check('Account transition transport guards',all('PlaybackGate;->accountTransition()Z' in files.get(k,'') for k in ('Lbd/j;','Landroid/support/v4/media/session/MediaSessionCompat$Callback$MediaSessionCallbackApi21;','Llocal/spotify/unified/HeadUnitPlaybackService;')))
 main=files.get('Llocal/bydui/com/vivid/spotify/MainActivity;','')
 check('Settings entry / density context','HeadUnitSettings;->open(' in main and 'HeadUnitSettings;->scaled(' in main)
 # UI package resource IDs are retained as a second package by this APK.

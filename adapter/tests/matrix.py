@@ -2,7 +2,7 @@
 """Logged-out tablet smoke checks; does NOT certify account/audio behavior."""
 import os,subprocess,time,json,sys,xml.etree.ElementTree as E
 from pathlib import Path
-base=Path(__file__).resolve().parent.parent;adb=os.environ.get('ADB','adb');serial=sys.argv[1];api=sys.argv[2];folder=base/'diagnostics'/('api'+api);folder.mkdir(exist_ok=True);records=[]
+base=Path(__file__).resolve().parent.parent;adb=os.environ.get('ADB','adb');serial=sys.argv[1];api=sys.argv[2];folder=base/'diagnostics'/('api'+api);folder.mkdir(parents=True,exist_ok=True);records=[]
 def call(*args,binary=False):return subprocess.check_output([adb,'-s',serial,*args],stderr=subprocess.STDOUT,text=not binary,timeout=60)
 def shell(*args):return call('shell',*args)
 def instrument(mode,**kw):return shell('am','instrument','-w','-e','mode',mode,*sum((['-e',k,str(v)] for k,v in kw.items()),[]),'hu.tests/hu.tests.Runner')

@@ -1,0 +1,13 @@
+--------- beginning of main
+10-10 11:00:02.691  8039  8039 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:00:06.861  8039  8039 I HU_BROWSER: SUSPENDED connection
+10-10 11:00:22.465  8039  8039 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:00:23.740  8039  8039 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:00:28.008  8039  8039 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:04.773  8039  8039 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:04.972  8039  8039 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:06.417  8039  8039 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:01:10.568  8039  8039 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:24.791  8039  8039 I HU_BROWSER: TIMEOUT connection
+10-10 11:01:26.659  9417  9417 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:27.103  9417  9417 I HU_BROWSER: CONNECTED root=spotify:navigation

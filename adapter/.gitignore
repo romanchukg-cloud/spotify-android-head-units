@@ -16,3 +16,4 @@ verification.json
 structural-checks.json
 translation-audit.json
 vendor-guards.txt
+tests/profiles/out/

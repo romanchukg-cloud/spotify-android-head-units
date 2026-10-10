@@ -1,0 +1,9 @@
+{
+  "backend_payloads_preserved": 2438,
+  "backend_resource_strings_preserved": 22982,
+  "backend_resource_chunks_preserved": true,
+  "backend_ui_library_mapping_added": true,
+  "ui_classes_relocated": 5114,
+  "resource_packages": 2,
+  "backend_services_metadata_preserved": true
+}

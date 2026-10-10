@@ -9,7 +9,10 @@ for rel in ['bd/j.smali','android/support/v4/media/session/MediaSessionCompat$Ca
   guard=r'    invoke-static \{\}, Llocal/spotify/close/PlaybackGate;->blocked\(\)Z\n.*?if-eqz [^,]+, (?P<allowed>:\w+)\n.*?    (?P=allowed)\n'
   if 'PlaybackGate;->blocked()Z' in body:
    replacement='    invoke-static {p1}, Llocal/spotify/close/PlaybackGate;->mediaButton(Landroid/content/Intent;)V\n' if name=='onMediaButtonEvent' else '    invoke-static {}, Llocal/spotify/close/PlaybackGate;->userPlay()V\n'
-   body,count=re.subn(guard,replacement,body,count=1,flags=re.S);assert count==1
+   # Account changes must block transport until both old SDK processes stop.
+   exit_='    const/4 v0, 0x0\n    return v0\n' if name=='onMediaButtonEvent' else '    return-void\n'
+   lock='    invoke-static {}, Llocal/spotify/close/PlaybackGate;->accountTransition()Z\n    move-result v0\n    if-eqz v0, :hu_account_ready\n'+exit_+'    :hu_account_ready\n'
+   body,count=re.subn(guard,lambda m:lock+replacement,body,count=1,flags=re.S);assert count==1
   if name in ('onPause','onStop'):
    body=re.sub(r'(    \.locals \d+\n)',r'\1\n    invoke-static {}, Llocal/spotify/unified/HeadUnitRuntime;->explicitPause()V\n',body,count=1)
   return body
@@ -100,3 +103,13 @@ f=E.SubElement(r,'intent-filter');E.SubElement(f,'action',{A+'name':'android.int
 m.write(p,encoding='utf-8',xml_declaration=True)
 (base/'vendor-guards.txt').write_text('\n'.join(guarded)+'\n')
 print('Head unit patches:',len(guarded),'guarded BYD methods')
+
+# Bind the SDK's existing auth storage; never duplicate or replace the SDK.
+p=out/'smali/ca/c.smali';s=(stable/'smali/ca/c.smali').read_text()
+pattern=r'(\.method public synthetic constructor <init>\(ILjava/lang/Object;\)V\n.*?)(    return-void)'
+s,count=re.subn(pattern,lambda m:m[1]+'    invoke-static {p0, p2}, Llocal/spotify/unified/DriverProfiles;->bindCandidate(Ljava/lang/Object;Ljava/lang/Object;)V\n'+m[2],s,count=1,flags=re.S);assert count==1;p.write_text(s)
+# The coordinator uses plain Application and survives the SDK/UI handoff.
+app.set(A+'allowBackup','false')
+E.SubElement(app,'provider',{A+'name':'local.spotify.unified.ProfilesProvider',A+'authorities':'com.spotify.music.local.profiles',A+'exported':'false'})
+E.SubElement(app,'activity',{A+'name':'local.spotify.unified.ProfilesActivity',A+'process':':profiles',A+'exported':'false',A+'taskAffinity':'com.spotify.music.profiles',A+'excludeFromRecents':'true',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
+m.write(out/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)

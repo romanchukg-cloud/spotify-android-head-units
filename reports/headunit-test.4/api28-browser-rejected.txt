@@ -1,0 +1,21 @@
+--------- beginning of main
+--------- beginning of system
+10-10 10:59:35.416  6448  6448 I HU_BROWSER: PASS private settings inaccessible
+10-10 10:59:35.702  6448  6448 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 10:59:38.090  6448  6448 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:06.541  7566  7566 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:07.493  7566  7566 I SpotifyHU: Playback state=7
+10-10 11:01:10.230  7698  7698 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:25.873  7788  7788 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:26.047  7807  7807 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:26.573  7788  7788 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 11:01:26.578  7807  7807 I SpotifyHU: Playback state=7
+10-10 11:01:28.709  7788  7788 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:28.986  7883  7883 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:29.456  7924  7924 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:29.568  7942  7942 I SpotifyHU: Device profile=GENERIC
+10-10 11:01:29.904  7942  7942 W SpotifyHU: Controller rejected package=hu.browser
+10-10 11:01:29.913  7924  7924 I HU_BROWSER: REJECTED connection
+10-10 11:01:30.081  7942  7942 I SpotifyHU: Playback state=7
+10-10 11:01:30.944  7942  7968 I SpotifyHU: Playback state=8
+10-10 11:01:30.960  7942  7942 I SpotifyHU: Playback browser connected

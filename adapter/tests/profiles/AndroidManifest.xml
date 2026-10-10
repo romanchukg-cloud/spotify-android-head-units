@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="local.spotify.profilestests">
+ <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="33"/>
+ <application android:label="Profile regression tests" android:allowBackup="false"/>
+ <instrumentation android:name="local.spotify.unified.ProfileTests" android:targetPackage="local.spotify.profilestests"/>
+</manifest>

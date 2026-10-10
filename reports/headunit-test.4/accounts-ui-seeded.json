@@ -1,0 +1,28 @@
+{
+  "28": {
+    "api": 28,
+    "viewport": "800x480@160",
+    "settings_accounts_entry": true,
+    "separate_task": true,
+    "accounts_add_visible": true,
+    "native_qr_opened": true,
+    "backend_restarted": true,
+    "return_from_qr": true,
+    "crash_buffer_empty": true,
+    "real_authorization": false,
+    "synthetic_profile_rows": true
+  },
+  "35": {
+    "api": 35,
+    "viewport": "800x480@160",
+    "settings_accounts_entry": true,
+    "separate_task": true,
+    "accounts_add_visible": true,
+    "native_qr_opened": true,
+    "backend_restarted": true,
+    "return_from_qr": true,
+    "crash_buffer_empty": true,
+    "real_authorization": false,
+    "synthetic_profile_rows": true
+  }
+}

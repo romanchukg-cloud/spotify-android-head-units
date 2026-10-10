@@ -1,0 +1,7 @@
+--------- beginning of main
+--------- beginning of system
+10-10 10:59:35.416  6448  6448 I HU_BROWSER: PASS private settings inaccessible
+10-10 10:59:35.702  6448  6448 I HU_BROWSER: CONNECTED root=spotify:navigation
+10-10 10:59:38.090  6448  6448 I HU_BROWSER: SUSPENDED connection
+10-10 11:01:25.873  7788  7788 I HU_BROWSER: PASS private settings inaccessible
+10-10 11:01:26.573  7788  7788 I HU_BROWSER: CONNECTED root=spotify:navigation

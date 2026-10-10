@@ -17,4 +17,4 @@ apktool b ui -o ui-resources.apk
 apktool b backend -o backend-rebuilt.apk
 python3 package.py
 python3 verify.py
-python3 ../tools/apk_audit.py Spotify-5.5.0-HeadUnit-test.3.apk --min-api 28
+python3 ../tools/apk_audit.py Spotify-5.5.0-HeadUnit-test.4.apk --min-api 28

@@ -31,7 +31,7 @@ with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as sdk,zipfile.ZipFile(b
  out.writestr('classes2.dex',(b/'helper-dex/classes.dex').read_bytes())
  out.writestr('classes3.dex',(b/'ui.dex').read_bytes())
 subprocess.run([str(bt/'zipalign'),'-P','16','-f','4',str(b/'unsigned.apk'),str(b/'aligned.apk')],check=True)
-output=b/'Spotify-5.5.0-HeadUnit-test.3.apk'
+output=b/'Spotify-5.5.0-HeadUnit-test.4.apk'
 subprocess.run([str(bt/'apksigner'),'sign','--ks',os.environ.get('HU_KEYSTORE',str(Path.home()/'.android/debug.keystore')),'--ks-pass',os.environ.get('HU_KEYSTORE_PASS','pass:android'),'--out',str(output),str(b/'aligned.apk')],check=True)
 subprocess.run([str(bt/'apksigner'),'verify','--verbose',str(output)],check=True)
 subprocess.run([str(bt/'zipalign'),'-c','-P','16','4',str(output)],check=True)

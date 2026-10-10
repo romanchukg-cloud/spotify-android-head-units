@@ -31,6 +31,7 @@ public final class HeadUnitRuntime {
   try{if(value!=null)state=(Integer)value.getClass().getMethod("getState").invoke(value);}catch(ReflectiveOperationException e){Log.w("SpotifyHU","Cannot read playback state");return;}
   if(state==lastState)return;lastState=state;
   boolean playing=state==3 || state==6 || state==8 || state==9 || state==10 || state==11;
+  if(local.spotify.close.PlaybackGate.accountTransition())playing=false;
   HeadUnitPreferences.store().edit().putBoolean("was_playing",playing).putInt("last_state",state).commit();Log.i("SpotifyHU","Playback state="+state);
   if(playing)HeadUnitPlaybackService.keepAlive(context);
  }

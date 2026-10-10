@@ -14,6 +14,7 @@ public final class HeadUnitPlaybackService extends Service {
  private MediaBrowser browser;private MediaController controller;private long connectedAt;
  public static boolean supported(int key){return key==85 || key==87 || key==88 || key==126 || key==127 || key==79;}
  public static boolean command(Context c,int key,String source){
+  local.spotify.close.PlaybackGate.init(c);if(local.spotify.close.PlaybackGate.accountTransition())return false;
   if(!supported(key)){Log.w("SpotifyHU","Unsupported media key="+key);return false;}
   Log.i("SpotifyHU","Command key="+key+" source="+source);
   if(key==KeyEvent.KEYCODE_MEDIA_PAUSE)HeadUnitRuntime.explicitPause(c);
@@ -41,6 +42,7 @@ public final class HeadUnitPlaybackService extends Service {
   if(state!=3 && state!=6 && state!=8 && state!=9 && state!=10 && state!=11)stopSelf();
  };
  private void flush(){
+  if(local.spotify.close.PlaybackGate.accountTransition()){commands.clear();return;}
   if(controller==null)return;
   while(!commands.isEmpty()){
    int key=commands.removeFirst();
