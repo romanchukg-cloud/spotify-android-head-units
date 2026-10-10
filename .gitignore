@@ -3,3 +3,7 @@
 
 spotify55-adaptation/
 __pycache__/
+
+*.idsig
+*.keystore
+*.jks
