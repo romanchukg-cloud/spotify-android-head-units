@@ -4,7 +4,7 @@
 
 An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
 
-[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.5) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
+[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.5/Spotify-5.5.0-HeadUnit-test.5.apk) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
 
 ## What has been tested
 
@@ -16,7 +16,7 @@ Android 9+ (API 28) is required; Android 8 is a later phase. BYD, AAOS and GENER
 
 ## How to install
 
-1. Download the APK from GitHub Releases and transfer it to the infotainment system.
+1. Use the download button above to get the APK, then transfer it to the infotainment system.
 2. Update our previous test build with the same signature without uninstalling it: your sign-in may be preserved. Builds signed with a different key cannot be updated this way.
 3. Open Spotify and sign in using the QR code if needed.
 4. To add another driver: Head unit settings → Accounts → Add account · QR. Switching stops playback and restarts the player.

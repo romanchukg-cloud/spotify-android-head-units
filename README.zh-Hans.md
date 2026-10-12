@@ -4,7 +4,7 @@
 
 适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
 
-[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.5) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
+[下载测试版 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.5/Spotify-5.5.0-HeadUnit-test.5.apk) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
 
 ## 已完成的测试
 
@@ -16,7 +16,7 @@ Headunit-test.5：APK 审核 28 项通过，0 项失败。Android 9 和 15 模�
 
 ## 安装方法
 
-1. 从 GitHub Releases 下载 APK，并传输到车载多媒体系统。
+1. 点击上方下载按钮获取 APK，然后将其传输到车载多媒体系统。
 2. 如果已安装我们之前使用相同签名的测试版本，请直接更新，无需卸载，登录状态可能保留。签名不同的版本无法通过此方式更新。
 3. 打开 Spotify，按需扫码登录。
 4. 添加其他驾驶员：主机设置 → 账号 → 添加账号 · QR。切换时会停止音乐并重启播放器。

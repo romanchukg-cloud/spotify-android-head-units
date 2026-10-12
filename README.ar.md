@@ -6,7 +6,7 @@
 
 مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.
 
-[تنزيل ملف APK التجريبي](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.5) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
+[تنزيل ملف APK التجريبي](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.5/Spotify-5.5.0-HeadUnit-test.5.apk) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
 
 ## ما الذي تم اختباره؟
 
@@ -18,7 +18,7 @@ Headunit-test.5: اجتاز فحص APK عدد 28 اختباراً دون إخف�
 
 ## طريقة التثبيت
 
-1. نزّل ملف APK من GitHub Releases وانقله إلى نظام الوسائط في السيارة.
+1. اضغط على زر التنزيل أعلاه للحصول على ملف APK، ثم انقله إلى نظام الوسائط في السيارة.
 2. يمكن تحديث نسختنا التجريبية السابقة التي تحمل التوقيع نفسه دون إزالتها، وقد تبقى جلسة تسجيل الدخول محفوظة. لا يمكن تحديث النسخ ذات التوقيع المختلف بهذه الطريقة.
 3. افتح Spotify وسجّل الدخول عبر رمز QR عند الحاجة.
 4. لإضافة سائق آخر: إعدادات الوحدة الرئيسية ← الحسابات ← إضافة حساب · QR. يوقف التبديل الموسيقى ويعيد تشغيل المشغل.

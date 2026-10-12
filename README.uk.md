@@ -4,7 +4,7 @@
 
 Експериментальний плеєр Spotify Automotive для Android-магнітол. Інтерфейс на основі BYD та музичний сервіс об’єднані в одному APK з однією іконкою і штатним входом Spotify.
 
-[Завантажити тестовий APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.5) · [🌐 Spotify для Android-магнітол](https://romanchukg-cloud.github.io/spotify-android-head-units/uk/)
+[Завантажити тестовий APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.5/Spotify-5.5.0-HeadUnit-test.5.apk) · [🌐 Spotify для Android-магнітол](https://romanchukg-cloud.github.io/spotify-android-head-units/uk/)
 
 ## Що вже перевірено
 
@@ -16,7 +16,7 @@ Headunit-test.5: аудит APK — 28 PASS / 0 FAIL. На емуляторах 
 
 ## Як встановити
 
-1. Завантажте APK з GitHub Releases і перенесіть у мультимедійну систему.
+1. Натисніть кнопку завантаження вище, щоб отримати APK, і перенесіть його в мультимедійну систему.
 2. Нашу попередню тестову збірку з тим самим підписом оновлюйте без видалення: авторизація може зберегтися. Збірки з іншим підписом так не оновляться.
 3. Відкрийте Spotify й за потреби увійдіть через QR-код.
 4. Щоб додати іншого водія: Налаштування магнітоли → Акаунти → Додати акаунт · QR. Перемикання зупиняє музику й перезапускає плеєр.

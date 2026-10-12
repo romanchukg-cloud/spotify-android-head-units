@@ -4,7 +4,7 @@
 
 Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.
 
-[Скачать тестовый APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.5) · [🌐 Spotify для Android-магнитол](https://romanchukg-cloud.github.io/spotify-android-head-units/ru/)
+[Скачать тестовый APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.5/Spotify-5.5.0-HeadUnit-test.5.apk) · [🌐 Spotify для Android-магнитол](https://romanchukg-cloud.github.io/spotify-android-head-units/ru/)
 
 ## Что уже проверено
 
@@ -16,7 +16,7 @@ Headunit-test.5: аудит APK — 28 PASS / 0 FAIL. На эмуляторах 
 
 ## Как установить
 
-1. Скачайте APK из GitHub Releases и перенесите в мультимедийную систему.
+1. Нажмите кнопку скачивания выше, чтобы получить APK, и перенесите его в мультимедийную систему.
 2. Нашу предыдущую тестовую сборку с той же подписью обновляйте без удаления: авторизация может сохраниться. Сборки с другой подписью так не обновятся.
 3. Откройте Spotify и при необходимости войдите по QR-коду.
 4. Чтобы добавить другого водителя: Настройки магнитолы → Аккаунты → Добавить аккаунт · QR. Переключение останавливает музыку и перезапускает плеер.
