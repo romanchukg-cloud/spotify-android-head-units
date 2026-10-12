@@ -7,7 +7,8 @@ public final class HeadUnitSettingsProvider extends ContentProvider {
  public boolean onCreate(){HeadUnitPreferences.init(getContext());HeadUnitProfile.configure(getContext());HeadUnitRuntime.init(getContext());return true;}
  public Bundle call(String method,String arg,Bundle extras){
   if(Binder.getCallingUid()!=android.os.Process.myUid())throw new SecurityException("Private settings");
-  if("set".equals(method)){HeadUnitPreferences.write(extras);if(!HeadUnitPreferences.stopOnClose())local.spotify.close.PlaybackGate.change(getContext(),false);}
+  if("set".equals(method)){HeadUnitPreferences.write(extras);HeadUnitRuntime.resumeActive();if(!HeadUnitPreferences.stopOnClose())local.spotify.close.PlaybackGate.change(getContext(),false);}
+  else if("ui_open".equals(method))HeadUnitRuntime.playerOpened(getContext());
   else if(!"get".equals(method))throw new IllegalArgumentException("Unknown settings operation");
   return HeadUnitPreferences.read();
  }

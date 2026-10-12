@@ -23,8 +23,10 @@ for width,height,density in [(800,480,160),(1024,600,160),(1280,720,240),(1920,7
  settings_run=subprocess.Popen([adb,'-s',serial,'shell','am','instrument','-w','-e','mode','settings','hu.tests/hu.tests.Runner'],stdout=subprocess.PIPE);time.sleep(3);snap(name+'-settings');r=E.parse(folder/(name+'-settings.xml'));setting=any('Stop music' in n.get('text','') for n in r.iter('node'))
  if not setting:
   time.sleep(3);snap(name+'-settings');r=E.parse(folder/(name+'-settings.xml'));setting=any('Stop music' in n.get('text','') for n in r.iter('node'))
+ shell('input','swipe',str(width//2),str(height*3//4),str(width//2),str(height//4),'250');time.sleep(.5);snap(name+'-autoplay-settings')
+ autoplay=any('Automatically play when opening Spotify' in n.get('text','') for n in E.parse(folder/(name+'-autoplay-settings.xml')).iter('node'))
  settings_run.communicate(timeout=30)
- records.append({'screen':name,'logged_out_login_visible':login,'settings_visible':setting});print(name,'settings visible',setting,flush=True)
+ records.append({'screen':name,'logged_out_login_visible':login,'settings_visible':setting,'autoplay_switch_visible_after_scroll':autoplay});print(name,'settings visible',setting,flush=True)
 shell('am','force-stop','hu.browser');shell('am','start','-n','hu.browser/.Main');time.sleep(3);browser=shell('logcat','-d','-s','HU_BROWSER');(folder/'browser-allowed.txt').write_text(browser);print(browser,flush=True)
 instrument('external',value='false');shell('am','force-stop','hu.browser');shell('am','start','-n','hu.browser/.Main');time.sleep(3);browser=shell('logcat','-d','-s','HU_BROWSER','SpotifyHU');(folder/'browser-rejected.txt').write_text(browser);print(browser[-1800:],flush=True)
 instrument('external',value='true')

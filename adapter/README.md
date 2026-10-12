@@ -1,6 +1,6 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Headunit-test.4 merges the experimental account manager into the main settings screen.
+This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Headunit-test.5 fixes acknowledged playback restoration and adds opt-in playback on a fresh player launch.
 
 The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
 
@@ -15,7 +15,7 @@ The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, 
 | `SpotifySDK-5.5.0-BYD-test.apk` | `6527109d69dbbee4c9bef177879dbb9cebedc806dd6b07cb0e89a223125247d2` |
 | `Spotify-BYD-for-5.5-test.apk` | `087a78a67501543bceac2700cbe3e2c3b9ea6e84037fd898fe8941b1f7b72ace` |
 
-- A local signing keystore. Keys are never committed. A developer build with a different key cannot update the published APK or preserve its app data through an in-place update. The published test.4 uses the same package and certificate as public test.2.
+- A local signing keystore. Keys are never committed. A developer build with a different key cannot update the published APK or preserve its app data through an in-place update. The published test.5 uses the same package and certificate as public test.2.
 
 From the repository root:
 
@@ -26,7 +26,7 @@ export APKTOOL_JAR=/path/to/apktool_2.11.1.jar
 export HU_KEYSTORE=/path/to/your.keystore
 export HU_KEYSTORE_PASS=pass:your_password
 ./adapter/build.sh
-python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.4.apk --min-api 28
+python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.5.apk --min-api 28
 ```
 
 The optional variables `ANDROID_HOME` and `BUILD_TOOLS_VERSION` select the SDK and tools; local defaults match Android Studio on macOS. `adapter/tests/build.sh` builds test APKs signed with `HU_KEYSTORE` (the test keystore password defaults to `android`; set `HU_KEYSTORE_PASS` for another key). Only run instrumentation on disposable emulators: its checks change head-unit preferences and playback state.
@@ -37,7 +37,7 @@ The fresh input-to-APK build was verified before publication. ZIP timestamps and
 
 ```sh
 ./adapter/tests/build.sh
-adb install adapter/Spotify-5.5.0-HeadUnit-test.4.apk
+adb install adapter/Spotify-5.5.0-HeadUnit-test.5.apk
 adb install adapter/tests/out/client.apk
 adb install adapter/tests/out/test.apk
 python3 adapter/tests/matrix.py emulator-5554 35
@@ -45,7 +45,7 @@ python3 adapter/tests/matrix.py emulator-5554 35
 
 The independent `hu.browser` app uses `MediaBrowserCompat` from the locally supplied backend DEX. It has a different Android UID and connects through the public service. The policy instrumentation runs under Spotify's UID with the same test certificate. It exercises the settings provider, defaults, controller checks, explicit close/play, binder death callback, pause and scale bounds. It **does not simulate successful Spotify authentication or certify audio playback**. The cold-session fixture deliberately terminates its process; an instrumentation “Process crashed” result for that fixture is expected and is not a successful audio test.
 
-See [test.4 validation](../reports/headunit-test.4.md) for what was tested and what requires a signed-in account or real hardware. Android package visibility allows a client that binds to the service to become visible automatically ([Android documentation](https://developer.android.com/training/package-visibility/automatic)); the adapter does not request `QUERY_ALL_PACKAGES`.
+See [test.5 validation](../reports/headunit-test.5.md) for what was tested and what requires a signed-in account or real hardware. Android package visibility allows a client that binds to the service to become visible automatically ([Android documentation](https://developer.android.com/training/package-visibility/automatic)); the adapter does not request `QUERY_ALL_PACKAGES`.
 
 ## Accounts
 
@@ -64,3 +64,14 @@ adb -s YOUR_DISPOSABLE_EMULATOR shell am instrument -w local.spotify.profilestes
 The isolated test package uses its own UID, Android Keystore and synthetic credentials with a mocked SDK auth store. It checks encryption/tamper rejection, two-account restoration, rollback, transition locks, cancellation and restart retries. **A real two-account Spotify server login and A → B → A playback remain unverified.** Do not treat the mock as proof that a saved server credential stays valid indefinitely; Spotify can require QR sign-in again.
 
 The logged-out UI restart test is `python3 adapter/tests/accounts_ui.py YOUR_DISPOSABLE_EMULATOR API`. Pass `--seed` to populate two visibly synthetic profile rows in that emulator's Spotify vault; these are not usable Spotify credentials. The test finishes instrumentation before the normal UI restart scenario, because Android force-stops the target when an instrumented backend dies. Never run this fixture against a real signed-in installation.
+
+
+## Playback startup in test.5
+
+Head unit settings has two separate switches. **Resume playback after head unit starts or wakes** restores a previously playing session after BOOT_COMPLETED or a screen-off period of at least two minutes. **Automatically play when opening Spotify** defaults to OFF and starts the last restored queue on a new player task or a cold UI process. Returning from settings or recreating the activity does not start music. Account restart/QR handoffs are excluded.
+
+Automatic restoration waits for a paused/stopped session advertising PLAY or PLAY_PAUSE. It retries an unacknowledged Play no more often than every five seconds for at most two minutes, waits through buffering/connecting/error, and acknowledges success only at PLAYING. A boot intent survives an accepted service start, timeout and another reboot; opening the player can retry it. Explicit pause, stop-on-close and account changes cancel pending retries. Disabling boot resume also clears stale boot intent. Existing login, accounts and playback switches are preserved on an in-place update.
+
+Screen wake is observed by the running backend. If vehicle firmware force-stops the whole package, [Android](https://developer.android.com/about/versions/15/behavior-changes-all#enhanced-stop-states) does not deliver its normal background wake/boot work until the package is allowed to run again. This adapter cannot override a vehicle task killer. The optional new-launch switch provides playback when the user opens Spotify again; real firmware sleep/reboot behavior still needs a signed-in hardware test.
+
+Run `./adapter/tests/resume/build.sh`, install its `out/ResumeTests.apk` on a disposable emulator and run `adb -s SERIAL shell am instrument -w hu.resume/hu.resume.ResumeTests`. This fixture uses the actual adapter playback service, runtime and preferences with a synthetic Android MediaBrowserService/MediaSession. It checks delayed readiness, dropped Play, acknowledgement, cancellation and timeout; it neither uses Spotify accounts nor produces audio. Do not install test fixtures on the user's car.

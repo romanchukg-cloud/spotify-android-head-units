@@ -19,7 +19,7 @@ public final class HeadUnitSettingsActivity extends Activity {
  }
  private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
  private void render(Bundle b){
-  for(String key:new String[]{"stop_close","external","resume"}){
+  for(String key:new String[]{"stop_close","external","resume","play_open"}){
    Switch row=new Switch(this);row.setText(HuText.get(key.equals("stop_close")?"close":key));row.setTextColor(Color.WHITE);row.setTextSize(18);row.setMinHeight(dp(60));row.setChecked(b.getBoolean(key));list.addView(row,new LinearLayout.LayoutParams(-1,-2));
    row.setOnCheckedChangeListener((button,value)->{Bundle change=new Bundle();change.putBoolean(key,value);save(change);});
   }
@@ -28,7 +28,7 @@ public final class HeadUnitSettingsActivity extends Activity {
   scale.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){public void onStartTrackingTouch(SeekBar s){}public void onProgressChanged(SeekBar s,int p,boolean user){label.setText(HuText.get("scale")+": "+(p+80)+" %");}public void onStopTrackingTouch(SeekBar s){Bundle change=new Bundle();change.putInt("scale",s.getProgress()+80);save(change);}});
   Button audio=new Button(this);audio.setAllCaps(false);audio.setText(HuText.get("spotify"));audio.setTextSize(18);audio.setMinHeight(dp(56));list.addView(audio,new LinearLayout.LayoutParams(-1,-2));
   audio.setOnClickListener(v->startActivity(new Intent().setClassName(getPackageName(),"com.spotify.automotive.settingspage.SettingsPageActivity")));
-  TextView profile=new TextView(this);profile.setText("5.5.0 · headunit-test.4 · "+b.getString("profile"));profile.setTextColor(0xffb3b3b3);profile.setPadding(0,dp(16),0,0);list.addView(profile);
+  TextView profile=new TextView(this);profile.setText("5.5.0 · headunit-test.5 · "+b.getString("profile"));profile.setTextColor(0xffb3b3b3);profile.setPadding(0,dp(16),0,0);list.addView(profile);
  }
  private void save(Bundle b){worker.execute(()->{try{HeadUnitSettings.call(this,"set",b);main.post(()->{if(!destroyed)status.setText(HuText.get("saved"));});}catch(RuntimeException e){main.post(()->{if(!destroyed)status.setText(HuText.get("error"));});}});}
  protected void onDestroy(){destroyed=true;worker.shutdown();main.removeCallbacksAndMessages(null);super.onDestroy();}

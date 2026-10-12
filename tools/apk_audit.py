@@ -66,6 +66,11 @@ profiles=component('provider','local.spotify.unified.ProfilesProvider');coordina
 check('Private accounts / isolated coordinator',profiles is not None and profiles.get(A+'exported')=='false' and coordinator is not None and coordinator.get(A+'exported')=='false' and coordinator.get(A+'process')==':profiles' and coordinator.get(A+'taskAffinity')=='com.spotify.music.profiles' and app.get(A+'allowBackup')=='false')
 check('Account storage / settings entry','DriverProfiles;->bindCandidate(' in files.get('Lca/c;','') and 'Llocal/spotify/unified/ProfilesActivity;' in files.get('Llocal/spotify/unified/HeadUnitSettingsActivity;','') and 'Landroid/security/keystore/KeyGenParameterSpec$Builder;' in files.get('Llocal/spotify/unified/ProfileVault;',''))
 check('Account transition transport guards',all('PlaybackGate;->accountTransition()Z' in files.get(k,'') for k in ('Lbd/j;','Landroid/support/v4/media/session/MediaSessionCompat$Callback$MediaSessionCallbackApi21;','Llocal/spotify/unified/HeadUnitPlaybackService;')))
+runtime=files.get('Llocal/spotify/unified/HeadUnitRuntime;','')
+factory=''.join(v for k,v in files.items() if k.startswith('Llocal/spotify/unified/UnifiedFactory'))
+policy=files.get('Llocal/spotify/unified/AutoResumePolicy;','')
+check('Acknowledged resume / bounded readiness retries','Auto resume confirmed PLAYING' in runtime and 'AutoResumePolicy;->shouldPlay(' in ''.join(v for k,v in files.items() if k.startswith('Llocal/spotify/unified/HeadUnitPlaybackService')) and 'expired(JJ)Z' in policy)
+check('Opt-in player launch / profile handoff guard','play_open' in files.get('Llocal/spotify/unified/HeadUnitPreferences;','') and 'ui_open' in factory and 'local.profile.qr' in factory and 'getTaskId()I' in factory)
 main=files.get('Llocal/bydui/com/vivid/spotify/MainActivity;','')
 check('Settings entry / density context','HeadUnitSettings;->open(' in main and 'HeadUnitSettings;->scaled(' in main)
 # UI package resource IDs are retained as a second package by this APK.

@@ -1,0 +1,9 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="hu.resume">
+ <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="33"/>
+ <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+ <application android:label="Resume regression fixture" android:allowBackup="false">
+  <service android:name="local.spotify.unified.HeadUnitPlaybackService" android:exported="false" android:foregroundServiceType="mediaPlayback"/>
+  <service android:name="com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService" android:exported="false"/>
+ </application>
+ <instrumentation android:name="hu.resume.ResumeTests" android:targetPackage="hu.resume"/>
+</manifest>

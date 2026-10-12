@@ -24,7 +24,7 @@ public class Runner extends Instrumentation {
    ok(HeadUnitProfile.get(c)==HeadUnitProfile.Kind.GENERIC,"ordinary tablet is GENERIC");
    ok(c.getPackageManager().getComponentEnabledSetting(new ComponentName(c,"local.bydui.com.vivid.spotify.service.MediaManagerService"))==2,"BYD service disabled");
    HeadUnitPreferences.store().edit().clear().commit();HeadUnitPreferences.write(new Bundle());
-   ok(!HeadUnitPreferences.stopOnClose()&&HeadUnitPreferences.external()&&HeadUnitPreferences.resume(),"GENERIC defaults");
+   ok(!HeadUnitPreferences.stopOnClose()&&HeadUnitPreferences.external()&&HeadUnitPreferences.resume()&&!HeadUnitPreferences.playOnOpen(),"GENERIC defaults; open autoplay opt-in");
    Bundle b=new Bundle();b.putBoolean("stop_close",false);HeadUnitSettings.call(c,"set",b);PlaybackGate.change(c,false);
    c.getContentResolver().call(Uri.parse("content://com.spotify.music.local.closecontrol"),"close",null,null);ok(!PlaybackGate.blocked(),"task removal option OFF keeps gate open");
    b.putBoolean("stop_close",true);HeadUnitSettings.call(c,"set",b);c.getContentResolver().call(Uri.parse("content://com.spotify.music.local.closecontrol"),"close",null,null);ok(PlaybackGate.blocked(),"task removal option ON closes gate");
@@ -35,6 +35,9 @@ public class Runner extends Instrumentation {
    b.putInt("scale",100);b.putBoolean("stop_close",false);b.putBoolean("external",false);HeadUnitSettings.call(c,"set",b);ok(HeadUnitControllers.allow(c,"com.android.settings"),"system app bypasses external restriction");ok(!HeadUnitControllers.allow(c,"hu.browser"),"third-party blocked when external OFF");ok(!HeadUnitControllers.matches(c,12345,"hu.browser"),"package UID mismatch rejected");b.putBoolean("external",true);HeadUnitSettings.call(c,"set",b);ok(HeadUnitControllers.allow(c,"hu.browser"),"third-party allowed when external ON");
    HeadUnitPreferences.store().edit().putLong("screen_off",SystemClock.elapsedRealtime()-119000).putBoolean("screen_playing",true).commit();HeadUnitRuntime.receive(c,new Intent(Intent.ACTION_SCREEN_ON));ok(!HeadUnitPreferences.store().contains("screen_off"),"short screen wake consumed without resume request");
    HeadUnitPreferences.store().edit().putLong("screen_off",SystemClock.elapsedRealtime()-121000).putBoolean("screen_playing",false).commit();HeadUnitRuntime.receive(c,new Intent(Intent.ACTION_SCREEN_ON));ok(!HeadUnitPreferences.store().getBoolean("was_playing",false),"paused long sleep stays paused");
+   HeadUnitSettings.call(c,"ui_open",null);ok(!HeadUnitRuntime.resumeActive(),"opening player with autoplay OFF stays paused");
+   b=new Bundle();b.putBoolean("play_open",true);HeadUnitSettings.call(c,"set",b);HeadUnitSettings.call(c,"ui_open",null);ok(HeadUnitRuntime.resumeActive(),"private player-open hook requests opted-in playback");
+   HeadUnitRuntime.explicitPause(c);b.putBoolean("play_open",false);HeadUnitSettings.call(c,"set",b);HeadUnitSettings.call(c,"ui_open",null);ok(!HeadUnitRuntime.resumeActive(),"disabling opening autoplay prevents new requests");
    HeadUnitRuntime.receive(c,new Intent("hu.tests.UNKNOWN"));
   }
   out.putString("stream","PASS mode="+mode+" checks="+passed+"\n");finish(-1,out);

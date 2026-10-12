@@ -1,0 +1,32 @@
+APK Spotify-5.5.0-HeadUnit-test.5.apk
+SHA256 98b19fb1336fc41c0cf776ffe763b7e1b2850c010421266ff07fa834420112a2
+PASS Package / minimum API — minSdk=28
+PASS Optional automotive feature
+PASS Legacy Back dispatch
+PASS Privacy metadata
+PASS Boot permission
+PASS Private settings / playback components
+PASS One cold-start media receiver
+PASS No vendor restore service
+PASS Helper / relocated UI present
+PASS Vendor (BYD) coupling — 10 entry-guarded methods; 4 listeners only constructed behind profile guard
+PASS External controller policy hook
+PASS Binder death does not close gate
+PASS BYD legacy UI trust gated
+PASS Explicit transport commands unblocked
+PASS Private accounts / isolated coordinator
+PASS Account storage / settings entry
+PASS Account transition transport guards
+PASS Acknowledged resume / bounded readiness retries
+PASS Opt-in player launch / profile handoff guard
+PASS Settings entry / density context
+PASS Landscape / portrait resources
+PASS DEX version compatible with Android 9 — {'classes.dex': 39, 'classes2.dex': 39, 'classes3.dex': 39}
+PASS UI translations uk — 34 strings, missing=[]
+PASS UI translations ru — 34 strings, missing=[]
+PASS UI translations ar — 34 strings, missing=[]
+PASS UI translations zh-rCN — 34 strings, missing=[]
+PASS APK signature
+PASS ZIP / native 16 KiB alignment
+RESULT 28 PASS, 0 FAIL
+LIMIT: static policy checks do not validate login, audio, all SDK API calls, or real head-unit firmware.

@@ -4,13 +4,13 @@
 
 An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
 
-[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.4) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
+[Download test APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.5) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
 
 ## What has been tested
 
-Headunit-test.4: APK audit 26 PASS / 0 FAIL. Android 9 and 15 emulator checks cover head-unit policies, logged-out screens and settings in five viewports, plus encrypted storage, rollback, restart recovery and switching two synthetic accounts. These tests do not validate Spotify server authentication for two real accounts.
+Headunit-test.5: APK audit 28 PASS / 0 FAIL. Android 9 and 15 emulator fixtures cover delayed player readiness, a lost first Play command, playback acknowledgement, pause cancellation and account transition guards. Logged-out settings and media-controller policies also pass. Actual audio after car sleep or reboot still needs verification.
 
-**Experimental headunit-test.4.** Signed-in browsing and audio, a real A → B → A account switch, offline downloads, steering-wheel controls, actual sleep/reboot audio restoration and BYD/AAOS hardware regression still need verification.
+**Experimental headunit-test.5.** Signed-in browsing and audio, a real A → B → A account switch, offline downloads, steering-wheel controls, actual sleep/reboot audio restoration and BYD/AAOS hardware regression still need verification.
 
 Android 9+ (API 28) is required; Android 8 is a later phase. BYD, AAOS and GENERIC profiles are implemented; only GENERIC was tested in this build. Real head units from other manufacturers and AAOS remain unverified.
 
@@ -26,12 +26,12 @@ Android 9+ · 55.2 MiB · unofficial adaptation
 
 ## Verify the file
 
-`Spotify-5.5.0-HeadUnit-test.4.apk` · 57 868 288 bytes
+`Spotify-5.5.0-HeadUnit-test.5.apk` · 57 876 480 bytes
 
 SHA-256 of the current test build:
 
 ```text
-534a3d0000ab34c87523509e183e326218d83b01c496da2cb4285c942a09edc4
+98b19fb1336fc41c0cf776ffe763b7e1b2850c010421266ff07fa834420112a2
 ```
 
 Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.
@@ -40,4 +40,4 @@ Unofficial experimental project. Spotify and BYD are trademarks of their respect
 
 Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs.
 
-[Java / build](adapter/) · [What has been tested](reports/headunit-test.4.md)
+[Java / build](adapter/) · [What has been tested](reports/headunit-test.5.md)
