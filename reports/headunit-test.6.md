@@ -1,6 +1,6 @@
 # headunit-test.6 validation — 2026-10-13
 
-Test build **headunit-test.6** adds the car's own ambient music rhythm to Spotify on BYD. It was installed and verified on the connected DiLink 5 / Android 12 head unit. The user confirmed that the lamps visibly respond to Spotify.
+Published prerelease **headunit-test.6** adds the car's own ambient music rhythm to Spotify on BYD. It was installed and verified on the connected DiLink 5 / Android 12 head unit. The user confirmed that the lamps visibly respond to Spotify. Published on 2026-10-13: [GitHub release](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.6). The download website points to this APK.
 
 APK: `Spotify-5.5.0-HeadUnit-test.6.apk` · **57,880,576 bytes**.
 

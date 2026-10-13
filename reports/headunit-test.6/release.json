@@ -8,6 +8,9 @@
   "minSdk": 28,
   "targetSdk": 33,
   "certificateSha256": "a29d95f7a8eda7508dd97fa0c7c6889a65677050e69e4c0f14123d42d33dc2b1",
-  "published": false,
-  "installedOnCar": true
+  "published": true,
+  "installedOnCar": true,
+  "releaseUrl": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.6",
+  "publishedAt": "2026-10-13T20:15:17Z",
+  "sourceCommit": "bfdeebc54c210f296b2d399e249f3b7d27433fe3"
 }

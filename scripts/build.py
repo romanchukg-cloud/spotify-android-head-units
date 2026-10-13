@@ -7,10 +7,12 @@ CONTENT=json.loads((ROOT/'scripts/content.json').read_text())
 LABELS={'en':'English','uk':'Українська','ru':'Русский','ar':'العربية','zh-Hans':'简体中文'}
 SITE='https://romanchukg-cloud.github.io/spotify-android-head-units/'
 REPO='https://github.com/romanchukg-cloud/spotify-android-head-units'
-RELEASE_TAG='v5.5.0-headunit-test.5'
-APK_NAME='Spotify-5.5.0-HeadUnit-test.5.apk'
+RELEASE_TAG='v5.5.0-headunit-test.6'
+RELEASE=json.loads((ROOT/'reports/headunit-test.6/release.json').read_text())
+APK_NAME=RELEASE['file']
+SIZE=f"{RELEASE['size']:,}".replace(',', ' ')
 DOWNLOAD=REPO+'/releases/download/'+RELEASE_TAG+'/'+APK_NAME
-SHA='98b19fb1336fc41c0cf776ffe763b7e1b2850c010421266ff07fa834420112a2'
+SHA=RELEASE['sha256']
 def route(lang):return '' if lang=='en' else lang+'/'
 for lang,c in CONTENT.items():
  prefix='' if lang=='en' else '../'
@@ -44,7 +46,7 @@ for lang,c in CONTENT.items():
 <p><strong>{e(c['pendingStrong'])}</strong> {e(c['pending'])}</p><p>{e(c['compatibility'])}</p></section>
 <section><h2>{e(c['installTitle'])}</h2><ol>{steps}</ol></section>
 <section><h2>{e(c['verifyTitle'])}</h2><p>{e(c['verify'])}</p><code dir="ltr">{SHA}</code></section>
-<section><h2>{e(c['sourceTitle'])}</h2><p>{e(c['source'])}</p><p><a href="{REPO}/tree/main/adapter">Java / build</a> · <a href="{REPO}/blob/main/reports/headunit-test.5.md">{e(c['testedTitle'])}</a></p></section>
+<section><h2>{e(c['sourceTitle'])}</h2><p>{e(c['source'])}</p><p><a href="{REPO}/tree/main/adapter">Java / build</a> · <a href="{REPO}/blob/main/reports/headunit-test.6.md">{e(c['testedTitle'])}</a></p></section>
 <footer>{e(c['footer'])}</footer>
 </main></body></html>
 '''
@@ -53,8 +55,8 @@ for lang,c in CONTENT.items():
  languages=' · '.join(f'[{LABELS[k]}]('+('README.md' if k=='en' else f'README.{k}.md')+')' for k in CONTENT)
  markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({DOWNLOAD}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n{c['compatibility']}\n\n## {c['installTitle']}\n\n"
  markdown+='\n'.join(f'{i}. {s}' for i,s in enumerate(c['steps'],1))
- markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`Spotify-5.5.0-HeadUnit-test.5.apk` · 57 876 480 bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
- markdown+=f"\n## {c['sourceTitle']}\n\n{c['source']}\n\n[Java / build](adapter/) · [{c['testedTitle']}](reports/headunit-test.5.md)\n"
+ markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`{APK_NAME}` · {SIZE} bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
+ markdown+=f"\n## {c['sourceTitle']}\n\n{c['source']}\n\n[Java / build](adapter/) · [{c['testedTitle']}](reports/headunit-test.6.md)\n"
  if lang=='ar':markdown='<div dir="rtl">\n\n'+markdown+'\n</div>\n'
  (ROOT/readme).write_text(markdown)
 print('Generated 5 pages and 5 READMEs. English is the default.')

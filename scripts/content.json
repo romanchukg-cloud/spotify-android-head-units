@@ -3,11 +3,11 @@
     "name": "Spotify for Android Head Units",
     "title": "Spotify for Android Head Units — one app",
     "description": "Experimental Spotify Automotive 5.5.0 for Android head units, with a BYD-derived interface in one APK.",
-    "badge": "Experimental build · 5.5.0",
+    "badge": "Experimental build · 5.5.0 · test.6",
     "headline": "Familiar interface.",
     "highlight": "One app.",
     "intro": "An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.",
-    "download": "Download test APK",
+    "download": "Download test.6 APK",
     "meta": "Android 9+ · 55.2 MiB · unofficial adaptation",
     "languages": "Language",
     "cards": [
@@ -30,24 +30,29 @@
       [
         "Playback startup",
         "Head unit settings has separate options for resuming after boot or a long sleep and for playing on a new Spotify launch. Playback waits for the player to be ready; pause cancels automatic retries."
+      ],
+      [
+        "BYD ambient music rhythm",
+        "Spotify starts and stops the car’s own lighting rhythm with playback. Enable Music rhythm in the vehicle’s ambient-light settings; the car controls colours and effects."
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Headunit-test.5: APK audit 28 PASS / 0 FAIL. Android 9 and 15 emulator fixtures cover delayed player readiness, a lost first Play command, playback acknowledgement, pause cancellation and account transition guards. Logged-out settings and media-controller policies also pass. Actual audio after car sleep or reboot still needs verification.",
-    "pendingStrong": "Experimental headunit-test.5.",
-    "pending": "Signed-in browsing and audio, a real A → B → A account switch, offline downloads, steering-wheel controls, actual sleep/reboot audio restoration and BYD/AAOS hardware regression still need verification.",
+    "tested": "Headunit-test.6: APK audit 31 PASS / 0 FAIL. Android 9 and 15 emulators each pass 18 synthetic rhythm checks and 19 playback-resume checks. On a 2024 BYD Tang EV with DiLink 5 / Android 12, the in-place update preserved sign-in; music starts the native rhythm, pause stops it and process death releases it. The visible lamp response was confirmed by the user.",
+    "pendingStrong": "Experimental headunit-test.6.",
+    "pending": "Real vehicle sleep/reboot restoration, long-term use, real account A → B → A, offline downloads, steering-wheel controls and other BYD/AAOS hardware remain unverified. The broader account and UI suites were not rerun for test.6.",
     "installTitle": "How to install",
     "steps": [
       "Use the download button above to get the APK, then transfer it to the infotainment system.",
       "Update our previous test build with the same signature without uninstalling it: your sign-in may be preserved. Builds signed with a different key cannot be updated this way.",
       "Open Spotify and sign in using the QR code if needed.",
+      "For BYD ambient lighting, enable Music rhythm in the car’s own ambient-light settings. This switch is in the vehicle settings, not in Spotify.",
       "To add another driver: Head unit settings → Accounts → Add account · QR. Switching stops playback and restarts the player.",
       "Check music playback and controls. Remove the old separate BYD interface only after the new APK passes these checks."
     ],
     "verifyTitle": "Verify the file",
     "verify": "SHA-256 of the current test build:",
     "footer": "Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.",
-    "compatibility": "Android 9+ (API 28) is required; Android 8 is a later phase. BYD, AAOS and GENERIC profiles are implemented; only GENERIC was tested in this build. Real head units from other manufacturers and AAOS remain unverified.",
+    "compatibility": "Android 9+ (API 28). BYD rhythm is verified on DiLink 5 / Android 12; DiLink 5.1 / Android 13 and other firmware are not yet verified. AAOS and GENERIC profiles are implemented; real head units from other manufacturers and AAOS remain unverified.",
     "sourceTitle": "Source code and validation",
     "source": "Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs."
   },
@@ -55,11 +60,11 @@
     "name": "Spotify для Android-магнітол",
     "title": "Spotify для Android-магнітол — один додаток",
     "description": "Експериментальний Spotify Automotive 5.5.0 для Android-магнітол з інтерфейсом на основі BYD в одному APK.",
-    "badge": "Експериментальна збірка · 5.5.0",
+    "badge": "Експериментальна збірка · 5.5.0 · test.6",
     "headline": "Звичний інтерфейс.",
     "highlight": "Один додаток.",
     "intro": "Експериментальний плеєр Spotify Automotive для Android-магнітол. Інтерфейс на основі BYD та музичний сервіс об’єднані в одному APK з однією іконкою і штатним входом Spotify.",
-    "download": "Завантажити тестовий APK",
+    "download": "Завантажити APK test.6",
     "meta": "Android 9+ · 55,2 MiB · неофіційна адаптація",
     "languages": "Мова",
     "cards": [
@@ -82,24 +87,29 @@
       [
         "Запуск відтворення",
         "У налаштуваннях магнітоли є окремі опції відновлення після запуску чи тривалого сну та відтворення при новому запуску Spotify. Додаток чекає готовності плеєра; пауза скасовує автоматичні повтори."
+      ],
+      [
+        "Музичний ритм підсвітки BYD",
+        "Spotify запускає та зупиняє штатний ритм підсвітки разом із відтворенням. Увімкніть «Музичний ритм» у налаштуваннях підсвітки авто; кольорами й ефектами керує машина."
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Headunit-test.5: аудит APK — 28 PASS / 0 FAIL. На емуляторах Android 9 і 15 перевірено затримку готовності плеєра, втрату першої команди Play, підтвердження відтворення, скасування після паузи та захист під час зміни акаунта. Налаштування без входу й правила медіакерування також пройшли перевірку. Реальний звук після сну чи перезавантаження авто ще потребує перевірки.",
-    "pendingStrong": "Експериментальна headunit-test.5.",
-    "pending": "Ще не перевірені перегляд і звук після входу, справжнє перемикання A → B → A, офлайн-завантаження, кнопки керма, фактичне відновлення звуку після сну/перезавантаження та регресія на BYD/AAOS.",
+    "tested": "Headunit-test.6: аудит APK — 31 PASS / 0 FAIL. Android 9 і 15: на кожному емуляторі пройшли 18 синтетичних перевірок ритму та 19 перевірок відновлення відтворення. На BYD Tang EV 2024 з DiLink 5 / Android 12 оновлення зберегло вхід; музика запускає штатний ритм, пауза зупиняє його, завершення процесу звільняє сеанс. Користувач підтвердив видиму реакцію підсвітки.",
+    "pendingStrong": "Експериментальна headunit-test.6.",
+    "pending": "Ще не перевірені відновлення після реального сну/перезапуску авто, тривала робота, справжнє перемикання A → B → A, офлайн-завантаження, кнопки керма та інші магнітоли BYD/AAOS. Повні акаунтні й UI-тести для test.6 повторно не запускались.",
     "installTitle": "Як встановити",
     "steps": [
       "Натисніть кнопку завантаження вище, щоб отримати APK, і перенесіть його в мультимедійну систему.",
       "Нашу попередню тестову збірку з тим самим підписом оновлюйте без видалення: авторизація може зберегтися. Збірки з іншим підписом так не оновляться.",
       "Відкрийте Spotify й за потреби увійдіть через QR-код.",
+      "Для підсвітки BYD увімкніть «Музичний ритм» у налаштуваннях салонної підсвітки самого авто. Цей перемикач у налаштуваннях машини, а не Spotify.",
       "Щоб додати іншого водія: Налаштування магнітоли → Акаунти → Додати акаунт · QR. Перемикання зупиняє музику й перезапускає плеєр.",
       "Перевірте музику та керування. Старий окремий інтерфейс BYD видаляйте після успішної перевірки нового APK."
     ],
     "verifyTitle": "Перевірка файлу",
     "verify": "SHA-256 поточної тестової збірки:",
     "footer": "Неофіційний експериментальний проєкт. Spotify та BYD — торговельні марки відповідних власників.",
-    "compatibility": "Потрібен Android 9+ (API 28); Android 8 — наступний етап. Реалізовані профілі BYD, AAOS і GENERIC; у цій збірці перевірений лише GENERIC. Реальні магнітоли інших виробників та AAOS ще не перевірені.",
+    "compatibility": "Android 9+ (API 28). Ритм BYD перевірено на DiLink 5 / Android 12; DiLink 5.1 / Android 13 та інші прошивки ще не перевірені. Профілі AAOS і GENERIC реалізовано; реальні магнітоли інших виробників та AAOS ще не перевірені.",
     "sourceTitle": "Вихідний код і перевірки",
     "source": "Наш Java-код інтеграції, патчі, скрипти складання, аудит і тести емуляторів доступні в репозиторії. Закритий SDK Spotify та інтерфейс BYD є локальними вхідними файлами складання."
   },
@@ -107,11 +117,11 @@
     "name": "Spotify для Android-магнитол",
     "title": "Spotify для Android-магнитол — одно приложение",
     "description": "Экспериментальный Spotify Automotive 5.5.0 для Android-магнитол с интерфейсом на основе BYD в одном APK.",
-    "badge": "Экспериментальная сборка · 5.5.0",
+    "badge": "Экспериментальная сборка · 5.5.0 · test.6",
     "headline": "Знакомый интерфейс.",
     "highlight": "Одно приложение.",
     "intro": "Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.",
-    "download": "Скачать тестовый APK",
+    "download": "Скачать APK test.6",
     "meta": "Android 9+ · 55,2 MiB · неофициальная адаптация",
     "languages": "Язык",
     "cards": [
@@ -134,24 +144,29 @@
       [
         "Запуск воспроизведения",
         "В настройках магнитолы есть отдельные опции возобновления после запуска или длительного сна и воспроизведения при новом запуске Spotify. Приложение ждёт готовности плеера; пауза отменяет автоматические повторы."
+      ],
+      [
+        "Музыкальный ритм подсветки BYD",
+        "Spotify запускает и останавливает штатный ритм подсветки вместе с воспроизведением. Включите «Музыкальный ритм» в настройках подсветки автомобиля; цветами и эффектами управляет машина."
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Headunit-test.5: аудит APK — 28 PASS / 0 FAIL. На эмуляторах Android 9 и 15 проверены задержка готовности плеера, потеря первой команды Play, подтверждение воспроизведения, отмена после паузы и защита при смене аккаунта. Настройки без входа и правила медиоуправления также прошли проверку. Реальный звук после сна или перезагрузки авто ещё требует проверки.",
-    "pendingStrong": "Экспериментальная headunit-test.5.",
-    "pending": "Ещё не проверены просмотр и звук после входа, настоящее переключение A → B → A, офлайн-загрузки, кнопки руля, фактическое восстановление звука после сна/перезагрузки и регрессия на BYD/AAOS.",
+    "tested": "Headunit-test.6: аудит APK — 31 PASS / 0 FAIL. Android 9 и 15: на каждом эмуляторе пройдены 18 синтетических проверок ритма и 19 проверок восстановления воспроизведения. На BYD Tang EV 2024 с DiLink 5 / Android 12 обновление сохранило вход; музыка запускает штатный ритм, пауза останавливает его, завершение процесса освобождает сеанс. Пользователь подтвердил видимую реакцию подсветки.",
+    "pendingStrong": "Экспериментальная headunit-test.6.",
+    "pending": "Ещё не проверены восстановление после реального сна/перезапуска автомобиля, длительная работа, настоящее переключение A → B → A, офлайн-загрузки, кнопки руля и другие магнитолы BYD/AAOS. Полные аккаунтные и UI-тесты для test.6 повторно не запускались.",
     "installTitle": "Как установить",
     "steps": [
       "Нажмите кнопку скачивания выше, чтобы получить APK, и перенесите его в мультимедийную систему.",
       "Нашу предыдущую тестовую сборку с той же подписью обновляйте без удаления: авторизация может сохраниться. Сборки с другой подписью так не обновятся.",
       "Откройте Spotify и при необходимости войдите по QR-коду.",
+      "Для подсветки BYD включите «Музыкальный ритм» в настройках салонной подсветки самого автомобиля. Этот переключатель в настройках машины, а не Spotify.",
       "Чтобы добавить другого водителя: Настройки магнитолы → Аккаунты → Добавить аккаунт · QR. Переключение останавливает музыку и перезапускает плеер.",
       "Проверьте музыку и управление. Удаляйте старый отдельный интерфейс BYD только после успешной проверки нового APK."
     ],
     "verifyTitle": "Проверка файла",
     "verify": "SHA-256 текущей тестовой сборки:",
     "footer": "Неофициальный экспериментальный проект. Spotify и BYD — товарные знаки соответствующих владельцев.",
-    "compatibility": "Требуется Android 9+ (API 28); Android 8 — следующий этап. Реализованы профили BYD, AAOS и GENERIC; в этой сборке проверен только GENERIC. Реальные магнитолы других производителей и AAOS ещё не проверены.",
+    "compatibility": "Android 9+ (API 28). Ритм BYD проверен на DiLink 5 / Android 12; DiLink 5.1 / Android 13 и другие прошивки ещё не проверены. Профили AAOS и GENERIC реализованы; реальные магнитолы других производителей и AAOS ещё не проверены.",
     "sourceTitle": "Исходный код и проверки",
     "source": "Наш Java-код интеграции, патчи, скрипты сборки, аудит и тесты эмуляторов доступны в репозитории. Закрытый SDK Spotify и интерфейс BYD — локальные входные файлы сборки."
   },
@@ -159,11 +174,11 @@
     "name": "Spotify لوحدات الوسائط العاملة بنظام Android",
     "title": "Spotify لوحدات الوسائط العاملة بنظام Android — تطبيق واحد",
     "description": "نسخة تجريبية من Spotify Automotive 5.5.0 لوحدات الوسائط العاملة بنظام Android، بواجهة مستندة إلى BYD في ملف APK واحد.",
-    "badge": "إصدار تجريبي · 5.5.0",
+    "badge": "إصدار تجريبي · 5.5.0 · test.6",
     "headline": "الواجهة المألوفة.",
     "highlight": "تطبيق واحد.",
     "intro": "مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.",
-    "download": "تنزيل ملف APK التجريبي",
+    "download": "تنزيل APK test.6",
     "meta": "Android 9+ · 55.2 MiB · تعديل غير رسمي",
     "languages": "اللغة",
     "cards": [
@@ -186,24 +201,29 @@
       [
         "بدء التشغيل",
         "تتضمن إعدادات وحدة السيارة خيارين منفصلين للاستئناف بعد بدء التشغيل أو السكون الطويل وللتشغيل عند فتح جلسة جديدة من Spotify. ينتظر التطبيق جاهزية المشغل؛ ويلغي الإيقاف المؤقت المحاولات التلقائية."
+      ],
+      [
+        "إيقاع الإضاءة المحيطية في BYD",
+        "يبدأ Spotify إيقاع الإضاءة الأصلي في السيارة ويوقفه مع تشغيل الموسيقى. فعّل «إيقاع الموسيقى» في إعدادات الإضاءة المحيطية للسيارة؛ تتحكم السيارة بالألوان والتأثيرات."
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "Headunit-test.5: اجتاز فحص APK عدد 28 اختباراً دون إخفاق. تغطي محاكيات Android 9 و15 تأخر جاهزية المشغل وفقدان أمر التشغيل الأول وتأكيد التشغيل والإلغاء بعد الإيقاف المؤقت والحماية أثناء تبديل الحساب. اجتازت أيضاً الإعدادات دون تسجيل الدخول وسياسات التحكم بالوسائط. لا يزال الصوت الفعلي بعد سكون السيارة أو إعادة تشغيلها بحاجة إلى التحقق.",
-    "pendingStrong": "نسخة headunit-test.5 تجريبية.",
-    "pending": "لم يتم التحقق بعد من التصفح والصوت بعد تسجيل الدخول، والتبديل الحقيقي A → B → A، والتنزيلات دون اتصال، وأزرار المقود، واستعادة الصوت بعد السكون أو إعادة التشغيل، والتوافق الفعلي مع BYD وAAOS.",
+    "tested": "Headunit-test.6: اجتاز فحص APK عدد 31 اختباراً دون إخفاق. اجتاز كل من محاكي Android 9 و15 عدد 18 اختباراً اصطناعياً للإيقاع و19 اختباراً لاستئناف التشغيل. في BYD Tang EV موديل 2024 مع DiLink 5 وAndroid 12، حافظ التحديث على تسجيل الدخول؛ تبدأ الموسيقى الإيقاع الأصلي، ويوقفه الإيقاف المؤقت، ويحرر إنهاء العملية الجلسة. أكّد المستخدم استجابة الإضاءة المرئية.",
+    "pendingStrong": "نسخة headunit-test.6 تجريبية.",
+    "pending": "لم يتم التحقق بعد من الاستئناف بعد السكون الحقيقي أو إعادة تشغيل السيارة، والاستخدام الطويل، والتبديل الحقيقي A → B → A، والتنزيل دون اتصال، وأزرار المقود، ووحدات BYD/AAOS الأخرى. لم تُعد اختبارات الحسابات والواجهة الكاملة للإصدار test.6.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "اضغط على زر التنزيل أعلاه للحصول على ملف APK، ثم انقله إلى نظام الوسائط في السيارة.",
       "يمكن تحديث نسختنا التجريبية السابقة التي تحمل التوقيع نفسه دون إزالتها، وقد تبقى جلسة تسجيل الدخول محفوظة. لا يمكن تحديث النسخ ذات التوقيع المختلف بهذه الطريقة.",
       "افتح Spotify وسجّل الدخول عبر رمز QR عند الحاجة.",
+      "لإضاءة BYD، فعّل «إيقاع الموسيقى» في إعدادات الإضاءة المحيطية للسيارة نفسها. يوجد هذا المفتاح في إعدادات السيارة، وليس في Spotify.",
       "لإضافة سائق آخر: إعدادات الوحدة الرئيسية ← الحسابات ← إضافة حساب · QR. يوقف التبديل الموسيقى ويعيد تشغيل المشغل.",
       "تحقّق من تشغيل الموسيقى وأدوات التحكم. لا تزل تطبيق واجهة BYD القديم المنفصل إلا بعد نجاح اختبار ملف APK الجديد."
     ],
     "verifyTitle": "التحقق من الملف",
     "verify": "بصمة SHA-256 للإصدار التجريبي الحالي:",
     "footer": "مشروع تجريبي غير رسمي. Spotify وBYD علامتان تجاريتان لمالكيهما المعنيين.",
-    "compatibility": "يتطلب Android 9 أو أحدث (API 28)؛ دعم Android 8 مرحلة لاحقة. تم تنفيذ ملفات BYD وAAOS وGENERIC، لكن تم اختبار GENERIC فقط في هذه النسخة. لم يتم التحقق من وحدات الشركات الأخرى أو AAOS الفعلية.",
+    "compatibility": "Android 9 أو أحدث (API 28). تم التحقق من إيقاع BYD على DiLink 5 وAndroid 12؛ لم يتم التحقق بعد من DiLink 5.1 وAndroid 13 والبرامج الثابتة الأخرى. تم تنفيذ ملفات AAOS وGENERIC؛ لم يتم التحقق من وحدات الشركات الأخرى أو AAOS الفعلية.",
     "sourceTitle": "الشيفرة المصدرية والتحقق",
     "source": "تتوفر شيفرة Java الخاصة بالتكامل وسكربتات التعديل والبناء والتدقيق واختبارات المحاكيات في المستودع. خدمة Spotify وواجهة BYD المغلقتان تُستخدمان كمدخلات بناء محلية."
   },
@@ -211,11 +231,11 @@
     "name": "适用于 Android 车机的 Spotify",
     "title": "Android 车机 Spotify — 一个应用",
     "description": "适用于 Android 车机的 Spotify Automotive 5.5.0 实验版本，将基于比亚迪的界面整合到一个 APK 中。",
-    "badge": "实验版本 · 5.5.0",
+    "badge": "实验版本 · 5.5.0 · test.6",
     "headline": "熟悉的界面。",
     "highlight": "一个应用。",
     "intro": "适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。",
-    "download": "下载测试版 APK",
+    "download": "下载 test.6 APK",
     "meta": "Android 9+ · 55.2 MiB · 非官方适配",
     "languages": "语言",
     "cards": [
@@ -238,24 +258,29 @@
       [
         "播放启动",
         "车机设置提供两个独立选项：在启动或长时间休眠后恢复播放，以及在新启动 Spotify 时播放。应用会等待播放器准备就绪；暂停会取消自动重试。"
+      ],
+      [
+        "比亚迪氛围灯音乐律动",
+        "Spotify 会随播放启动和停止车辆原生灯光律动。请在车辆氛围灯设置中开启“音乐律动”；颜色和效果由车辆控制。"
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "Headunit-test.5：APK 审核 28 项通过，0 项失败。Android 9 和 15 模拟器测试覆盖播放器延迟就绪、首次播放命令丢失、播放确认、暂停后取消及切换账号保护。未登录设置和媒体控制策略也通过测试。车辆休眠或重启后的实际音频仍需验证。",
-    "pendingStrong": "headunit-test.5 实验版本。",
-    "pending": "登录后的浏览和音频、真实账号 A → B → A 切换、离线下载、方向盘控制、休眠或重启后的实际音频恢复，以及 BYD/AAOS 硬件回归仍待验证。",
+    "tested": "Headunit-test.6：APK 审核 31 项通过，0 项失败。Android 9 和 15 模拟器分别通过 18 项合成律动测试和 19 项播放恢复测试。在配备 DiLink 5 / Android 12 的 2024 款比亚迪唐 EV 上，覆盖更新保留了登录状态；音乐启动原生律动，暂停停止律动，进程结束释放会话。用户已确认灯光实际响应。",
+    "pendingStrong": "headunit-test.6 实验版本。",
+    "pending": "实际车辆休眠或重启后的恢复、长时间使用、真实账号 A → B → A 切换、离线下载、方向盘控制和其他 BYD/AAOS 车机仍待验证。test.6 未重新运行完整账号和界面测试。",
     "installTitle": "安装方法",
     "steps": [
       "点击上方下载按钮获取 APK，然后将其传输到车载多媒体系统。",
       "如果已安装我们之前使用相同签名的测试版本，请直接更新，无需卸载，登录状态可能保留。签名不同的版本无法通过此方式更新。",
       "打开 Spotify，按需扫码登录。",
+      "要使用比亚迪氛围灯，请在车辆自身的氛围灯设置中开启“音乐律动”。此开关位于车辆设置中，而不是 Spotify 中。",
       "添加其他驾驶员：主机设置 → 账号 → 添加账号 · QR。切换时会停止音乐并重启播放器。",
       "检查音乐播放和控制功能。确认新 APK 工作正常后，再卸载原来独立的比亚迪界面应用。"
     ],
     "verifyTitle": "文件校验",
     "verify": "当前测试版本的 SHA-256：",
     "footer": "非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。",
-    "compatibility": "需要 Android 9+（API 28）；Android 8 属于后续阶段。已实现 BYD、AAOS、GENERIC 配置，本次仅验证 GENERIC。其他品牌的真实车机及 AAOS 尚未验证。",
+    "compatibility": "Android 9+（API 28）。比亚迪律动已在 DiLink 5 / Android 12 上验证；DiLink 5.1 / Android 13 和其他固件尚未验证。已实现 AAOS 和 GENERIC 配置；其他品牌真实车机及 AAOS 尚未验证。",
     "sourceTitle": "源代码与验证",
     "source": "仓库提供我们的 Java 集成代码、补丁与构建脚本、审计工具及模拟器测试源码。闭源 Spotify 后端和 BYD 界面作为本地构建输入。"
   }
