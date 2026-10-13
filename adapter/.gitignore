@@ -7,7 +7,7 @@ helper-dex/
 *.class
 *-map.json
 manifest-refs.json
-diagnostics/
+/diagnostics/
 tests/out/
 *.apk
 *.keystore
@@ -20,3 +20,6 @@ tests/profiles/out/
 
 tests/resume/out/
 tests/rhythm/out/
+tests/diagnostics/out/
+generated/
+/support/

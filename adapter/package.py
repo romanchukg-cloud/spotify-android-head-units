@@ -1,6 +1,7 @@
 from pathlib import Path
 import os,zipfile,json,subprocess,hashlib
 from merge_resources import merge,xml
+from build_config import BUILD
 b=Path(__file__).resolve().parent;p=b.parent/'spotify55-adaptation';bt=Path(os.environ.get('ANDROID_SDK_ROOT',os.environ.get('ANDROID_HOME',str(Path.home()/'Library/Android/sdk'))))/'build-tools'/os.environ.get('BUILD_TOOLS_VERSION','35.0.0')
 cm=json.loads((b/'class-map.json').read_text());refs={int(k,16):int(v,16) for k,v in json.loads((b/'manifest-refs.json').read_text()).items()}
 def transform(s):
@@ -31,7 +32,7 @@ with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as sdk,zipfile.ZipFile(b
  out.writestr('classes2.dex',(b/'helper-dex/classes.dex').read_bytes())
  out.writestr('classes3.dex',(b/'ui.dex').read_bytes())
 subprocess.run([str(bt/'zipalign'),'-P','16','-f','4',str(b/'unsigned.apk'),str(b/'aligned.apk')],check=True)
-output=b/'Spotify-5.5.0-HeadUnit-test.6.apk'
+output=b/BUILD['apk_name']
 subprocess.run([str(bt/'apksigner'),'sign','--ks',os.environ.get('HU_KEYSTORE',str(Path.home()/'.android/debug.keystore')),'--ks-pass',os.environ.get('HU_KEYSTORE_PASS','pass:android'),'--out',str(output),str(b/'aligned.apk')],check=True)
 subprocess.run([str(bt/'apksigner'),'verify','--verbose',str(output)],check=True)
 subprocess.run([str(bt/'zipalign'),'-c','-P','16','4',str(output)],check=True)

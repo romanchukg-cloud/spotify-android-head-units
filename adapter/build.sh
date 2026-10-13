@@ -7,14 +7,16 @@ ANDROID_JAR="$SDK_ROOT/platforms/android-35/android.jar"
 APKTOOL_JAR=${APKTOOL_JAR:?Set APKTOOL_JAR to apktool 2.11.1 jar}
 python3 patch_resources.py
 python3 prepare.py
+python3 build_config.py
 javac -cp "$APKTOOL_JAR" Assemble.java
 java -cp ".:$APKTOOL_JAR" Assemble ui-smali ui.dex
 rm -rf classes helper-dex
 mkdir -p classes helper-dex
-javac -source 8 -target 8 -cp "$ANDROID_JAR" -d classes src/local/spotify/{close,unified}/*.java
+javac -source 8 -target 8 -cp "$ANDROID_JAR" -d classes src/local/spotify/{close,unified}/*.java generated/local/spotify/unified/*.java
 "$BT/d8" --min-api 28 --lib "$ANDROID_JAR" --output helper-dex classes/local/spotify/{close,unified}/*.class
 apktool b ui -o ui-resources.apk
 apktool b backend -o backend-rebuilt.apk
 python3 package.py
 python3 verify.py
-python3 ../tools/apk_audit.py Spotify-5.5.0-HeadUnit-test.6.apk --min-api 28
+APK_NAME=$(python3 -c 'from build_config import BUILD;print(BUILD["apk_name"])')
+python3 ../tools/apk_audit.py "$APK_NAME" --min-api 28

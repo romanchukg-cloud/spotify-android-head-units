@@ -1,0 +1,13 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="hu.diagnostics" android:versionCode="1" android:versionName="fixture">
+ <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="33"/>
+ <queries><package android:name="hu.diagnostics.reader"/></queries>
+ <application android:label="Diagnostics regression fixture" android:allowBackup="false">
+  <provider android:name="local.spotify.unified.TestSettingsProvider" android:authorities="hu.diagnostics.local.headunit" android:exported="false"/>
+  <provider android:name="local.spotify.unified.DiagnosticReportProvider" android:authorities="hu.diagnostics.local.diagnostics" android:exported="false" android:grantUriPermissions="true"/>
+  <activity android:name="local.spotify.unified.DiagnosticActivity" android:exported="false" android:theme="@android:style/Theme.Material.NoActionBar"/>
+  <activity android:name="local.spotify.unified.DiagnosticNoticeActivity" android:exported="false" android:theme="@android:style/Theme.Material.NoActionBar"/>
+  <activity android:name="local.spotify.unified.TestHarness" android:exported="true"/>
+  <service android:name="local.spotify.unified.TestLogService" android:exported="false" android:process=":bydui"/>
+ </application>
+ <instrumentation android:name="local.spotify.unified.DiagnosticTests" android:targetPackage="hu.diagnostics"/>
+</manifest>

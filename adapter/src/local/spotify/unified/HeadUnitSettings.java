@@ -7,8 +7,7 @@ import android.os.*;
 import android.util.DisplayMetrics;
 import android.view.WindowManager;
 public final class HeadUnitSettings {
- private static final Uri URI=Uri.parse("content://com.spotify.music.local.headunit");
- public static Bundle call(Context c,String method,Bundle args){Bundle b=c.getContentResolver().call(URI,method,null,args);if(b==null)throw new IllegalStateException("Settings service unavailable");return b;}
+ public static Bundle call(Context c,String method,Bundle args){Uri uri=Uri.parse("content://"+c.getPackageName()+".local.headunit");Bundle b=c.getContentResolver().call(uri,method,null,args);if(b==null)throw new IllegalStateException("Settings service unavailable");return b;}
  public static void open(Activity a){a.startActivity(new Intent(a,HeadUnitSettingsActivity.class));}
  public static int density(Context c,int scale){DisplayMetrics d=new DisplayMetrics();c.getSystemService(WindowManager.class).getDefaultDisplay().getRealMetrics(d);return Math.round(d.densityDpi*scale/100f);}
  public static Context scaled(Context c){

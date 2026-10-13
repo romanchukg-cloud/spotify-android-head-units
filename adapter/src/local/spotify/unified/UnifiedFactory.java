@@ -13,11 +13,11 @@ public final class UnifiedFactory extends AppComponentFactory {
     if(a.getClass().getName().equals("local.bydui.com.vivid.spotify.MainActivity") && playerTask!=a.getTaskId()){
      playerTask=a.getTaskId();
      boolean switching=a.getIntent().hasExtra(ProfileButton.ACK) || a.getIntent().getBooleanExtra("local.profile.qr",false);
-     if(!switching)try{HeadUnitSettings.call(a,"ui_open",null);}catch(RuntimeException ignored){}
+     if(!switching){try{HeadUnitSettings.call(a,"ui_open",null);}catch(RuntimeException ignored){}DiagnosticNoticeActivity.maybeShow(a);}
     }
     ProfileButton.install(a);
    }
-   public void onActivityCreated(Activity a,android.os.Bundle b){}public void onActivityStarted(Activity a){}public void onActivityPaused(Activity a){}public void onActivityStopped(Activity a){}public void onActivitySaveInstanceState(Activity a,android.os.Bundle b){}public void onActivityDestroyed(Activity a){}
+   public void onActivityCreated(Activity a,android.os.Bundle b){DiagnosticLog.init(a);}public void onActivityStarted(Activity a){}public void onActivityPaused(Activity a){}public void onActivityStopped(Activity a){}public void onActivitySaveInstanceState(Activity a,android.os.Bundle b){}public void onActivityDestroyed(Activity a){}
   });return app;
  }
 }

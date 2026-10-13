@@ -9,6 +9,8 @@ import android.view.KeyEvent;
 import java.util.*;
 /** Holds a framework browser connection and routes cold-start media commands. */
 public final class HeadUnitPlaybackService extends Service {
+ private static volatile boolean bridgeConnected;
+ public static boolean connected(){return bridgeConnected;}
  private final Handler main=new Handler(Looper.getMainLooper());
  private final ArrayDeque<Integer> commands=new ArrayDeque<>();
  private MediaBrowser browser;private MediaController controller;private long lastAttempt=-1,attemptGeneration=-1;
@@ -32,9 +34,9 @@ public final class HeadUnitPlaybackService extends Service {
   PendingIntent pending=PendingIntent.getActivity(this,72,open,PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
   startForeground(7045,new Notification.Builder(this,"spotify_hu_playback").setSmallIcon(android.R.drawable.ic_media_play).setContentTitle("Spotify").setContentText(HuText.get("background")).setContentIntent(pending).setOngoing(true).build());
   browser=new MediaBrowser(this,new ComponentName(getPackageName(),"com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new MediaBrowser.ConnectionCallback(){
-   public void onConnected(){controller=new MediaController(HeadUnitPlaybackService.this,browser.getSessionToken());controller.registerCallback(callback,main);flush();scheduleResume();main.postDelayed(idle,30000);Log.i("SpotifyHU","Playback browser connected");}
-   public void onConnectionFailed(){Log.w("SpotifyHU","Playback browser rejected connection");retryConnection();}
-   public void onConnectionSuspended(){controller=null;Log.w("SpotifyHU","Playback browser suspended");retryConnection();}
+   public void onConnected(){bridgeConnected=true;DiagnosticLog.playback(HeadUnitRuntime.diagnosticState(),true);controller=new MediaController(HeadUnitPlaybackService.this,browser.getSessionToken());controller.registerCallback(callback,main);flush();scheduleResume();main.postDelayed(idle,30000);Log.i("SpotifyHU","Playback browser connected");}
+   public void onConnectionFailed(){bridgeConnected=false;DiagnosticLog.failureCode("playback","connection_lost");Log.w("SpotifyHU","Playback browser rejected connection");retryConnection();}
+   public void onConnectionSuspended(){bridgeConnected=false;DiagnosticLog.playback(0,false);controller=null;Log.w("SpotifyHU","Playback browser suspended");retryConnection();}
   },null);browser.connect();main.postDelayed(()->{if(controller==null){Log.w("SpotifyHU","Playback browser timed out");retryConnection();}},30000);
  }
  private void retryConnection(){
@@ -73,6 +75,6 @@ public final class HeadUnitPlaybackService extends Service {
   }
  }
  public int onStartCommand(Intent i,int flags,int id){if(i!=null && i.hasExtra("key"))commands.add(i.getIntExtra("key",0));flush();scheduleResume();return START_NOT_STICKY;}
- public void onDestroy(){main.removeCallbacksAndMessages(null);if(controller!=null)controller.unregisterCallback(callback);if(browser!=null)browser.disconnect();stopForeground(true);super.onDestroy();}
+ public void onDestroy(){bridgeConnected=false;DiagnosticLog.playback(HeadUnitRuntime.diagnosticState(),false);main.removeCallbacksAndMessages(null);if(controller!=null)controller.unregisterCallback(callback);if(browser!=null)browser.disconnect();stopForeground(true);super.onDestroy();}
  public IBinder onBind(Intent i){return null;}
 }

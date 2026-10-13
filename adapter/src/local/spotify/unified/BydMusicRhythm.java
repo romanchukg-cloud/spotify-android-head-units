@@ -42,7 +42,7 @@ public final class BydMusicRhythm {
    // Even an uncertain start must be paired with a stop using the same token.
    if(playing)owned=true;
    try{output.set(playing);owned=playing;Log.i("SpotifyCarRhythm",playing?"start accepted":"stop accepted");}
-   catch(Exception|LinkageError e){Log.w("SpotifyCarRhythm",(playing?"start":"stop")+" unavailable",e);}
+   catch(Exception|LinkageError e){DiagnosticLog.failure("playback",e);Log.w("SpotifyCarRhythm",(playing?"start":"stop")+" unavailable",e);}
   }
  }
 
@@ -52,9 +52,12 @@ public final class BydMusicRhythm {
   public void set(boolean playing)throws Exception{
    IBinder binder=(IBinder)Class.forName("android.os.ServiceManager").getMethod("getService",String.class).invoke(null,"audio");
    if(binder==null)throw new IllegalStateException("Audio service unavailable");
+
    Object audio=Class.forName("android.media.IAudioService$Stub").getMethod("asInterface",IBinder.class).invoke(null,binder);
    if(audio==null)throw new IllegalStateException("Audio interface unavailable");
+
    Method method=audio.getClass().getMethod(playing?"startAudioOutput":"stopAudioOutput",String.class,IBinder.class);
+
    // The vehicle owns mode, colours and brightness. Only acquire/release its session.
    method.invoke(audio,MEDIA_CENTRE,token);
   }

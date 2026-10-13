@@ -1,8 +1,9 @@
 from pathlib import Path
 import os,zipfile,json,re,subprocess,struct
 from merge_resources import chunks,strings,U16,U32
+from build_config import BUILD
 b=Path(__file__).resolve().parent;p=b.parent/'spotify55-adaptation'
-with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as old,zipfile.ZipFile(b/'Spotify-5.5.0-HeadUnit-test.6.apk') as new:
+with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as old,zipfile.ZipFile(b/BUILD['apk_name']) as new:
  preserved=[n for n in old.namelist() if not n.startswith('META-INF/') and n not in ('classes.dex','classes2.dex','AndroidManifest.xml','resources.arsc','stamp-cert-sha256')]
  assert all(old.read(n)==new.read(n) for n in preserved)
  ot=old.read('resources.arsc');nt=new.read('resources.arsc')

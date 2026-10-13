@@ -1,6 +1,6 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Headunit-test.5 fixes acknowledged playback restoration and adds opt-in playback on a fresh player launch. Local test.6 adds the BYD ambient music rhythm.
+This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.6 adds BYD ambient music rhythm. Local test.7 adds Support and structured diagnostics. Build identity and output filename are generated from `build-info.json`.
 
 The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
 
@@ -26,7 +26,7 @@ export APKTOOL_JAR=/path/to/apktool_2.11.1.jar
 export HU_KEYSTORE=/path/to/your.keystore
 export HU_KEYSTORE_PASS=pass:your_password
 ./adapter/build.sh
-python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.6.apk --min-api 28
+python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.7.apk --min-api 28
 ```
 
 The optional variables `ANDROID_HOME` and `BUILD_TOOLS_VERSION` select the SDK and tools; local defaults match Android Studio on macOS. `adapter/tests/build.sh` builds test APKs signed with `HU_KEYSTORE` (the test keystore password defaults to `android`; set `HU_KEYSTORE_PASS` for another key). Only run instrumentation on disposable emulators: its checks change head-unit preferences and playback state.
@@ -37,7 +37,7 @@ The fresh input-to-APK build was verified before publication. ZIP timestamps and
 
 ```sh
 ./adapter/tests/build.sh
-adb install -r adapter/Spotify-5.5.0-HeadUnit-test.6.apk
+adb install -r adapter/Spotify-5.5.0-HeadUnit-test.7.apk
 adb install adapter/tests/out/client.apk
 adb install adapter/tests/out/test.apk
 python3 adapter/tests/matrix.py emulator-5554 35
@@ -85,3 +85,19 @@ The worker is created only on a detected BYD. PLAYING acquires the session. Shor
 This build uses the direct third-party app call documented for Tang EV / DiLink 5 / Android 12. A successful reflected call means the audio service accepted it; visible lamp activity also depends on firmware and the car's own rhythm switch. Other firmware can reject the hidden API or borrowed package name; errors are logged under `SpotifyCarRhythm`, without interrupting music. Automatic ADB/Shizuku fallback is not included: the Spotify adapter currently has no authorized local-shell transport.
 
 `zsh adapter/tests/rhythm/build.sh` builds an isolated synthetic-output fixture. Install it only on a disposable emulator and run `adb -s SERIAL shell am instrument -w hu.rhythm/local.spotify.unified.RhythmTests`. It tests timing, worker execution, cleanup and the production runtime/gate hooks, without using the car audio API or Spotify accounts. See [test.6 validation](../reports/headunit-test.6.md) for the actual build and hardware results.
+
+## Local test.7: Support and diagnostics
+
+Open **Head unit settings > Support**. **Send diagnostics** shows the frozen, sanitized JSON and public-report disclosure before **Send public report**. It works with automatic sending off. **Export diagnostics** saves or shares a ZIP containing only that report and its disclosure; exporting does not upload it. For missing ambient lighting, select **Other (including ambient lighting)** and first check **Music rhythm** in the car's own menu.
+
+On first foreground player use, a notice has **Automatically send diagnostics** selected by default. No automatic work starts before **Continue**. A previous opt-out is preserved. Automatic reports cover measured playback/BYD integration failures only, at most one new report per installation per 24 hours. Successful sessions and missing physical light/cluster output are not automatic triggers. Crash/ANR detection is not included. The automatic preference can be changed in Support; disabling it removes unattempted automatic payloads and requests cancellation for known queued receipts. Already claimed/public reports, or an acceptance whose response was lost, cannot reliably be recalled. Manual reports remain independent.
+
+The fixed HTTPS service is `https://diagnostics.localcharge.app`, project `spotify-android-head-units`, playback profile, `/v1/reports` with schema **2** and explicit `report_source`. Pending legacy manual schema-1 bodies remain compatible. Before every automatic POST, the client verifies schema 2, automatic reporting and the documented grouping capability at GET `/`. Missing capabilities defer automatic upload. The server groups matching automatic project/build/failure/UTC-day reports; manual reports are independent. A limited technical summary may be published in this project's **public GitHub Issues**. Technical metadata can still identify an unusual configuration; this is not an anonymity guarantee.
+
+Only allowlisted lifecycle, playback, bridge connectivity, wheel, audio-focus and safe failure enums are recorded. Audio focus is `unknown` where the app cannot measure it. BYD audio integration errors use the playback failure stage. No raw logcat, exception text/stacks, account data, media titles, screenshots, location or persistent device IDs are read into the report. Unsupported settings are omitted and unregistered components stay empty. Private logs use four fixed process slots, each two 64-KiB files, with a ten-minute capture window. Active processes prune all slots at startup, snapshot and once per minute; stopped applications cannot run a deletion timer. Report limits are 256 KiB and 500 events.
+
+The three-report private queue persists exact bodies, random UUIDv4 keys and random per-report 256-bit tokens before upload. Automatic work uses at most one slot and never evicts manual work. Offline retries, rate limits and process restarts reuse the original body/key/token; retries stop after 24 hours. A native persisted JobScheduler job handles pending work and seven-day content cleanup without a permanent diagnostics service. Android scheduling, force-stop and firmware restrictions can defer work; pending work is scheduled again when the backend opens. Receipt tokens stay private and never appear in exported reports or URLs. No GitHub credentials are embedded.
+
+**Pending** is local, **Queued** means durable server acceptance, and **Report sent** requires a confirmed URL in this exact GitHub repository. Cancellation applies only before delivery is claimed. Removing a local copy frees a queue slot and does not delete a public issue.
+
+Build `zsh adapter/tests/diagnostics/build.sh` after compiling the adapter. Install its `out/reader.apk` and `out/main.apk` on disposable emulators, then run `adb -s SERIAL shell am instrument -w hu.diagnostics/local.spotify.unified.DiagnosticTests`. Run `-e phase ui` for production Support/notice views with a fake transport. Run `-e phase seed`, force-stop `hu.diagnostics`, then `-e phase verify` for real process-restart persistence. The fixture never schedules the real HTTP upload service. No automated suite should create public test issues. See [test.7 validation](../reports/headunit-test.7.md) for actual coverage and remaining vehicle checks.

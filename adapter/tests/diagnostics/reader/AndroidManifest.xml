@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="hu.diagnostics.reader">
+ <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="33"/>
+ <application android:label="External diagnostics recipient" android:allowBackup="false">
+  <activity android:name="hu.diagnostics.reader.ReaderActivity" android:exported="true"/>
+  <provider android:name="hu.diagnostics.reader.Results" android:authorities="hu.diagnostics.reader.results" android:exported="true"/>
+ </application>
+</manifest>

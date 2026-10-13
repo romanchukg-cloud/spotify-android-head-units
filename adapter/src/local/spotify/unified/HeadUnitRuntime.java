@@ -59,7 +59,7 @@ public final class HeadUnitRuntime {
   if(context==null)return;int state=0;
   try{if(value!=null)state=(Integer)value.getClass().getMethod("getState").invoke(value);}catch(ReflectiveOperationException e){Log.w("SpotifyHU","Cannot read playback state");return;}
   if(local.spotify.close.PlaybackGate.blocked())BydMusicRhythm.stop();else BydMusicRhythm.playback(state);
-  if(state==lastState)return;lastState=state;
+  if(state==lastState)return;lastState=state;DiagnosticLog.playback(state,HeadUnitPlaybackService.connected());
   SharedPreferences.Editor e=HeadUnitPreferences.store().edit().putInt("last_state",state);
   // Initial NONE/STOPPED/CONNECTING must not erase the previous drive's intent.
   if(!local.spotify.close.PlaybackGate.accountTransition()){
@@ -68,8 +68,9 @@ public final class HeadUnitRuntime {
   e.commit();Log.i("SpotifyHU","Playback state="+state);
   if(AutoResumePolicy.busy(state))HeadUnitPlaybackService.keepAlive(context);
  }
+ public static synchronized int diagnosticState(){return lastState;}
  public static void explicitPause(){if(context!=null)explicitPause(context);}
- public static synchronized void sessionEnded(){BydMusicRhythm.stop();lastState=-1;}
+ public static synchronized void sessionEnded(){DiagnosticLog.playback(0,false);BydMusicRhythm.stop();lastState=-1;}
  public static synchronized void explicitPause(Context c){
   BydMusicRhythm.stop();HeadUnitPreferences.init(c);SharedPreferences p=HeadUnitPreferences.store();
   p.edit().putBoolean("was_playing",false).putBoolean("screen_playing",false).putBoolean("boot_restore_pending",false).remove("shutdown_playing").remove("resume_source").remove("resume_started").putLong("resume_generation",p.getLong("resume_generation",0)+1).commit();

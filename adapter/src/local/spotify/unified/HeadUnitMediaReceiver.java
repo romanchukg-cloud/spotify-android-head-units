@@ -9,7 +9,8 @@ public final class HeadUnitMediaReceiver extends BroadcastReceiver {
    KeyEvent e=i.getParcelableExtra(Intent.EXTRA_KEY_EVENT);
    if(e==null){Log.w("SpotifyHU","Media broadcast without key event");return;}
    Log.i("SpotifyHU","Media key="+e.getKeyCode()+" action="+e.getAction()+" repeat="+e.getRepeatCount());
-   if(e.getAction()==KeyEvent.ACTION_DOWN && e.getRepeatCount()==0)HeadUnitPlaybackService.command(c,e.getKeyCode(),"media-button");
+   boolean consumed=e.getAction()==KeyEvent.ACTION_DOWN && e.getRepeatCount()==0 && HeadUnitPlaybackService.command(c,e.getKeyCode(),"media-button");
+   DiagnosticLog.wheel(e.getAction(),e.getKeyCode(),e.getScanCode(),consumed);
   }else if(i!=null && Intent.ACTION_BOOT_COMPLETED.equals(i.getAction()))HeadUnitRuntime.receive(c,i);
   else Log.w("SpotifyHU","Unknown manifest broadcast action="+(i==null?"null":i.getAction()));
  }
