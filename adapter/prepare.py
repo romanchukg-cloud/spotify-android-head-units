@@ -88,7 +88,7 @@ E.ElementTree(vals).write(out/'res/values/unified_refs.xml',encoding='utf-8',xml
 bp.write(out/'res/values/public.xml',encoding='utf-8',xml_declaration=True)
 (base/'manifest-refs.json').write_text(json.dumps(patches,indent=2))
 m.write(out/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
-y=(out/'apktool.yml').read_text();y=re.sub(r'targetSdkVersion: \d+','targetSdkVersion: 33',y);(out/'apktool.yml').write_text(y)
+y=(out/'apktool.yml').read_text();y=re.sub(r'targetSdkVersion: \d+','targetSdkVersion: 33',y);y=re.sub(r'versionCode: \d+','versionCode: 95483',y);(out/'apktool.yml').write_text(y)
 print('Relocated',len(files),'UI classes;',len(ids),'resource IDs')
 
 exec((base/"patch_headunit.py").read_text(),{"__file__":str(base/"patch_headunit.py")})

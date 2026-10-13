@@ -18,7 +18,8 @@ for rel in ['bd/j.smali','android/support/v4/media/session/MediaSessionCompat$Ca
   return body
  s=re.sub(r'\.method[^\n]*\n.*?\.end method',patch,s,flags=re.S);p.write_text(s)
 p=out/'smali/android/support/v4/media/session/MediaSessionCompat.smali';s=(stable/'smali/android/support/v4/media/session/MediaSessionCompat.smali').read_text()
-s=re.sub(r'(\.method public setPlaybackState\([^\n]*\n    \.locals \d+\n)',r'\1\n    invoke-static {p1}, Llocal/spotify/unified/HeadUnitRuntime;->playback(Ljava/lang/Object;)V\n',s);p.write_text(s)
+s=re.sub(r'(\.method public setPlaybackState\([^\n]*\n    \.locals \d+\n)',r'\1\n    invoke-static {p1}, Llocal/spotify/unified/HeadUnitRuntime;->playback(Ljava/lang/Object;)V\n',s)
+s,count=re.subn(r'(\.method public release\(\)V\n    \.locals \d+\n)',r'\1\n    invoke-static {}, Llocal/spotify/unified/HeadUnitRuntime;->sessionEnded()V\n',s);assert count==1;p.write_text(s)
 p=out/'smali/le/d.smali';s=(stable/'smali/le/d.smali').read_text()
 a='''.method public final a(ILjava/lang/String;)Z
     .locals 2

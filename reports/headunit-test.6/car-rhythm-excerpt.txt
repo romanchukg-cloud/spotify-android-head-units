@@ -1,0 +1,79 @@
+10-13 17:15:02.709 26468 26468 I SpotifyHU: Playback state=2
+10-13 17:15:03.346 26468 26468 I SpotifyHU: Playback state=6
+10-13 17:15:04.179 26468 26468 I SpotifyHU: Auto resume confirmed PLAYING
+10-13 17:15:04.216  1006  2029 D AudioVisualizerControl: startAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:15:04.218  1006  2029 D AudioVisualizerControl: start Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=0}
+10-13 17:15:04.218  1006  2029 D AtmosphereLampCore: start: mode = 2 mCurrentMode = 0 mLastMode = 0
+10-13 17:15:04.218 26468 26509 I SpotifyCarRhythm: start accepted
+10-13 17:15:04.225 26468 26468 I SpotifyHU: Playback state=3
+10-13 17:15:04.236  1006  1767 D ColorVisualizerEffect: startSendColor colorMode = 2
+10-13 17:15:05.866  1006  1767 D ColorVisualizerEffect: send color 3 to ECU
+10-13 17:15:06.130  1006  1767 D ColorVisualizerEffect: send color 11 to ECU
+10-13 17:15:06.374  1006  1767 D ColorVisualizerEffect: send color 3 to ECU
+10-13 17:17:20.920  1006  3398 D AudioVisualizerControl: stopAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:20.920  1006  3398 D AudioVisualizerControl: stop Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=1}
+10-13 17:17:20.920  1006  3398 D AtmosphereLampCore: stop: mode = 2 mCurrentMode = 2 mLastMode = 0
+10-13 17:17:20.920  1006  3398 D AtmosphereLampCore: stopAll: mCurrentMode = 2 mLastMode = 0
+10-13 17:17:20.921  1006  1767 D ColorVisualizerEffect: stopSendColor
+10-13 17:17:20.921 26468 26509 I SpotifyCarRhythm: stop accepted
+10-13 17:17:20.975 26468 26468 I SpotifyHU: Playback state=2
+10-13 17:17:26.832  1006  1762 D AudioVisualizerControl: startAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:26.832  1006  1762 D AudioVisualizerControl: start Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=0}
+10-13 17:17:26.832  1006  1762 D AtmosphereLampCore: start: mode = 2 mCurrentMode = 0 mLastMode = 0
+10-13 17:17:26.834 26468 26509 I SpotifyCarRhythm: start accepted
+10-13 17:17:26.836 26468 26468 I SpotifyHU: Playback state=3
+10-13 17:17:26.836  1006  1767 D ColorVisualizerEffect: startSendColor colorMode = 2
+10-13 17:17:29.996  1006 26060 D AudioVisualizerControl: stopAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:29.996  1006 26060 D AudioVisualizerControl: stop Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=1}
+10-13 17:17:29.996  1006 26060 D AtmosphereLampCore: stop: mode = 2 mCurrentMode = 2 mLastMode = 0
+10-13 17:17:29.997  1006 26060 D AtmosphereLampCore: stopAll: mCurrentMode = 2 mLastMode = 0
+10-13 17:17:29.998 26468 26509 I SpotifyCarRhythm: stop accepted
+10-13 17:17:29.998  1006  1767 D ColorVisualizerEffect: stopSendColor
+10-13 17:17:30.059 26468 26468 I SpotifyHU: Playback state=2
+10-13 17:17:30.266 26468 26468 I SpotifyHU: Playback state=3
+10-13 17:17:30.279  1006  2371 D AudioVisualizerControl: startAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:30.279  1006  2371 D AudioVisualizerControl: start Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=0}
+10-13 17:17:30.279  1006  2371 D AtmosphereLampCore: start: mode = 2 mCurrentMode = 0 mLastMode = 0
+10-13 17:17:30.279 26468 26509 I SpotifyCarRhythm: start accepted
+10-13 17:17:30.284  1006  1767 D ColorVisualizerEffect: startSendColor colorMode = 2
+10-13 17:17:32.487  1006  3382 D AudioVisualizerControl: stopAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:32.487  1006  3382 D AudioVisualizerControl: stop Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=1}
+10-13 17:17:32.488  1006  3382 D AtmosphereLampCore: stop: mode = 2 mCurrentMode = 2 mLastMode = 0
+10-13 17:17:32.489  1006  3382 D AtmosphereLampCore: stopAll: mCurrentMode = 2 mLastMode = 0
+10-13 17:17:32.490 26468 26509 I SpotifyCarRhythm: stop accepted
+10-13 17:17:32.496  1006  1767 D ColorVisualizerEffect: stopSendColor
+10-13 17:17:32.535 26468 26468 I SpotifyHU: Playback state=2
+10-13 17:17:33.626  1006  3360 D AudioVisualizerControl: startAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:33.626  1006  3360 D AudioVisualizerControl: start Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=0}
+10-13 17:17:33.626  1006  3360 D AtmosphereLampCore: start: mode = 2 mCurrentMode = 0 mLastMode = 0
+10-13 17:17:33.627 26468 26509 I SpotifyCarRhythm: start accepted
+10-13 17:17:33.631 26468 26468 I SpotifyHU: Playback state=3
+10-13 17:17:33.631  1006  1767 D ColorVisualizerEffect: startSendColor colorMode = 2
+10-13 17:17:49.145  1006  3361 D AudioVisualizerControl: stopAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:49.145  1006  3361 D AudioVisualizerControl: stop Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=1}
+10-13 17:17:49.146  1006  3361 D AtmosphereLampCore: stop: mode = 2 mCurrentMode = 2 mLastMode = 0
+10-13 17:17:49.146  1006  3361 D AtmosphereLampCore: stopAll: mCurrentMode = 2 mLastMode = 0
+10-13 17:17:49.146 26468 26509 I SpotifyCarRhythm: stop accepted
+10-13 17:17:49.153  1006  1767 D ColorVisualizerEffect: stopSendColor
+10-13 17:17:49.191 26468 26468 I SpotifyHU: Playback state=2
+10-13 17:17:55.152  1006  3361 D AudioVisualizerControl: startAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@3be46c5 mAccOffState = false
+10-13 17:17:55.152  1006  3361 D AudioVisualizerControl: start Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=0}
+10-13 17:17:55.152  1006  3361 D AtmosphereLampCore: start: mode = 2 mCurrentMode = 0 mLastMode = 0
+10-13 17:17:55.153 26468 26509 I SpotifyCarRhythm: start accepted
+10-13 17:17:55.155 26468 26468 I SpotifyHU: Playback state=3
+10-13 17:17:55.170  1006  1767 D ColorVisualizerEffect: startSendColor colorMode = 2
+10-13 17:18:02.304  1006 26060 D AudioVisualizerControl: binderDied: Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@3be46c5, startCount=1}
+10-13 17:18:02.304  1006 26060 D AtmosphereLampCore: stop: mode = 2 mCurrentMode = 2 mLastMode = 0
+10-13 17:18:02.305  1006 26060 D AtmosphereLampCore: stopAll: mCurrentMode = 2 mLastMode = 0
+10-13 17:18:02.326  1006  1767 D ColorVisualizerEffect: stopSendColor
+10-13 17:18:08.803 30408 30408 I SpotifyHU: Playback state=2
+10-13 17:18:09.322 30408 30408 I SpotifyHU: Playback state=6
+10-13 17:18:09.593 30408 30408 I SpotifyHU: Auto resume confirmed PLAYING
+10-13 17:18:09.594  1006  1937 D AudioVisualizerControl: startAudioVisualizer: packageName = com.byd.mediacenter binder = android.os.BinderProxy@ce71499 mAccOffState = false
+10-13 17:18:09.596  1006  1937 D AudioVisualizerControl: start Session{packageName='com.byd.mediacenter', binder=android.os.BinderProxy@ce71499, startCount=0}
+10-13 17:18:09.596  1006  1937 D AtmosphereLampCore: start: mode = 2 mCurrentMode = 0 mLastMode = 0
+10-13 17:18:09.594 30408 30408 I SpotifyHU: Playback state=3
+10-13 17:18:09.596 30408 30445 I SpotifyCarRhythm: start accepted
+10-13 17:18:09.618  1006  1767 D ColorVisualizerEffect: startSendColor colorMode = 2
+10-13 17:20:06.342 30408 30408 I SpotifyHU: Playback state=6
+10-13 17:20:07.309 30408 30408 I SpotifyHU: Playback state=3

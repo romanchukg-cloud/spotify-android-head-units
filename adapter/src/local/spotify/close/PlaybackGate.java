@@ -70,6 +70,7 @@ public final class PlaybackGate {
     // Commit before acknowledging the synchronous cross-package call.
     if(!context.getSharedPreferences("local_close_gate",0).edit().putBoolean("closed",value).commit()) throw new IllegalStateException("Cannot persist playback gate");
     closed=value;
+    if(value)local.spotify.unified.BydMusicRhythm.stop();
     for(Map.Entry<MediaSession,PendingIntent> item:sessions.entrySet()) {
       MediaSession s=item.getKey();
       if(value) { s.getController().getTransportControls().pause(); }

@@ -1,6 +1,6 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Headunit-test.5 fixes acknowledged playback restoration and adds opt-in playback on a fresh player launch.
+This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Headunit-test.5 fixes acknowledged playback restoration and adds opt-in playback on a fresh player launch. Local test.6 adds the BYD ambient music rhythm.
 
 The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
 
@@ -26,7 +26,7 @@ export APKTOOL_JAR=/path/to/apktool_2.11.1.jar
 export HU_KEYSTORE=/path/to/your.keystore
 export HU_KEYSTORE_PASS=pass:your_password
 ./adapter/build.sh
-python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.5.apk --min-api 28
+python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.6.apk --min-api 28
 ```
 
 The optional variables `ANDROID_HOME` and `BUILD_TOOLS_VERSION` select the SDK and tools; local defaults match Android Studio on macOS. `adapter/tests/build.sh` builds test APKs signed with `HU_KEYSTORE` (the test keystore password defaults to `android`; set `HU_KEYSTORE_PASS` for another key). Only run instrumentation on disposable emulators: its checks change head-unit preferences and playback state.
@@ -37,7 +37,7 @@ The fresh input-to-APK build was verified before publication. ZIP timestamps and
 
 ```sh
 ./adapter/tests/build.sh
-adb install adapter/Spotify-5.5.0-HeadUnit-test.5.apk
+adb install -r adapter/Spotify-5.5.0-HeadUnit-test.6.apk
 adb install adapter/tests/out/client.apk
 adb install adapter/tests/out/test.apk
 python3 adapter/tests/matrix.py emulator-5554 35
@@ -75,3 +75,13 @@ Automatic restoration waits for a paused/stopped session advertising PLAY or PLA
 Screen wake is observed by the running backend. If vehicle firmware force-stops the whole package, [Android](https://developer.android.com/about/versions/15/behavior-changes-all#enhanced-stop-states) does not deliver its normal background wake/boot work until the package is allowed to run again. This adapter cannot override a vehicle task killer. The optional new-launch switch provides playback when the user opens Spotify again; real firmware sleep/reboot behavior still needs a signed-in hardware test.
 
 Run `./adapter/tests/resume/build.sh`, install its `out/ResumeTests.apk` on a disposable emulator and run `adb -s SERIAL shell am instrument -w hu.resume/hu.resume.ResumeTests`. This fixture uses the actual adapter playback service, runtime and preferences with a synthetic Android MediaBrowserService/MediaSession. It checks delayed readiness, dropped Play, acknowledgement, cancellation and timeout; it neither uses Spotify accounts nor produces audio. Do not install test fixtures on the user's car.
+
+## Local test.6: BYD ambient music rhythm
+
+`Spotify-5.5.0-HeadUnit-test.6.apk` adds the vehicle's existing ambient music rhythm. The Spotify backend observes its own MediaSession playback states and invokes the BYD audio service's `startAudioOutput` / `stopAudioOutput` off the main thread. Both calls use `com.byd.mediacenter` and one backend-lifetime Binder token. No lamp colour, brightness, or vehicle mode is written. Enable **Music rhythm** in the car's ambient-light menu; that menu owns the visual effect.
+
+The worker is created only on a detected BYD. PLAYING acquires the session. Short PAUSED/BUFFERING/CONNECTING/skipping gaps are allowed up to two seconds; repeated notifications cannot extend the deadline. Explicit pause/stop commands, stop-on-close, account transition, MediaSession release and shutdown request immediate cleanup. Process death releases the Binder token through the vehicle service. Navigation and other output audio may also influence the effect while Spotify owns a rhythm session, because BYD captures the output mix.
+
+This build uses the direct third-party app call documented for Tang EV / DiLink 5 / Android 12. A successful reflected call means the audio service accepted it; visible lamp activity also depends on firmware and the car's own rhythm switch. Other firmware can reject the hidden API or borrowed package name; errors are logged under `SpotifyCarRhythm`, without interrupting music. Automatic ADB/Shizuku fallback is not included: the Spotify adapter currently has no authorized local-shell transport.
+
+`zsh adapter/tests/rhythm/build.sh` builds an isolated synthetic-output fixture. Install it only on a disposable emulator and run `adb -s SERIAL shell am instrument -w hu.rhythm/local.spotify.unified.RhythmTests`. It tests timing, worker execution, cleanup and the production runtime/gate hooks, without using the car audio API or Spotify accounts. See [test.6 validation](../reports/headunit-test.6.md) for the actual build and hardware results.

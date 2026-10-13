@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="hu.rhythm">
+ <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="33"/>
+ <application android:label="Rhythm regression fixture" android:allowBackup="false"/>
+ <instrumentation android:name="local.spotify.unified.RhythmTests" android:targetPackage="hu.rhythm"/>
+</manifest>

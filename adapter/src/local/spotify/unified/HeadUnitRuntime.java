@@ -5,11 +5,14 @@ import android.util.Log;
 /** Playback intent belongs to the backend, not the UI process. */
 public final class HeadUnitRuntime {
  private static Context context;private static int lastState=-1;
- public static synchronized void init(Context c){
-  if(context!=null)return;context=c.getApplicationContext();HeadUnitPreferences.init(context);
+ public static void init(Context c){
+  local.spotify.close.PlaybackGate.init(c);
+  synchronized(HeadUnitRuntime.class){
+  if(context!=null)return;context=c.getApplicationContext();HeadUnitPreferences.init(context);BydMusicRhythm.init();
   IntentFilter f=new IntentFilter();f.addAction(Intent.ACTION_SCREEN_ON);f.addAction(Intent.ACTION_SCREEN_OFF);f.addAction(Intent.ACTION_SHUTDOWN);
   BroadcastReceiver receiver=new BroadcastReceiver(){public void onReceive(Context c,Intent i){receive(c,i);}};
   if(Build.VERSION.SDK_INT>=33)context.registerReceiver(receiver,f,Context.RECEIVER_NOT_EXPORTED);else context.registerReceiver(receiver,f);
+  }
  }
  public static void broadcast(Context c,Intent i){Log.i("SpotifyHU","Broadcast action="+(i==null?"null":i.getAction()));}
  public static void receive(Context c,Intent i){
@@ -18,7 +21,7 @@ public final class HeadUnitRuntime {
   else if(Intent.ACTION_SCREEN_ON.equals(action)){
    long off=p.getLong("screen_off",-1);boolean resume=HeadUnitPreferences.resume() && off>=0 && SystemClock.elapsedRealtime()-off>=120000 && p.getBoolean("screen_playing",false);
    p.edit().remove("screen_off").remove("screen_playing").commit();if(resume)requestResume(c,"screen");
-  }else if(Intent.ACTION_SHUTDOWN.equals(action)){p.edit().putBoolean("shutdown_playing",p.getBoolean("was_playing",false)).commit();}
+  }else if(Intent.ACTION_SHUTDOWN.equals(action)){BydMusicRhythm.stop();p.edit().putBoolean("shutdown_playing",p.getBoolean("was_playing",false)).commit();}
   else if(Intent.ACTION_BOOT_COMPLETED.equals(action)){
    if(HeadUnitPreferences.resume() && p.getBoolean("boot_restore_pending",false))requestResume(c,"boot");
   }else Log.w("SpotifyHU","Unknown broadcast action="+action);
@@ -55,6 +58,7 @@ public final class HeadUnitRuntime {
  public static synchronized void playback(Object value){
   if(context==null)return;int state=0;
   try{if(value!=null)state=(Integer)value.getClass().getMethod("getState").invoke(value);}catch(ReflectiveOperationException e){Log.w("SpotifyHU","Cannot read playback state");return;}
+  if(local.spotify.close.PlaybackGate.blocked())BydMusicRhythm.stop();else BydMusicRhythm.playback(state);
   if(state==lastState)return;lastState=state;
   SharedPreferences.Editor e=HeadUnitPreferences.store().edit().putInt("last_state",state);
   // Initial NONE/STOPPED/CONNECTING must not erase the previous drive's intent.
@@ -65,8 +69,9 @@ public final class HeadUnitRuntime {
   if(AutoResumePolicy.busy(state))HeadUnitPlaybackService.keepAlive(context);
  }
  public static void explicitPause(){if(context!=null)explicitPause(context);}
+ public static synchronized void sessionEnded(){BydMusicRhythm.stop();lastState=-1;}
  public static synchronized void explicitPause(Context c){
-  HeadUnitPreferences.init(c);SharedPreferences p=HeadUnitPreferences.store();
+  BydMusicRhythm.stop();HeadUnitPreferences.init(c);SharedPreferences p=HeadUnitPreferences.store();
   p.edit().putBoolean("was_playing",false).putBoolean("screen_playing",false).putBoolean("boot_restore_pending",false).remove("shutdown_playing").remove("resume_source").remove("resume_started").putLong("resume_generation",p.getLong("resume_generation",0)+1).commit();
  }
 }
