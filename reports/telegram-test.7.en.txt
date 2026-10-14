@@ -1,0 +1,22 @@
+🎵 Spotify for Android Head Units — test.7
+
+New: built-in Support and diagnostics!
+
+• Settings → Support → Send diagnostics: preview a technical report and send it directly from the app.
+• Optional automatic reports for measured integration failures — at most one new report per day. The first-use checkbox is selected by default; sending starts after Continue. Change your choice anytime in Support.
+• Offline queue, delivery status, pending-report cancellation and ZIP export. Manual sending works with automatic reports off.
+• Fixed the build/version label in settings.
+
+Reports exclude account data, song/playlist names, location and screenshots. A limited technical summary may appear in our PUBLIC GitHub Issues.
+
+📥 Download page:
+https://romanchukg-cloud.github.io/spotify-android-head-units/
+
+Direct APK:
+https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.7/Spotify-5.5.0-HeadUnit-test.7.apk
+
+Install the APK on your head unit and choose Update. Do not uninstall your current build. Android 9+.
+
+💡 BYD lighting: enable Music rhythm in the CAR'S own ambient-light settings. DiLink 5.1 / Android 13 lighting remains unverified.
+
+Experimental test release; diagnostics tested on Android 9, 12 and 13 emulators.

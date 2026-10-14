@@ -4,15 +4,19 @@
 
 An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
 
-[Download test.6 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.6/Spotify-5.5.0-HeadUnit-test.6.apk) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
+[Download test.7 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.7/Spotify-5.5.0-HeadUnit-test.7.apk) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
 
 ## What has been tested
 
-Headunit-test.6: APK audit 31 PASS / 0 FAIL. Android 9 and 15 emulators each pass 18 synthetic rhythm checks and 19 playback-resume checks. On a 2024 BYD Tang EV with DiLink 5 / Android 12, the in-place update preserved sign-in; music starts the native rhythm, pause stops it and process death releases it. The visible lamp response was confirmed by the user.
+Headunit-test.7: APK audit 39 PASS / 0 FAIL. Android 9, 12 and 13 emulators each passed 94 diagnostic logic checks, 7 Support/notice UI checks, 8 process-restart persistence checks, 18 synthetic rhythm checks and 19 playback-resume checks. Diagnostics delivery was tested with a fake transport; no production Spotify report was submitted.
 
-**Experimental headunit-test.6.** Real vehicle sleep/reboot restoration, long-term use, real account A → B → A, offline downloads, steering-wheel controls and other BYD/AAOS hardware remain unverified. The broader account and UI suites were not rerun for test.6.
+Experimental headunit-test.7. This version has not been installed on the car. The earlier test.6 lighting integration was verified on a BYD Tang EV with DiLink 5 / Android 12. Physical DiLink 5.1 / Android 13 lighting, real vehicle sleep/reboot, real account switching and other head units remain unverified.
 
-Android 9+ (API 28). BYD rhythm is verified on DiLink 5 / Android 12; DiLink 5.1 / Android 13 and other firmware are not yet verified. AAOS and GENERIC profiles are implemented; real head units from other manufacturers and AAOS remain unverified.
+Android 9+ (API 28). BYD, AAOS and GENERIC profiles are implemented; compatibility depends on vehicle firmware.
+
+## Support and diagnostics
+
+Open Head unit settings → Support. Send diagnostics lets you preview approved technical data before sending. Reports go to our shared server and a limited summary may appear in this project’s PUBLIC GitHub Issues. Automatically send diagnostics is selected on the first-use notice and starts only after Continue; you can turn it off in Support. Automatic reports cover measured integration failures only, at most one new report per day. Manual sending, pending status/cancellation and ZIP export remain available with automatic sending off. Reports exclude account data, song/playlist names, location and screenshots. Technical metadata is not a guarantee of anonymity.
 
 ## How to install
 
@@ -23,16 +27,16 @@ Android 9+ (API 28). BYD rhythm is verified on DiLink 5 / Android 12; DiLink 5.1
 5. To add another driver: Head unit settings → Accounts → Add account · QR. Switching stops playback and restarts the player.
 6. Check music playback and controls. Remove the old separate BYD interface only after the new APK passes these checks.
 
-Android 9+ · 55.2 MiB · unofficial adaptation
+Android 9+ · 55.3 MiB · unofficial adaptation
 
 ## Verify the file
 
-`Spotify-5.5.0-HeadUnit-test.6.apk` · 57 880 576 bytes
+`Spotify-5.5.0-HeadUnit-test.7.apk` · 57 946 112 bytes
 
 SHA-256 of the current test build:
 
 ```text
-f5eac6dcb254d095bc9bf26a7aabaf111ea6af71079fcccd79b4f3463cf4c086
+9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7
 ```
 
 Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.
@@ -41,4 +45,4 @@ Unofficial experimental project. Spotify and BYD are trademarks of their respect
 
 Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs.
 
-[Java / build](adapter/) · [What has been tested](reports/headunit-test.6.md)
+[Java / build](adapter/) · [What has been tested](reports/headunit-test.7.md)

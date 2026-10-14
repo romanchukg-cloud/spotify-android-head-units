@@ -1,0 +1,2 @@
+PASS diagnostics seed checks=2
+

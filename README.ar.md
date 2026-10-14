@@ -6,15 +6,19 @@
 
 مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.
 
-[تنزيل APK test.6](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.6/Spotify-5.5.0-HeadUnit-test.6.apk) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
+[تنزيل APK test.7](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.7/Spotify-5.5.0-HeadUnit-test.7.apk) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
 
 ## ما الذي تم اختباره؟
 
-Headunit-test.6: اجتاز فحص APK عدد 31 اختباراً دون إخفاق. اجتاز كل من محاكي Android 9 و15 عدد 18 اختباراً اصطناعياً للإيقاع و19 اختباراً لاستئناف التشغيل. في BYD Tang EV موديل 2024 مع DiLink 5 وAndroid 12، حافظ التحديث على تسجيل الدخول؛ تبدأ الموسيقى الإيقاع الأصلي، ويوقفه الإيقاف المؤقت، ويحرر إنهاء العملية الجلسة. أكّد المستخدم استجابة الإضاءة المرئية.
+Headunit-test.7: APK audit 39 PASS / 0 FAIL. Android 9, 12 and 13 emulators each passed 94 diagnostic logic checks, 7 Support/notice UI checks, 8 process-restart persistence checks, 18 synthetic rhythm checks and 19 playback-resume checks. Diagnostics delivery was tested with a fake transport; no production Spotify report was submitted.
 
-**نسخة headunit-test.6 تجريبية.** لم يتم التحقق بعد من الاستئناف بعد السكون الحقيقي أو إعادة تشغيل السيارة، والاستخدام الطويل، والتبديل الحقيقي A → B → A، والتنزيل دون اتصال، وأزرار المقود، ووحدات BYD/AAOS الأخرى. لم تُعد اختبارات الحسابات والواجهة الكاملة للإصدار test.6.
+Experimental headunit-test.7. This version has not been installed on the car. The earlier test.6 lighting integration was verified on a BYD Tang EV with DiLink 5 / Android 12. Physical DiLink 5.1 / Android 13 lighting, real vehicle sleep/reboot, real account switching and other head units remain unverified.
 
-Android 9 أو أحدث (API 28). تم التحقق من إيقاع BYD على DiLink 5 وAndroid 12؛ لم يتم التحقق بعد من DiLink 5.1 وAndroid 13 والبرامج الثابتة الأخرى. تم تنفيذ ملفات AAOS وGENERIC؛ لم يتم التحقق من وحدات الشركات الأخرى أو AAOS الفعلية.
+Android 9+ (API 28). BYD, AAOS and GENERIC profiles are implemented; compatibility depends on vehicle firmware.
+
+## Support and diagnostics
+
+Open Head unit settings → Support. Send diagnostics lets you preview approved technical data before sending. Reports go to our shared server and a limited summary may appear in this project’s PUBLIC GitHub Issues. Automatically send diagnostics is selected on the first-use notice and starts only after Continue; you can turn it off in Support. Automatic reports cover measured integration failures only, at most one new report per day. Manual sending, pending status/cancellation and ZIP export remain available with automatic sending off. Reports exclude account data, song/playlist names, location and screenshots. Technical metadata is not a guarantee of anonymity.
 
 ## طريقة التثبيت
 
@@ -25,16 +29,16 @@ Android 9 أو أحدث (API 28). تم التحقق من إيقاع BYD على D
 5. لإضافة سائق آخر: إعدادات الوحدة الرئيسية ← الحسابات ← إضافة حساب · QR. يوقف التبديل الموسيقى ويعيد تشغيل المشغل.
 6. تحقّق من تشغيل الموسيقى وأدوات التحكم. لا تزل تطبيق واجهة BYD القديم المنفصل إلا بعد نجاح اختبار ملف APK الجديد.
 
-Android 9+ · 55.2 MiB · تعديل غير رسمي
+Android 9+ · 55.3 MiB · تعديل غير رسمي
 
 ## التحقق من الملف
 
-`Spotify-5.5.0-HeadUnit-test.6.apk` · 57 880 576 bytes
+`Spotify-5.5.0-HeadUnit-test.7.apk` · 57 946 112 bytes
 
 بصمة SHA-256 للإصدار التجريبي الحالي:
 
 ```text
-f5eac6dcb254d095bc9bf26a7aabaf111ea6af71079fcccd79b4f3463cf4c086
+9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7
 ```
 
 مشروع تجريبي غير رسمي. Spotify وBYD علامتان تجاريتان لمالكيهما المعنيين.
@@ -43,6 +47,6 @@ f5eac6dcb254d095bc9bf26a7aabaf111ea6af71079fcccd79b4f3463cf4c086
 
 تتوفر شيفرة Java الخاصة بالتكامل وسكربتات التعديل والبناء والتدقيق واختبارات المحاكيات في المستودع. خدمة Spotify وواجهة BYD المغلقتان تُستخدمان كمدخلات بناء محلية.
 
-[Java / build](adapter/) · [ما الذي تم اختباره؟](reports/headunit-test.6.md)
+[Java / build](adapter/) · [ما الذي تم اختباره؟](reports/headunit-test.7.md)
 
 </div>

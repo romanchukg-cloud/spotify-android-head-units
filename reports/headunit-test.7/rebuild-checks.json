@@ -1,0 +1,8 @@
+{
+  "zip_entries_identical_to_tested_build": true,
+  "previous_tested_sha256": "5e5d49cfa0451eef5ff18b4845462e86dbf36ea2e25e5b610f7d540a8b07dee6",
+  "release_sha256": "9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7",
+  "install_r_preserved_preferences": true,
+  "automatic_opt_out_preserved": true,
+  "production_reports_queued": 0
+}

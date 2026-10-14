@@ -1,0 +1,2 @@
+PASS diagnostics verify checks=6
+

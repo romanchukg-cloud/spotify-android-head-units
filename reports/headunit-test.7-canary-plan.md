@@ -42,7 +42,7 @@ The compact frozen body SHA-256 is `521b946eeafcbfcb4e9c27e1ff2a2c0dbe3ca0ba2946
 
 ## Execution boundaries
 
-1. Use only a dedicated Spotify emulator; no car or signed-in user installation. Verify the installed APK hash is `5e5d49cfa0451eef5ff18b4845462e86dbf36ea2e25e5b610f7d540a8b07dee6`.
+1. Use only a dedicated Spotify emulator; no car or signed-in user installation. Verify the installed APK hash is `9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7`.
 2. Keep automatic sending opted out. Persist the approved synthetic manual request in the private queue before starting the backend. No GitHub credential enters the APK.
 3. Start the real app/job, confirm durable Queued and then Report sent with a URL in the exact Spotify repository. Observe the native scheduler rather than posting directly from a shell script.
 4. Verify the public issue marker/receipt and synthetic notice. Replay once with the same request identity only after the first delivery is confirmed; confirm the same receipt/issue.

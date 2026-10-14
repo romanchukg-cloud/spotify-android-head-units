@@ -1,12 +1,12 @@
 # HeadUnit test.7 — Support and shared diagnostics
 
-Prepared locally on 2026-10-14. This is a signed client build, not a published release or a vehicle installation. The public release/site remains test.6. The last verified car installation remains test.6 on DiLink 5 / Android 12.
+Signed test.7 prerelease published on 2026-10-14. The last verified car installation remains test.6 on DiLink 5 / Android 12; test.7 has not been installed on the car. [Release](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.7).
 
 ## Build identity and update compatibility
 
 - File: `Spotify-5.5.0-HeadUnit-test.7.apk`
 - Package: `com.spotify.music`; upstream version: `5.5.0.16251`; versionCode: **95484** (published test.6: 95483).
-- SHA-256: `5e5d49cfa0451eef5ff18b4845462e86dbf36ea2e25e5b610f7d540a8b07dee6`
+- SHA-256: `9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7`
 - Size: **57,946,112 bytes**.
 - Original signing certificate SHA-256: `a29d95f7a8eda7508dd97fa0c7c6889a65677050e69e4c0f14123d42d33dc2b1`, matching test.6. The signing key was not changed or copied.
 - Non-debuggable; minimum API 28; target API 33; all three DEX files remain version 039. Signature and 16-KiB ZIP/native alignment pass.
@@ -37,7 +37,7 @@ On disposable AOSP emulators Android 9/API28, Android 12/API32 and Android 13/AP
 
 The production first-use/Support views with fake delivery passed **7 checks per API**. Real process-termination persistence passed **2 seed + 6 restart checks per API**, including automatic/manual exact bodies, keys/tokens and the automatic daily limit. Rhythm and resume regression fixtures passed **18 and 19 checks per API**, respectively. The Android 12 tablet UI fixture required inspecting interactive accessibility windows rather than only the active root; the final suite passed. These are emulator tests, not vehicle or audible playback verification.
 
-The exact production APK was installed on all three emulators and its installed SHA-256 matched the artifact. The new-player launch on API28 displayed the default-checked notice through the factory hook. Production Support/notice views were inspected on API28/32/33. On API33, public preview was opened and cancelled; Save ZIP completed through the real DocumentsUI picker, and the saved ZIP was read and checked for the exact project/schema/build and its two allowed entries. All production emulator installations were left with explicit automatic opt-out and zero queued reports, avoiding real issue submissions. Existing signing/package settings were preserved; no signed-in vehicle/account data was used in these tests.
+The implementation APK (SHA-256 `5e5d49cfa0451eef5ff18b4845462e86dbf36ea2e25e5b610f7d540a8b07dee6`) was installed and hash-checked on all three emulators. The release APK was freshly rebuilt from the same source: every ZIP entry is byte-identical to that tested build; archive/signing packaging accounts for the different whole-file hash. The release APK was installed again with `install -r` on Android 13, its installed hash was checked, and existing preferences/automatic opt-out were preserved. See [rebuild checks](headunit-test.7/rebuild-checks.json). The new-player launch on API28 displayed the default-checked notice through the factory hook. Production Support/notice views were inspected on API28/32/33. On API33, public preview was opened and cancelled; Save ZIP completed through the real DocumentsUI picker, and the saved ZIP was read and checked for the exact project/schema/build and its two allowed entries. All production emulator installations were left with explicit automatic opt-out and zero queued reports, avoiding real issue submissions. Existing signing/package settings were preserved; no signed-in vehicle/account data was used in these tests.
 
 Read-only production HTTPS checks returned healthy API v1, schema versions `[1,2]`, intake/delivery enabled and automatic reporting/grouping enabled. **No Spotify production report canary or public test issue was created.** Common server connectivity or fake delivery is not an end-to-end verification of this client on a real car.
 
@@ -45,4 +45,4 @@ Read-only production HTTPS checks returned healthy API v1, schema versions `[1,2
 
 New client files: `DiagnosticActivity`, `DiagnosticNoticeActivity`, `DiagnosticLog`, `DiagnosticSchema`, `DiagnosticReport`, `DiagnosticReportProvider`, `DiagnosticsConfig`, `DiagnosticsQueue`, `DiagnosticTransport`, `DiagnosticHttps`, `DiagnosticUploadJob`, `AutomaticDiagnostics` and `DiagnosticText`. Settings/provider/factory and playback/BYD/wheel hooks integrate them. Build generators, manifest patching, audit, adapter README and `adapter/tests/diagnostics` were updated. Internal shared support/server materials remain local and ignored; no other project's code was changed.
 
-Still required: install this APK as an update on the car, confirm UI/first-use consent and signed-in data preservation, exercise a real safe support case and verify the resulting receipt/issue when explicitly authorized. Physical DiLink 5.1 / Android 13 lighting compatibility, vehicle sleep/reboot and two-account playback remain unverified. Source/APK preparation does not change the installed vehicle version or publish the release.
+Still required: install this APK as an update on the car, confirm UI/first-use consent and signed-in data preservation, exercise a real safe support case and verify the resulting receipt/issue when explicitly authorized. Physical DiLink 5.1 / Android 13 lighting compatibility, vehicle sleep/reboot and two-account playback remain unverified. Publication does not change the installed vehicle version or establish physical compatibility.

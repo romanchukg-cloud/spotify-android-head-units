@@ -4,15 +4,19 @@
 
 Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.
 
-[Скачать APK test.6](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.6/Spotify-5.5.0-HeadUnit-test.6.apk) · [🌐 Spotify для Android-магнитол](https://romanchukg-cloud.github.io/spotify-android-head-units/ru/)
+[Скачать APK test.7](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.7/Spotify-5.5.0-HeadUnit-test.7.apk) · [🌐 Spotify для Android-магнитол](https://romanchukg-cloud.github.io/spotify-android-head-units/ru/)
 
 ## Что уже проверено
 
-Headunit-test.6: аудит APK — 31 PASS / 0 FAIL. Android 9 и 15: на каждом эмуляторе пройдены 18 синтетических проверок ритма и 19 проверок восстановления воспроизведения. На BYD Tang EV 2024 с DiLink 5 / Android 12 обновление сохранило вход; музыка запускает штатный ритм, пауза останавливает его, завершение процесса освобождает сеанс. Пользователь подтвердил видимую реакцию подсветки.
+Headunit-test.7: APK audit 39 PASS / 0 FAIL. Android 9, 12 and 13 emulators each passed 94 diagnostic logic checks, 7 Support/notice UI checks, 8 process-restart persistence checks, 18 synthetic rhythm checks and 19 playback-resume checks. Diagnostics delivery was tested with a fake transport; no production Spotify report was submitted.
 
-**Экспериментальная headunit-test.6.** Ещё не проверены восстановление после реального сна/перезапуска автомобиля, длительная работа, настоящее переключение A → B → A, офлайн-загрузки, кнопки руля и другие магнитолы BYD/AAOS. Полные аккаунтные и UI-тесты для test.6 повторно не запускались.
+Experimental headunit-test.7. This version has not been installed on the car. The earlier test.6 lighting integration was verified on a BYD Tang EV with DiLink 5 / Android 12. Physical DiLink 5.1 / Android 13 lighting, real vehicle sleep/reboot, real account switching and other head units remain unverified.
 
-Android 9+ (API 28). Ритм BYD проверен на DiLink 5 / Android 12; DiLink 5.1 / Android 13 и другие прошивки ещё не проверены. Профили AAOS и GENERIC реализованы; реальные магнитолы других производителей и AAOS ещё не проверены.
+Android 9+ (API 28). BYD, AAOS and GENERIC profiles are implemented; compatibility depends on vehicle firmware.
+
+## Support and diagnostics
+
+Open Head unit settings → Support. Send diagnostics lets you preview approved technical data before sending. Reports go to our shared server and a limited summary may appear in this project’s PUBLIC GitHub Issues. Automatically send diagnostics is selected on the first-use notice and starts only after Continue; you can turn it off in Support. Automatic reports cover measured integration failures only, at most one new report per day. Manual sending, pending status/cancellation and ZIP export remain available with automatic sending off. Reports exclude account data, song/playlist names, location and screenshots. Technical metadata is not a guarantee of anonymity.
 
 ## Как установить
 
@@ -27,12 +31,12 @@ Android 9+ · 55,2 MiB · неофициальная адаптация
 
 ## Проверка файла
 
-`Spotify-5.5.0-HeadUnit-test.6.apk` · 57 880 576 bytes
+`Spotify-5.5.0-HeadUnit-test.7.apk` · 57 946 112 bytes
 
 SHA-256 текущей тестовой сборки:
 
 ```text
-f5eac6dcb254d095bc9bf26a7aabaf111ea6af71079fcccd79b4f3463cf4c086
+9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7
 ```
 
 Неофициальный экспериментальный проект. Spotify и BYD — товарные знаки соответствующих владельцев.
@@ -41,4 +45,4 @@ f5eac6dcb254d095bc9bf26a7aabaf111ea6af71079fcccd79b4f3463cf4c086
 
 Наш Java-код интеграции, патчи, скрипты сборки, аудит и тесты эмуляторов доступны в репозитории. Закрытый SDK Spotify и интерфейс BYD — локальные входные файлы сборки.
 
-[Java / build](adapter/) · [Что уже проверено](reports/headunit-test.6.md)
+[Java / build](adapter/) · [Что уже проверено](reports/headunit-test.7.md)
