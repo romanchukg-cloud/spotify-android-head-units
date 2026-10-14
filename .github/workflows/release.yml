@@ -55,8 +55,11 @@ jobs:
           mkdir -p "$RUNNER_TEMP/bin"
           printf '#!/bin/sh\nexec java -jar "%s" "$@"\n' "$RUNNER_TEMP/apktool.jar" > "$RUNNER_TEMP/bin/apktool"
           chmod +x "$RUNNER_TEMP/bin/apktool" && echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
-          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
-          PLATFORM=$(ls -d "$ANDROID_HOME"/platforms/android-* | sort -V | tail -1)
+          # Same tools as build.sh; otherwise the newest stable ones (no preview platforms).
+          BT="$ANDROID_HOME/build-tools/35.0.0"
+          [ -d "$BT" ] || BT=$(ls -d "$ANDROID_HOME"/build-tools/* | grep -E '/[0-9.]+$' | sort -V | tail -1)
+          PLATFORM="$ANDROID_HOME/platforms/android-35"
+          [ -d "$PLATFORM" ] || PLATFORM=$(ls -d "$ANDROID_HOME"/platforms/android-* | grep -E '/android-[0-9]+$' | sort -V | tail -1)
           { echo "BT=$BT"; echo "BUILD_TOOLS_VERSION=$(basename "$BT")"; echo "ANDROID_JAR=$PLATFORM/android.jar"; echo "ANDROID_SDK_ROOT=$ANDROID_HOME"; } >> "$GITHUB_ENV"
 
       - name: Base release
