@@ -25,4 +25,5 @@ generated/
 /support/
 
 tests/signin/out/
+tests/updates/out/
 incremental/

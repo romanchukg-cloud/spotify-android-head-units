@@ -1,6 +1,6 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.7 adds Support and structured diagnostics. Published test.8 keeps the Spotify sign-in stable on head units. Build identity and output filename are generated from `build-info.json`.
+This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.7 adds Support and structured diagnostics. Published test.8 keeps the Spotify sign-in stable on head units. Test.9 adds in-app updates. Build identity and output filename are generated from `build-info.json`.
 
 The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
 
@@ -35,9 +35,9 @@ The fresh input-to-APK build was verified before publication. ZIP timestamps and
 
 ## Releasing without the input APKs
 
-`incremental_release.py` builds the next test release from the previous published APK: it re-applies the smali patch section added since that release (`--since`, a `# …` heading in `patch_headunit.py`) to the published backend DEX, recompiles the helper DEX from `src/` and sets the `build-info.json` versionCode. Resources, the UI DEX and native libraries stay byte-identical, and the script refuses a base APK whose SHA-256 differs from its `reports/<release>/release.json`.
+`incremental_release.py` builds the next test release from the previous published APK: it re-applies the smali patch section added since that release (`--since`, a `# …` heading in `patch_headunit.py`) to the published backend DEX, recompiles the helper DEX from `src/`, adds the section's `MANIFEST_ADDITIONS` (permissions and receivers) to the binary manifest and sets the `build-info.json` versionCode. A section without smali changes keeps the backend DEX byte-identical. Resources, the UI DEX and native libraries stay byte-identical, and the script refuses a base APK whose SHA-256 differs from its `reports/<release>/release.json`.
 
-The **Release** GitHub Actions workflow (`.github/workflows/release.yml`, run manually) does this, signs with the `HU_KEYSTORE_B64` repository secret (base64 of the release keystore; optional `HU_KEYSTORE_PASS`, `HU_KEY_ALIAS`, `HU_KEY_PASS` default to the debug-keystore values), requires the certificate of the base release, runs the sign-in tests and both APK audits, uploads the APK as an artifact and, with `publish`, creates the prerelease from `reports/<label>/release-notes.md`. `build.sh` with the prepared inputs remains the reference build.
+The **Release** GitHub Actions workflow (`.github/workflows/release.yml`, run manually) does this, signs with the `HU_KEYSTORE_B64` repository secret (base64 of the release keystore; optional `HU_KEYSTORE_PASS`, `HU_KEY_ALIAS`, `HU_KEY_PASS` default to the debug-keystore values), requires the certificate of the base release, runs the sign-in and updater tests and both APK audits, updates the published base APK in place on Android 9 and 13 emulators (`tests/updates/emulator.sh`), uploads the APK and the update-feed record as an artifact and, with `publish`, creates the prerelease from `reports/<label>/release-notes.md`. `build.sh` with the prepared inputs remains the reference build.
 
 ## Verification
 
@@ -124,3 +124,27 @@ Spotify Automotive 5.5.0 signs out, and deletes its saved login, in four situati
 `tests/signin/run.sh` runs plain-JVM checks of the decisions: ID pinning, reason classification, the stale-removal filter, one recovery per boot and the diagnostics codes (`ANDROID_JAR` may point at any full framework jar). `../tools/apk_audit.py` adds three `Sign-in /` checks for the SDK hooks, and every new smali patch must match exactly once.
 
 Checked without the build inputs or the signing key: the new patches applied to smali disassembled from the published test.7 APK (each matched once), the patched DEX and the helper DEX assembled, all 35 cross-DEX helper references resolve, the three new audit checks pass on the patched smali and fail on test.7, and the 39 JVM checks pass. The published APK was then built by the Release workflow from the test.7 APK ([run](https://github.com/romanchukg-cloud/spotify-android-head-units/actions/runs/38588766001)): its certificate equals test.7 and the release audit passes 42/42. **Not yet verified:** a build from the prepared inputs, a real sign-in on an emulator or head unit, an actual `ANDROID_ID` change and recovery after a power cut.
+
+## Test.9: App updates
+
+Spotify updates itself from this project's published test builds, like Google Maps for BYD. Nothing is installed silently: Android's own **Update** confirmation always completes the installation.
+
+- **Feed.** Once a day while the backend process runs (a persisted JobScheduler job, ID 9158, run by the existing `DiagnosticUploadJob` service), `AppUpdates` reads `https://diagnostics.localcharge.app/v1/updates/spotify-android-head-units` over HTTPS without redirects. `UpdateFeed` accepts exactly the server's schema-1 record for this project: build `N`, version `test.N`, versionCode `95477 + N`, package `com.spotify.music`, minSdk 28, and the exact release tag and asset URL `v5.5.0-headunit-test.N/Spotify-5.5.0-HeadUnit-test.N.apk`. Only a higher build and versionCode is an update. A 404 means no published record; failures retry after at least an hour or the server's `Retry-After`.
+- **Download.** By default automatic and on Wi-Fi only; Head unit settings → **Updates** has switches for automatic checks, automatic downloads and Wi-Fi only, and buttons to check, download/resume, install and pause. `UpdateDownload` stores the APK in private no-backup storage, resumes with a matching `Content-Range`, follows redirects only to GitHub's release hosts and accepts exactly the feed's size and SHA-256.
+- **Verification.** Before staging and again before installing, the APK must be this package with the feed's versionCode, a minSdk the device supports, and the single release certificate `a29d95f7…2dc2b1` pinned in `UpdateFeed`. A file that fails is deleted and that build is not downloaded automatically again.
+- **Installation.** A `PackageInstaller` session (user action required on Android 12+) reports to the non-exported `UpdateResultReceiver` with a per-session nonce. The foreground UI opens Android's confirmation activity only after checking that it belongs to a system package. Spotify restarts; sign-in, accounts and settings are kept. If Android first asks to allow installs from Spotify, the app opens that setting and offers the update again on return.
+- **Offer.** When an update is verified, opening the player shows one offer per build, only while music is not playing and the diagnostics notice is not pending. Updates stays available in Head unit settings.
+
+All updater work runs on one backend worker thread; no updater failure can reach the uncaught-exception handler of the music process. The manifest gains only `REQUEST_INSTALL_PACKAGES` and the private receiver (`MANIFEST_ADDITIONS` in `patch_headunit.py`).
+
+`tests/updates/run.sh` runs 152 plain-JVM checks: the live test.8 record, every feed field and URL rule, trusted redirect hosts, full/resumed/ignored-range/corrupt/oversized/paused downloads and the update texts in five languages. `../tools/apk_audit.py` adds three `Updates /` checks.
+
+**Publishing a release to the feed** is a manual operator step; the server does not read GitHub. After the GitHub release is public, take `spotify-update-test.N.json` from the Release workflow artifact (or run `python3 tools/update_record.py reports/headunit-test.N/release.json reports/headunit-test.N/update-notes.txt`), check it against the release, then:
+
+```sh
+scp spotify-update-test.N.json loch:/opt/byd-diagnostics/staging/spotify-update-test.N.json
+ssh loch 'python3 /opt/byd-diagnostics/app/publish_update.py /opt/byd-diagnostics/staging/spotify-update-test.N.json'
+curl -fsS https://diagnostics.localcharge.app/v1/updates/spotify-android-head-units
+```
+
+The server caches a record for five minutes and rejects lower builds or versionCodes. test.8 and earlier have no updater: install test.9 manually once.

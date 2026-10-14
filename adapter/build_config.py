@@ -6,9 +6,13 @@ BUILD=json.loads((ROOT/'build-info.json').read_text())
 assert re.fullmatch(r'headunit-test\.\d+',BUILD['label'])
 assert re.fullmatch(r'Spotify-5\.5\.0-HeadUnit-test\.\d+\.apk',BUILD['apk_name'])
 assert isinstance(BUILD['version_code'],int) and BUILD['version_code']>95483
+NUMBER=int(BUILD['label'].rsplit('.',1)[1])
+# The shared update server accepts exactly versionCode 95477 + N for test.N.
+assert BUILD['version_code']==95477+NUMBER and BUILD['apk_name']=='Spotify-5.5.0-HeadUnit-test.%d.apk'%NUMBER
 def generate():
  p=ROOT/'generated/local/spotify/unified/HeadUnitBuild.java';p.parent.mkdir(parents=True,exist_ok=True)
  p.write_text('package local.spotify.unified;\npublic final class HeadUnitBuild {\n'
               f' public static final String LABEL="{BUILD["label"]}";\n'
-              f' public static final int VERSION_CODE={BUILD["version_code"]};\n'+'}\n')
+              f' public static final int VERSION_CODE={BUILD["version_code"]};\n'
+              f' public static final int BUILD={NUMBER};\n'+'}\n')
 if __name__=='__main__':generate()

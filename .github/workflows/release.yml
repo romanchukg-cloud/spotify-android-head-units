@@ -1,6 +1,7 @@
 # Builds a head-unit test release from the previous published APK plus main
-# (adapter/incremental_release.py), signs it with the release key and, when
-# asked, publishes it as a prerelease. Every check must pass before publishing.
+# (adapter/incremental_release.py), signs it with the release key, checks it
+# (unit tests, audits, Android 9 and 13 emulators) and, when asked, publishes it
+# as a prerelease. Every check must pass before publishing.
 name: Release
 
 on:
@@ -74,7 +75,7 @@ jobs:
           python3 adapter/incremental_release.py --base "$BASE_APK" --base-info "${{ inputs.base_info }}" \
             --since "${{ inputs.since }}" --tools "$RUNNER_TEMP/jadx-1.5.1-all.jar" --android-jar "$ANDROID_JAR" \
             --work "$RUNNER_TEMP/work" --out "$RUNNER_TEMP/unsigned.apk"
-          python3 -c 'import json;b=json.load(open("adapter/build-info.json"));print("LABEL="+b["label"]);print("APK_NAME="+b["apk_name"])' >> "$GITHUB_ENV"
+          python3 -c 'import json;b=json.load(open("adapter/build-info.json"));print("LABEL="+b["label"]);print("APK_NAME="+b["apk_name"]);print("VERSION_CODE=%d"%b["version_code"])' >> "$GITHUB_ENV"
 
       - name: Sign
         env:
@@ -102,6 +103,7 @@ jobs:
       - name: Checks
         run: |
           ANDROID_JAR="$ANDROID_JAR" bash adapter/tests/signin/run.sh
+          ANDROID_JAR="$ANDROID_JAR" bash adapter/tests/updates/run.sh
           python3 tools/apk_compat_audit.py "dist/$APK_NAME" --min-api 28 --no-api | tee dist/compat-audit.md
           python3 tools/apk_audit.py "dist/$APK_NAME" --min-api 28 | tee dist/apk-audit.txt
           python3 - <<'EOF'
@@ -116,6 +118,36 @@ jobs:
                 "sourceCommit":os.environ["GITHUB_SHA"],"base":base["file"]}
           json.dump(info,open("dist/release.json","w"),indent=2);print(json.dumps(info,indent=2))
           EOF
+          # Record for the shared update feed; published by the operator after the release (adapter/README.md, App updates).
+          if [ -f "reports/$LABEL/update-notes.txt" ]; then
+            python3 tools/update_record.py dist/release.json "reports/$LABEL/update-notes.txt" --out "dist/spotify-update-test.${LABEL##*.}.json"
+          fi
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules && sudo udevadm trigger --name-match=kvm
+
+      # In-place update over the published base, player start and a forced update-job run.
+      - name: Emulator / Android 9
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 28
+          arch: x86_64
+          target: default
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash adapter/tests/updates/emulator.sh "$BASE_APK" "dist/$APK_NAME" "$VERSION_CODE"
+
+      - name: Emulator / Android 13
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          target: default
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          script: bash adapter/tests/updates/emulator.sh "$BASE_APK" "dist/$APK_NAME" "$VERSION_CODE"
 
       - uses: actions/upload-artifact@v4
         with:

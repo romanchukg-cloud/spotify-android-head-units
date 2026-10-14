@@ -146,3 +146,14 @@ signin('zb/a.smali',[at_entry('public final a()V','invoke-static {}, '+H+'deprec
 signin('com/spotify/automotive/accountmanagerv2/AccountRemovedBroadcastReceiver.smali',[at_entry('public final onReceive(Landroid/content/Context;Landroid/content/Intent;)V',
  'invoke-static {p1, p2}, '+H+'ignoreRemoval(Landroid/content/Context;Landroid/content/Intent;)Z\n    move-result v0\n    if-eqz v0, :hu_account_removal\n    return-void\n    :hu_account_removal')])
 print('Sign-in patches: device ID, sign-out reasons, account removal, recovery')
+
+# App updates: Android's installer permission and the private receiver for the
+# PackageInstaller session status. incremental_release.py adds the same
+# declarations to a published binary manifest.
+MANIFEST_ADDITIONS=[('uses-permission','android.permission.REQUEST_INSTALL_PACKAGES'),('receiver','local.spotify.unified.UpdateResultReceiver')]
+if (out/'AndroidManifest.xml').exists():
+ p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+ for tag,name in MANIFEST_ADDITIONS:
+  E.SubElement(root if tag=='uses-permission' else app,tag,{A+'name':name,**({} if tag=='uses-permission' else {A+'exported':'false'})})
+ m.write(p,encoding='utf-8',xml_declaration=True)
+print('App updates: installer permission and private result receiver')

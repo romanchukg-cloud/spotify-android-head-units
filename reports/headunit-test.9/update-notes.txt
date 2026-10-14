@@ -1,0 +1,1 @@
+In-app updates: Spotify checks this project's releases daily, downloads verified test builds (on Wi-Fi by default) and installs them through Android's Update confirmation. Sign-in and settings are kept. Experimental prerelease.

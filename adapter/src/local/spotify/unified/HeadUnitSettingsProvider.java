@@ -4,9 +4,10 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.*;
 public final class HeadUnitSettingsProvider extends ContentProvider {
- public boolean onCreate(){HeadUnitIdentity.init(getContext());HeadUnitAccounts.init(getContext());DiagnosticLog.init(getContext());HeadUnitPreferences.init(getContext());HeadUnitProfile.configure(getContext());HeadUnitRuntime.init(getContext());DiagnosticUploadJob.schedule(getContext());return true;}
+ public boolean onCreate(){HeadUnitIdentity.init(getContext());HeadUnitAccounts.init(getContext());DiagnosticLog.init(getContext());HeadUnitPreferences.init(getContext());HeadUnitProfile.configure(getContext());HeadUnitRuntime.init(getContext());DiagnosticUploadJob.schedule(getContext());try{AppUpdates.init(getContext());}catch(Throwable ignored){}return true;}
  public Bundle call(String method,String arg,Bundle extras){
   if(Binder.getCallingUid()!=android.os.Process.myUid())throw new SecurityException("Private settings");
+  if(method.startsWith("update_")){try{return AppUpdates.call(getContext(),method,extras);}catch(Throwable e){throw new IllegalStateException("Update operation unavailable");}}
   if(method.startsWith("diagnostics_")){try{
    if("diagnostics_status".equals(method))return DiagnosticsQueue.summary(getContext());
    if("diagnostics_notice".equals(method))return AutomaticDiagnostics.state(getContext());
