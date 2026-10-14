@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 9,
+  "version": "test.9",
+  "version_code": 95486,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.9/Spotify-5.5.0-HeadUnit-test.9.apk",
+  "sha256": "f78026ba05fa52c67082851e710379358a05027dfcc47c404b8146147c880cd3",
+  "size": 58011648,
+  "notes": "In-app updates: Spotify checks this project's releases daily, downloads verified test builds (on Wi-Fi by default) and installs them through Android's Update confirmation. Sign-in and settings are kept. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.9",
+  "min_sdk": 28
+}

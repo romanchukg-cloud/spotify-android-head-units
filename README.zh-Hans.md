@@ -4,13 +4,13 @@
 
 适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
 
-[下载 test.8 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.8/Spotify-5.5.0-HeadUnit-test.8.apk) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
+[下载 test.9 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.9/Spotify-5.5.0-HeadUnit-test.9.apk) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
 
 ## 已完成的测试
 
-Headunit-test.8 保持 Spotify 登录状态：固定设备 ID；在 Android 设置中移除旧的非活动账号不再导致退出；车机上丢失的登录信息会自动恢复一次。基于已发布的 test.7 构建：仅 Spotify DEX、适配器 DEX 和 versionCode 有变化；资源、比亚迪界面和原生库逐字节相同。8 个新补丁均各匹配一次，39 项登录逻辑检查和兼容性审计通过，发布审计结果 42 PASS / 0 FAIL，签名证书与 test.7 相同。
+Headunit-test.9 新增应用内更新：Spotify 每天向本项目的更新服务器查询是否有更新的测试版本，在后台下载（默认仅限 Wi-Fi），校验大小、SHA-256、包名、版本和签名证书，并且只有在你确认 Android 的“更新”窗口后才会安装。基于已发布的 test.8 构建：仅适配器 DEX 和清单（versionCode、安装权限和一个私有接收器）有变化。发布审计结果 45 PASS / 0 FAIL，152 项更新检查和 39 项登录检查通过；在 Android 9 和 13 模拟器上，test.9 可作为 test.8 的更新安装、启动，并向真实服务器检查更新，无崩溃。
 
-**headunit-test.8 实验版本。** 登录相关改动尚未在模拟器或车内使用真实账号测试；实际的 ANDROID_ID 变化和断电后恢复均未验证。车辆真实休眠/重启、账号 A → B → A、离线下载、方向盘按键及其他车机也仍未验证。test.7 的模拟器测试未针对 test.8 重新运行。
+**headunit-test.9 实验版本。** 通过应用下载并安装更新版本，要等 test.10 发布后才能测试。test.9 尚未在车内安装，test.8 的登录改动也尚未在车内验证。车辆真实休眠/重启、账号 A → B → A、离线下载、方向盘按键及其他车机也仍未验证。
 
 Android 9+（API 28）。比亚迪律动已在 DiLink 5 / Android 12 上验证；DiLink 5.1 / Android 13 和其他固件尚未验证。已实现 AAOS 和 GENERIC 配置；其他品牌真实车机及 AAOS 尚未验证。
 
@@ -31,12 +31,12 @@ Android 9+ · 55.3 MiB · 非官方适配
 
 ## 文件校验
 
-`Spotify-5.5.0-HeadUnit-test.8.apk` · 57 962 496 bytes
+`Spotify-5.5.0-HeadUnit-test.9.apk` · 58 011 648 bytes
 
 当前测试版本的 SHA-256：
 
 ```text
-caa026818b27aa08de38c4c76dab35a02a6ec975095ed5cba9ed0d57c7dc8a93
+f78026ba05fa52c67082851e710379358a05027dfcc47c404b8146147c880cd3
 ```
 
 非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。
@@ -45,4 +45,4 @@ caa026818b27aa08de38c4c76dab35a02a6ec975095ed5cba9ed0d57c7dc8a93
 
 仓库提供我们的 Java 集成代码、补丁与构建脚本、审计工具及模拟器测试源码。闭源 Spotify 后端和 BYD 界面作为本地构建输入。
 
-[Java / build](adapter/) · [已完成的测试](reports/headunit-test.8.md)
+[Java / build](adapter/) · [已完成的测试](reports/headunit-test.9.md)

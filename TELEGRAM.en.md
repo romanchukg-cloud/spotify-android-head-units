@@ -1,20 +1,23 @@
-🎵 Spotify for Android Head Units — test.8
+🎵 Spotify for Android Head Units — test.9
 
-Fewer unexpected sign-outs!
+Updates now arrive inside the app!
 
-• Your sign-in now survives head units that change their system device ID. Spotify keeps using the ID you signed in with.
-• Removing an old Spotify account in Android settings (left over after switching accounts) no longer signs out the current account.
-• If the saved login is lost on the head unit, for example after a power cut, the last active account is restored automatically.
-• Head unit settings now show the last sign-in event and its reason. Unexpected sign-outs are included in automatic diagnostics if you turned them on.
+• Once a day Spotify checks this project's update server for a newer test build and downloads it in the background (on Wi-Fi only by default).
+• Before installing, it checks the file's size, SHA-256, package, version and our signing certificate.
+• You stay in control: Spotify offers the update when you open the player while music is not playing, and Android's own Update window asks you to confirm. Spotify restarts; your sign-in, accounts and settings are kept.
+• Head unit settings → Updates: check now, download or resume, pause, install, and switches for automatic checks, automatic downloads and Wi-Fi only.
 
-If Spotify itself rejects the login (password change or "sign out everywhere"), you still need to sign in again with the QR code.
+Install test.9 manually once, as an update over your current build (don't uninstall). After that, new builds come through the app. If Android asks you to allow installs from Spotify, allow it once.
+
+Also included from test.8: fewer unexpected sign-outs. The sign-in survives head units that change their device ID, removing an old Spotify account in Android settings no longer signs out the current one, and a login lost on the head unit (for example after a power cut) is restored automatically.
 
 📥 Download page:
 https://romanchukg-cloud.github.io/spotify-android-head-units/
 
 Direct APK:
-https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.8/Spotify-5.5.0-HeadUnit-test.8.apk
+https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.9/Spotify-5.5.0-HeadUnit-test.9.apk
 
-Install the APK on your head unit and choose Update. Do not uninstall your current build: uninstalling deletes your sign-in. Android 9+.
+Release notes:
+https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.9
 
-Experimental test release; the sign-in changes have not yet been tested in a car.
+Android 9+. Experimental test release: checked on Android 9 and 13 emulators (update over test.8, start, update check), not yet in a car. Installing a newer build through the app can only be tried once test.10 is out.
