@@ -1,6 +1,6 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.7 adds Support and structured diagnostics. Local test.8 keeps the Spotify sign-in stable on head units. Build identity and output filename are generated from `build-info.json`.
+This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.7 adds Support and structured diagnostics. Published test.8 keeps the Spotify sign-in stable on head units. Build identity and output filename are generated from `build-info.json`.
 
 The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
 
@@ -108,7 +108,7 @@ The three-report private queue persists exact bodies, random UUIDv4 keys and ran
 
 Build `zsh adapter/tests/diagnostics/build.sh` after compiling the adapter. Install its `out/reader.apk` and `out/main.apk` on disposable emulators, then run `adb -s SERIAL shell am instrument -w hu.diagnostics/local.spotify.unified.DiagnosticTests`. Run `-e phase ui` for production Support/notice views with a fake transport. Run `-e phase seed`, force-stop `hu.diagnostics`, then `-e phase verify` for real process-restart persistence. The fixture never schedules the real HTTP upload service. No automated suite should create public test issues. See [test.7 validation](../reports/headunit-test.7.md) for actual coverage and remaining vehicle checks.
 
-## Local test.8: Sign-in stability
+## Test.8: Sign-in stability
 
 Spotify Automotive 5.5.0 signs out, and deletes its saved login, in four situations. test.8 fixes the ones caused by the head unit and records the reason for all of them.
 
@@ -123,4 +123,4 @@ Spotify Automotive 5.5.0 signs out, and deletes its saved login, in four situati
 
 `tests/signin/run.sh` runs plain-JVM checks of the decisions: ID pinning, reason classification, the stale-removal filter, one recovery per boot and the diagnostics codes (`ANDROID_JAR` may point at any full framework jar). `../tools/apk_audit.py` adds three `Sign-in /` checks for the SDK hooks, and every new smali patch must match exactly once.
 
-Checked without the build inputs or the signing key: the new patches applied to smali disassembled from the published test.7 APK (each matched once), the patched DEX and the helper DEX assembled, all 35 cross-DEX helper references resolve, the three new audit checks pass on the patched smali and fail on test.7, and the 39 JVM checks pass. **Not yet verified:** a build from the prepared inputs, a real sign-in on an emulator or head unit, an actual `ANDROID_ID` change and recovery after a power cut.
+Checked without the build inputs or the signing key: the new patches applied to smali disassembled from the published test.7 APK (each matched once), the patched DEX and the helper DEX assembled, all 35 cross-DEX helper references resolve, the three new audit checks pass on the patched smali and fail on test.7, and the 39 JVM checks pass. The published APK was then built by the Release workflow from the test.7 APK ([run](https://github.com/romanchukg-cloud/spotify-android-head-units/actions/runs/38588766001)): its certificate equals test.7 and the release audit passes 42/42. **Not yet verified:** a build from the prepared inputs, a real sign-in on an emulator or head unit, an actual `ANDROID_ID` change and recovery after a power cut.

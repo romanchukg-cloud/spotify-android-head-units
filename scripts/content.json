@@ -3,12 +3,12 @@
     "name": "Spotify for Android Head Units",
     "title": "Spotify for Android Head Units — one app",
     "description": "Experimental Spotify Automotive 5.5.0 for Android head units, with a BYD-derived interface in one APK.",
-    "badge": "Experimental build · 5.5.0 · test.6",
+    "badge": "Experimental build · 5.5.0 · test.8",
     "headline": "Familiar interface.",
     "highlight": "One app.",
     "intro": "An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.",
-    "download": "Download test.6 APK",
-    "meta": "Android 9+ · 55.2 MiB · unofficial adaptation",
+    "download": "Download test.8 APK",
+    "meta": "Android 9+ · 55.3 MiB · unofficial adaptation",
     "languages": "Language",
     "cards": [
       [
@@ -28,6 +28,10 @@
         "Open Head unit settings → Accounts to add an account with QR sign-in, rename saved accounts or switch between them."
       ],
       [
+        "Stays signed in",
+        "A pinned device ID, safe removal of old accounts and one automatic restore per boot keep Spotify signed in. Head unit settings show the last sign-in event."
+      ],
+      [
         "Playback startup",
         "Head unit settings has separate options for resuming after boot or a long sleep and for playing on a new Spotify launch. Playback waits for the player to be ready; pause cancels automatic retries."
       ],
@@ -37,9 +41,9 @@
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Headunit-test.6: APK audit 31 PASS / 0 FAIL. Android 9 and 15 emulators each pass 18 synthetic rhythm checks and 19 playback-resume checks. On a 2024 BYD Tang EV with DiLink 5 / Android 12, the in-place update preserved sign-in; music starts the native rhythm, pause stops it and process death releases it. The visible lamp response was confirmed by the user.",
-    "pendingStrong": "Experimental headunit-test.6.",
-    "pending": "Real vehicle sleep/reboot restoration, long-term use, real account A → B → A, offline downloads, steering-wheel controls and other BYD/AAOS hardware remain unverified. The broader account and UI suites were not rerun for test.6.",
+    "tested": "Headunit-test.8 keeps the Spotify sign-in: a stable device ID, no sign-out when an old inactive account is removed in Android settings, and one automatic restore of a login lost on the head unit. It is built from the published test.7: only the Spotify backend DEX, the adapter DEX and the versionCode changed; resources, the BYD interface and native libraries are byte-identical. All 8 new patches matched once, 39 sign-in logic checks and the compatibility audit pass, the release audit reports 42 PASS / 0 FAIL, and the signing certificate equals test.7.",
+    "pendingStrong": "Experimental headunit-test.8.",
+    "pending": "The sign-in changes have not been tested with a signed-in account on an emulator or in a car; an actual ANDROID_ID change and recovery after a power cut are unverified. Real vehicle sleep/reboot, account A → B → A, offline downloads, steering-wheel controls and other head units also remain unverified. The test.7 emulator suites were not rerun for test.8.",
     "installTitle": "How to install",
     "steps": [
       "Use the download button above to get the APK, then transfer it to the infotainment system.",
@@ -54,18 +58,21 @@
     "footer": "Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.",
     "compatibility": "Android 9+ (API 28). BYD rhythm is verified on DiLink 5 / Android 12; DiLink 5.1 / Android 13 and other firmware are not yet verified. AAOS and GENERIC profiles are implemented; real head units from other manufacturers and AAOS remain unverified.",
     "sourceTitle": "Source code and validation",
-    "source": "Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs."
+    "source": "Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs.",
+    "supportTitle": "Support and diagnostics",
+    "supportCard": "Preview and send a technical report, track or cancel pending reports, and export a ZIP. Automatic reporting is optional after the first-use notice.",
+    "support": "Open Head unit settings → Support. Send diagnostics lets you preview approved technical data before sending. Reports go to our shared server and a limited summary may appear in this project’s PUBLIC GitHub Issues. Automatically send diagnostics is selected on the first-use notice and starts only after Continue; you can turn it off in Support. Automatic reports cover measured integration failures only, at most one new report per day. Manual sending, pending status/cancellation and ZIP export remain available with automatic sending off. Reports exclude account data, song/playlist names, location and screenshots. Technical metadata is not a guarantee of anonymity."
   },
   "uk": {
     "name": "Spotify для Android-магнітол",
     "title": "Spotify для Android-магнітол — один додаток",
     "description": "Експериментальний Spotify Automotive 5.5.0 для Android-магнітол з інтерфейсом на основі BYD в одному APK.",
-    "badge": "Експериментальна збірка · 5.5.0 · test.6",
+    "badge": "Експериментальна збірка · 5.5.0 · test.8",
     "headline": "Звичний інтерфейс.",
     "highlight": "Один додаток.",
     "intro": "Експериментальний плеєр Spotify Automotive для Android-магнітол. Інтерфейс на основі BYD та музичний сервіс об’єднані в одному APK з однією іконкою і штатним входом Spotify.",
-    "download": "Завантажити APK test.6",
-    "meta": "Android 9+ · 55,2 MiB · неофіційна адаптація",
+    "download": "Завантажити APK test.8",
+    "meta": "Android 9+ · 55,3 MiB · неофіційна адаптація",
     "languages": "Мова",
     "cards": [
       [
@@ -85,6 +92,10 @@
         "Відкрийте Налаштування магнітоли → Акаунти, щоб додати акаунт через QR-код, перейменувати збережені акаунти або переключитися між ними."
       ],
       [
+        "Вхід зберігається",
+        "Закріплений ID пристрою, безпечне видалення старих акаунтів і одне автоматичне відновлення за запуск зберігають вхід у Spotify. Останню подію входу видно в Налаштуваннях магнітоли."
+      ],
+      [
         "Запуск відтворення",
         "У налаштуваннях магнітоли є окремі опції відновлення після запуску чи тривалого сну та відтворення при новому запуску Spotify. Додаток чекає готовності плеєра; пауза скасовує автоматичні повтори."
       ],
@@ -94,9 +105,9 @@
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Headunit-test.6: аудит APK — 31 PASS / 0 FAIL. Android 9 і 15: на кожному емуляторі пройшли 18 синтетичних перевірок ритму та 19 перевірок відновлення відтворення. На BYD Tang EV 2024 з DiLink 5 / Android 12 оновлення зберегло вхід; музика запускає штатний ритм, пауза зупиняє його, завершення процесу звільняє сеанс. Користувач підтвердив видиму реакцію підсвітки.",
-    "pendingStrong": "Експериментальна headunit-test.6.",
-    "pending": "Ще не перевірені відновлення після реального сну/перезапуску авто, тривала робота, справжнє перемикання A → B → A, офлайн-завантаження, кнопки керма та інші магнітоли BYD/AAOS. Повні акаунтні й UI-тести для test.6 повторно не запускались.",
+    "tested": "Headunit-test.8 зберігає вхід у Spotify: стабільний ID пристрою, без виходу після видалення старого неактивного акаунта в налаштуваннях Android і одноразове автоматичне відновлення входу, втраченого на магнітолі. Зібрано з опублікованого test.7: змінилися лише DEX Spotify, DEX адаптера та versionCode; ресурси, інтерфейс BYD і нативні бібліотеки байт-у-байт ті самі. Усі 8 нових патчів збіглися по одному разу, 39 перевірок логіки входу й аудит сумісності пройдено, release-аудит: 42 PASS / 0 FAIL, сертифікат підпису збігається з test.7.",
+    "pendingStrong": "Експериментальна headunit-test.8.",
+    "pending": "Зміни входу ще не перевірені з реальним акаунтом на емуляторі чи в авто; справжню зміну ANDROID_ID і відновлення після знеструмлення не перевіряли. Також не перевірені реальний сон/перезавантаження авто, акаунти A → B → A, офлайн-завантаження, кнопки на кермі та інші магнітоли. Емуляторні тести test.7 для test.8 повторно не запускались.",
     "installTitle": "Як встановити",
     "steps": [
       "Натисніть кнопку завантаження вище, щоб отримати APK, і перенесіть його в мультимедійну систему.",
@@ -117,12 +128,12 @@
     "name": "Spotify для Android-магнитол",
     "title": "Spotify для Android-магнитол — одно приложение",
     "description": "Экспериментальный Spotify Automotive 5.5.0 для Android-магнитол с интерфейсом на основе BYD в одном APK.",
-    "badge": "Экспериментальная сборка · 5.5.0 · test.6",
+    "badge": "Экспериментальная сборка · 5.5.0 · test.8",
     "headline": "Знакомый интерфейс.",
     "highlight": "Одно приложение.",
     "intro": "Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.",
-    "download": "Скачать APK test.6",
-    "meta": "Android 9+ · 55,2 MiB · неофициальная адаптация",
+    "download": "Скачать APK test.8",
+    "meta": "Android 9+ · 55,3 MiB · неофициальная адаптация",
     "languages": "Язык",
     "cards": [
       [
@@ -142,6 +153,10 @@
         "Откройте Настройки магнитолы → Аккаунты, чтобы добавить аккаунт по QR-коду, переименовать сохранённые аккаунты или переключиться между ними."
       ],
       [
+        "Вход сохраняется",
+        "Закреплённый ID устройства, безопасное удаление старых аккаунтов и одно автоматическое восстановление за запуск сохраняют вход в Spotify. Последнее событие входа видно в Настройках магнитолы."
+      ],
+      [
         "Запуск воспроизведения",
         "В настройках магнитолы есть отдельные опции возобновления после запуска или длительного сна и воспроизведения при новом запуске Spotify. Приложение ждёт готовности плеера; пауза отменяет автоматические повторы."
       ],
@@ -151,9 +166,9 @@
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Headunit-test.6: аудит APK — 31 PASS / 0 FAIL. Android 9 и 15: на каждом эмуляторе пройдены 18 синтетических проверок ритма и 19 проверок восстановления воспроизведения. На BYD Tang EV 2024 с DiLink 5 / Android 12 обновление сохранило вход; музыка запускает штатный ритм, пауза останавливает его, завершение процесса освобождает сеанс. Пользователь подтвердил видимую реакцию подсветки.",
-    "pendingStrong": "Экспериментальная headunit-test.6.",
-    "pending": "Ещё не проверены восстановление после реального сна/перезапуска автомобиля, длительная работа, настоящее переключение A → B → A, офлайн-загрузки, кнопки руля и другие магнитолы BYD/AAOS. Полные аккаунтные и UI-тесты для test.6 повторно не запускались.",
+    "tested": "Headunit-test.8 сохраняет вход в Spotify: стабильный ID устройства, без выхода после удаления старого неактивного аккаунта в настройках Android и однократное автоматическое восстановление входа, потерянного на магнитоле. Собрано из опубликованного test.7: изменились только DEX Spotify, DEX адаптера и versionCode; ресурсы, интерфейс BYD и нативные библиотеки побайтно те же. Все 8 новых патчей совпали по одному разу, 39 проверок логики входа и аудит совместимости пройдены, release-аудит: 42 PASS / 0 FAIL, сертификат подписи совпадает с test.7.",
+    "pendingStrong": "Экспериментальная headunit-test.8.",
+    "pending": "Изменения входа ещё не проверены с реальным аккаунтом на эмуляторе или в машине; настоящая смена ANDROID_ID и восстановление после отключения питания не проверялись. Также не проверены реальный сон/перезагрузка машины, аккаунты A → B → A, офлайн-загрузки, кнопки на руле и другие магнитолы. Эмуляторные тесты test.7 для test.8 повторно не запускались.",
     "installTitle": "Как установить",
     "steps": [
       "Нажмите кнопку скачивания выше, чтобы получить APK, и перенесите его в мультимедийную систему.",
@@ -174,12 +189,12 @@
     "name": "Spotify لوحدات الوسائط العاملة بنظام Android",
     "title": "Spotify لوحدات الوسائط العاملة بنظام Android — تطبيق واحد",
     "description": "نسخة تجريبية من Spotify Automotive 5.5.0 لوحدات الوسائط العاملة بنظام Android، بواجهة مستندة إلى BYD في ملف APK واحد.",
-    "badge": "إصدار تجريبي · 5.5.0 · test.6",
+    "badge": "إصدار تجريبي · 5.5.0 · test.8",
     "headline": "الواجهة المألوفة.",
     "highlight": "تطبيق واحد.",
     "intro": "مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.",
-    "download": "تنزيل APK test.6",
-    "meta": "Android 9+ · 55.2 MiB · تعديل غير رسمي",
+    "download": "تنزيل APK test.8",
+    "meta": "Android 9+ · 55.3 MiB · تعديل غير رسمي",
     "languages": "اللغة",
     "cards": [
       [
@@ -199,6 +214,10 @@
         "افتح إعدادات الوحدة الرئيسية ← الحسابات لإضافة حساب عبر رمز QR أو إعادة تسمية الحسابات المحفوظة أو التبديل بينها."
       ],
       [
+        "البقاء مسجلاً للدخول",
+        "معرّف جهاز ثابت، وإزالة آمنة للحسابات القديمة، واستعادة تلقائية واحدة لكل تشغيل تُبقي Spotify مسجلاً للدخول. تعرض إعدادات الوحدة الرئيسية آخر حدث لتسجيل الدخول."
+      ],
+      [
         "بدء التشغيل",
         "تتضمن إعدادات وحدة السيارة خيارين منفصلين للاستئناف بعد بدء التشغيل أو السكون الطويل وللتشغيل عند فتح جلسة جديدة من Spotify. ينتظر التطبيق جاهزية المشغل؛ ويلغي الإيقاف المؤقت المحاولات التلقائية."
       ],
@@ -208,9 +227,9 @@
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "Headunit-test.6: اجتاز فحص APK عدد 31 اختباراً دون إخفاق. اجتاز كل من محاكي Android 9 و15 عدد 18 اختباراً اصطناعياً للإيقاع و19 اختباراً لاستئناف التشغيل. في BYD Tang EV موديل 2024 مع DiLink 5 وAndroid 12، حافظ التحديث على تسجيل الدخول؛ تبدأ الموسيقى الإيقاع الأصلي، ويوقفه الإيقاف المؤقت، ويحرر إنهاء العملية الجلسة. أكّد المستخدم استجابة الإضاءة المرئية.",
-    "pendingStrong": "نسخة headunit-test.6 تجريبية.",
-    "pending": "لم يتم التحقق بعد من الاستئناف بعد السكون الحقيقي أو إعادة تشغيل السيارة، والاستخدام الطويل، والتبديل الحقيقي A → B → A، والتنزيل دون اتصال، وأزرار المقود، ووحدات BYD/AAOS الأخرى. لم تُعد اختبارات الحسابات والواجهة الكاملة للإصدار test.6.",
+    "tested": "يحافظ Headunit-test.8 على تسجيل الدخول إلى Spotify: معرّف جهاز ثابت، وعدم تسجيل الخروج عند إزالة حساب قديم غير نشط من إعدادات Android، واستعادة تلقائية لمرة واحدة لتسجيل دخول فُقد على وحدة السيارة. بُني من test.7 المنشور: لم يتغير سوى DEX الخاص بـ Spotify وDEX المحوِّل وversionCode؛ أما الموارد وواجهة BYD والمكتبات الأصلية فمطابقة بايتًا ببايت. تطابقت التعديلات الثمانية الجديدة مرة واحدة لكل منها، ونجحت 39 فحصًا لمنطق تسجيل الدخول وتدقيق التوافق، وأظهر تدقيق الإصدار 42 PASS / 0 FAIL، وشهادة التوقيع مطابقة لـ test.7.",
+    "pendingStrong": "نسخة headunit-test.8 تجريبية.",
+    "pending": "لم تُختبر تغييرات تسجيل الدخول بحساب حقيقي على محاكي أو في سيارة؛ ولم يُختبر تغيير ANDROID_ID فعليًا ولا الاستعادة بعد انقطاع الكهرباء. كما لم يُتحقق بعد من سكون السيارة وإعادة تشغيلها فعليًا، والحسابات A → B → A، والتنزيلات دون اتصال، وأزرار المقود، ووحدات السيارات الأخرى. لم تُعد اختبارات المحاكي الخاصة بـ test.7 للإصدار test.8.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "اضغط على زر التنزيل أعلاه للحصول على ملف APK، ثم انقله إلى نظام الوسائط في السيارة.",
@@ -231,12 +250,12 @@
     "name": "适用于 Android 车机的 Spotify",
     "title": "Android 车机 Spotify — 一个应用",
     "description": "适用于 Android 车机的 Spotify Automotive 5.5.0 实验版本，将基于比亚迪的界面整合到一个 APK 中。",
-    "badge": "实验版本 · 5.5.0 · test.6",
+    "badge": "实验版本 · 5.5.0 · test.8",
     "headline": "熟悉的界面。",
     "highlight": "一个应用。",
     "intro": "适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。",
-    "download": "下载 test.6 APK",
-    "meta": "Android 9+ · 55.2 MiB · 非官方适配",
+    "download": "下载 test.8 APK",
+    "meta": "Android 9+ · 55.3 MiB · 非官方适配",
     "languages": "语言",
     "cards": [
       [
@@ -256,6 +275,10 @@
         "打开主机设置 → 账号，可通过二维码添加账号、重命名已保存的账号或切换账号。"
       ],
       [
+        "保持登录",
+        "固定设备 ID、安全移除旧账号以及每次启动一次的自动恢复，让 Spotify 保持登录。主机设置中显示最近一次登录事件。"
+      ],
+      [
         "播放启动",
         "车机设置提供两个独立选项：在启动或长时间休眠后恢复播放，以及在新启动 Spotify 时播放。应用会等待播放器准备就绪；暂停会取消自动重试。"
       ],
@@ -265,9 +288,9 @@
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "Headunit-test.6：APK 审核 31 项通过，0 项失败。Android 9 和 15 模拟器分别通过 18 项合成律动测试和 19 项播放恢复测试。在配备 DiLink 5 / Android 12 的 2024 款比亚迪唐 EV 上，覆盖更新保留了登录状态；音乐启动原生律动，暂停停止律动，进程结束释放会话。用户已确认灯光实际响应。",
-    "pendingStrong": "headunit-test.6 实验版本。",
-    "pending": "实际车辆休眠或重启后的恢复、长时间使用、真实账号 A → B → A 切换、离线下载、方向盘控制和其他 BYD/AAOS 车机仍待验证。test.6 未重新运行完整账号和界面测试。",
+    "tested": "Headunit-test.8 保持 Spotify 登录状态：固定设备 ID；在 Android 设置中移除旧的非活动账号不再导致退出；车机上丢失的登录信息会自动恢复一次。基于已发布的 test.7 构建：仅 Spotify DEX、适配器 DEX 和 versionCode 有变化；资源、比亚迪界面和原生库逐字节相同。8 个新补丁均各匹配一次，39 项登录逻辑检查和兼容性审计通过，发布审计结果 42 PASS / 0 FAIL，签名证书与 test.7 相同。",
+    "pendingStrong": "headunit-test.8 实验版本。",
+    "pending": "登录相关改动尚未在模拟器或车内使用真实账号测试；实际的 ANDROID_ID 变化和断电后恢复均未验证。车辆真实休眠/重启、账号 A → B → A、离线下载、方向盘按键及其他车机也仍未验证。test.7 的模拟器测试未针对 test.8 重新运行。",
     "installTitle": "安装方法",
     "steps": [
       "点击上方下载按钮获取 APK，然后将其传输到车载多媒体系统。",

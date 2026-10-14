@@ -7,12 +7,15 @@ CONTENT=json.loads((ROOT/'scripts/content.json').read_text())
 LABELS={'en':'English','uk':'Українська','ru':'Русский','ar':'العربية','zh-Hans':'简体中文'}
 SITE='https://romanchukg-cloud.github.io/spotify-android-head-units/'
 REPO='https://github.com/romanchukg-cloud/spotify-android-head-units'
-RELEASE_TAG='v5.5.0-headunit-test.6'
-RELEASE=json.loads((ROOT/'reports/headunit-test.6/release.json').read_text())
+LABEL='headunit-test.8'
+RELEASE_TAG='v5.5.0-'+LABEL
+RELEASE=json.loads((ROOT/'reports'/LABEL/'release.json').read_text())
 APK_NAME=RELEASE['file']
 SIZE=f"{RELEASE['size']:,}".replace(',', ' ')
 DOWNLOAD=REPO+'/releases/download/'+RELEASE_TAG+'/'+APK_NAME
 SHA=RELEASE['sha256']
+# The diagnostics disclosure stays in its approved English wording on every page.
+SUPPORT=CONTENT['en']
 def route(lang):return '' if lang=='en' else lang+'/'
 for lang,c in CONTENT.items():
  prefix='' if lang=='en' else '../'
@@ -20,6 +23,7 @@ for lang,c in CONTENT.items():
  alternate='\n'.join(f'<link rel="alternate" hreflang="{k}" href="{SITE+route(k)}">' for k in CONTENT)
  links=''.join(f'<a lang="{k}" hreflang="{k}" dir="auto" href="{prefix+route(k) or "./"}"'+(' aria-current="page"' if k==lang else '')+f'>{e(LABELS[k])}</a>' for k in CONTENT)
  cards=''.join(f'<article class="card"><h2>{e(t)}</h2><p>{e(s)}</p></article>' for t,s in c['cards'])
+ cards+=f'<article class="card" lang="en" dir="ltr"><h2>{e(SUPPORT["supportTitle"])}</h2><p>{e(SUPPORT["supportCard"])}</p></article>'
  steps=''.join(f'<li>{e(s)}</li>' for s in c['steps'])
  html=f'''<!doctype html>
 <html lang="{lang}" dir="{direction}">
@@ -42,21 +46,22 @@ for lang,c in CONTENT.items():
 <a class="button" href="{DOWNLOAD}" download="{APK_NAME}">{e(c['download'])} ↗</a>
 <div class="meta">{e(c['meta'])}</div></header>
 <div class="grid">{cards}</div>
+<section lang="en" dir="ltr"><h2>{e(SUPPORT['supportTitle'])}</h2><p>{e(SUPPORT['support'])}</p></section>
 <section><h2>{e(c['testedTitle'])}</h2><p>{e(c['tested'])}</p>
 <p><strong>{e(c['pendingStrong'])}</strong> {e(c['pending'])}</p><p>{e(c['compatibility'])}</p></section>
 <section><h2>{e(c['installTitle'])}</h2><ol>{steps}</ol></section>
 <section><h2>{e(c['verifyTitle'])}</h2><p>{e(c['verify'])}</p><code dir="ltr">{SHA}</code></section>
-<section><h2>{e(c['sourceTitle'])}</h2><p>{e(c['source'])}</p><p><a href="{REPO}/tree/main/adapter">Java / build</a> · <a href="{REPO}/blob/main/reports/headunit-test.6.md">{e(c['testedTitle'])}</a></p></section>
+<section><h2>{e(c['sourceTitle'])}</h2><p>{e(c['source'])}</p><p><a href="{REPO}/tree/main/adapter">Java / build</a> · <a href="{REPO}/blob/main/reports/{LABEL}.md">{e(c['testedTitle'])}</a></p></section>
 <footer>{e(c['footer'])}</footer>
 </main></body></html>
 '''
  dest=ROOT/'docs'/route(lang)/'index.html';dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(html)
  readme='README.md' if lang=='en' else f'README.{lang}.md'
  languages=' · '.join(f'[{LABELS[k]}]('+('README.md' if k=='en' else f'README.{k}.md')+')' for k in CONTENT)
- markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({DOWNLOAD}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n{c['compatibility']}\n\n## {c['installTitle']}\n\n"
+ markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({DOWNLOAD}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n{c['compatibility']}\n\n## {SUPPORT['supportTitle']}\n\n{SUPPORT['support']}\n\n## {c['installTitle']}\n\n"
  markdown+='\n'.join(f'{i}. {s}' for i,s in enumerate(c['steps'],1))
  markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`{APK_NAME}` · {SIZE} bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
- markdown+=f"\n## {c['sourceTitle']}\n\n{c['source']}\n\n[Java / build](adapter/) · [{c['testedTitle']}](reports/headunit-test.6.md)\n"
+ markdown+=f"\n## {c['sourceTitle']}\n\n{c['source']}\n\n[Java / build](adapter/) · [{c['testedTitle']}](reports/{LABEL}.md)\n"
  if lang=='ar':markdown='<div dir="rtl">\n\n'+markdown+'\n</div>\n'
  (ROOT/readme).write_text(markdown)
 print('Generated 5 pages and 5 READMEs. English is the default.')

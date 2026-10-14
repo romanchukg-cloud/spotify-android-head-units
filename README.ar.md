@@ -6,15 +6,15 @@
 
 مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.
 
-[تنزيل APK test.7](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.7/Spotify-5.5.0-HeadUnit-test.7.apk) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
+[تنزيل APK test.8](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.8/Spotify-5.5.0-HeadUnit-test.8.apk) · [🌐 Spotify لوحدات الوسائط العاملة بنظام Android](https://romanchukg-cloud.github.io/spotify-android-head-units/ar/)
 
 ## ما الذي تم اختباره؟
 
-Headunit-test.7: APK audit 39 PASS / 0 FAIL. Android 9, 12 and 13 emulators each passed 94 diagnostic logic checks, 7 Support/notice UI checks, 8 process-restart persistence checks, 18 synthetic rhythm checks and 19 playback-resume checks. Diagnostics delivery was tested with a fake transport; no production Spotify report was submitted.
+يحافظ Headunit-test.8 على تسجيل الدخول إلى Spotify: معرّف جهاز ثابت، وعدم تسجيل الخروج عند إزالة حساب قديم غير نشط من إعدادات Android، واستعادة تلقائية لمرة واحدة لتسجيل دخول فُقد على وحدة السيارة. بُني من test.7 المنشور: لم يتغير سوى DEX الخاص بـ Spotify وDEX المحوِّل وversionCode؛ أما الموارد وواجهة BYD والمكتبات الأصلية فمطابقة بايتًا ببايت. تطابقت التعديلات الثمانية الجديدة مرة واحدة لكل منها، ونجحت 39 فحصًا لمنطق تسجيل الدخول وتدقيق التوافق، وأظهر تدقيق الإصدار 42 PASS / 0 FAIL، وشهادة التوقيع مطابقة لـ test.7.
 
-Experimental headunit-test.7. This version has not been installed on the car. The earlier test.6 lighting integration was verified on a BYD Tang EV with DiLink 5 / Android 12. Physical DiLink 5.1 / Android 13 lighting, real vehicle sleep/reboot, real account switching and other head units remain unverified.
+**نسخة headunit-test.8 تجريبية.** لم تُختبر تغييرات تسجيل الدخول بحساب حقيقي على محاكي أو في سيارة؛ ولم يُختبر تغيير ANDROID_ID فعليًا ولا الاستعادة بعد انقطاع الكهرباء. كما لم يُتحقق بعد من سكون السيارة وإعادة تشغيلها فعليًا، والحسابات A → B → A، والتنزيلات دون اتصال، وأزرار المقود، ووحدات السيارات الأخرى. لم تُعد اختبارات المحاكي الخاصة بـ test.7 للإصدار test.8.
 
-Android 9+ (API 28). BYD, AAOS and GENERIC profiles are implemented; compatibility depends on vehicle firmware.
+Android 9 أو أحدث (API 28). تم التحقق من إيقاع BYD على DiLink 5 وAndroid 12؛ لم يتم التحقق بعد من DiLink 5.1 وAndroid 13 والبرامج الثابتة الأخرى. تم تنفيذ ملفات AAOS وGENERIC؛ لم يتم التحقق من وحدات الشركات الأخرى أو AAOS الفعلية.
 
 ## Support and diagnostics
 
@@ -33,12 +33,12 @@ Android 9+ · 55.3 MiB · تعديل غير رسمي
 
 ## التحقق من الملف
 
-`Spotify-5.5.0-HeadUnit-test.7.apk` · 57 946 112 bytes
+`Spotify-5.5.0-HeadUnit-test.8.apk` · 57 962 496 bytes
 
 بصمة SHA-256 للإصدار التجريبي الحالي:
 
 ```text
-9b127d9e9f9b05dfa210207370e9f21dd9ca5eb61ec6e4d6c6bb748d069f4da7
+caa026818b27aa08de38c4c76dab35a02a6ec975095ed5cba9ed0d57c7dc8a93
 ```
 
 مشروع تجريبي غير رسمي. Spotify وBYD علامتان تجاريتان لمالكيهما المعنيين.
@@ -47,6 +47,6 @@ Android 9+ · 55.3 MiB · تعديل غير رسمي
 
 تتوفر شيفرة Java الخاصة بالتكامل وسكربتات التعديل والبناء والتدقيق واختبارات المحاكيات في المستودع. خدمة Spotify وواجهة BYD المغلقتان تُستخدمان كمدخلات بناء محلية.
 
-[Java / build](adapter/) · [ما الذي تم اختباره؟](reports/headunit-test.7.md)
+[Java / build](adapter/) · [ما الذي تم اختباره؟](reports/headunit-test.8.md)
 
 </div>
