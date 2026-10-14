@@ -29,6 +29,9 @@ public final class HeadUnitSettingsActivity extends Activity {
   Button audio=new Button(this);audio.setAllCaps(false);audio.setText(HuText.get("spotify"));audio.setTextSize(18);audio.setMinHeight(dp(56));list.addView(audio,new LinearLayout.LayoutParams(-1,-2));
   audio.setOnClickListener(v->startActivity(new Intent().setClassName(getPackageName(),"com.spotify.automotive.settingspage.SettingsPageActivity")));
   Button diagnostics=new Button(this);diagnostics.setAllCaps(false);diagnostics.setText(DiagnosticText.get("title"));diagnostics.setTextSize(20);diagnostics.setMinHeight(dp(64));list.addView(diagnostics,new LinearLayout.LayoutParams(-1,-2));diagnostics.setOnClickListener(v->startActivity(new Intent(this,DiagnosticActivity.class)));
+  String reason=b.getString("auth_reason");
+  if(reason!=null){TextView signIn=new TextView(this);signIn.setText(SignInText.get("label")+": "+SignInText.get(reason)+" · "+java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(new java.util.Date(b.getLong("auth_time"))));signIn.setTextColor(0xffb3b3b3);signIn.setPadding(0,dp(16),0,0);list.addView(signIn);}
+  if(b.getLong("device_id_changed")>0){TextView id=new TextView(this);id.setText(SignInText.get("device_id"));id.setTextColor(0xffb3b3b3);id.setPadding(0,dp(8),0,0);list.addView(id);}
   TextView profile=new TextView(this);profile.setText("5.5.0 · "+HeadUnitBuild.LABEL+" · "+HeadUnitBuild.VERSION_CODE+" · "+b.getString("profile"));profile.setTextColor(0xffb3b3b3);profile.setPadding(0,dp(16),0,0);list.addView(profile);
  }
  private void save(Bundle b){worker.execute(()->{try{HeadUnitSettings.call(this,"set",b);main.post(()->{if(!destroyed)status.setText(HuText.get("saved"));});}catch(RuntimeException e){main.post(()->{if(!destroyed)status.setText(HuText.get("error"));});}});}

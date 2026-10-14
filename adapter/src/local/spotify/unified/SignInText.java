@@ -1,0 +1,17 @@
+package local.spotify.unified;
+import java.util.Locale;
+public final class SignInText {
+ public static String get(String key){
+  String[] keys={"label","device_id","user_logout","invalid_credentials","not_allowed","unsupported_protocol","deprecated","account_removed","storage_missing","storage_restored","forced_logout","other"};
+  String[][] values={
+   {"Last sign-in event","The head unit changed its system device ID. Spotify keeps using the original ID, so your sign-in stays valid.","Signed out in Spotify settings","Spotify rejected the saved login (password change or sign-out everywhere)","Spotify does not allow this account on this player","Spotify no longer supports the sign-in method of this version","Spotify requires a newer app version","The Spotify account was removed in Android settings","The saved login was lost on the head unit, for example after a power cut","The saved login was lost and restored automatically","Spotify ended the session","Signed out"},
+   {"Остання подія входу","Магнітола змінила системний ID пристрою. Spotify і далі використовує початковий ID, тож вхід залишається дійсним.","Вихід у налаштуваннях Spotify","Spotify відхилив збережений вхід (зміна пароля або вихід на всіх пристроях)","Spotify не дозволяє цей акаунт у цьому плеєрі","Spotify більше не підтримує спосіб входу цієї версії","Spotify вимагає новішу версію застосунку","Акаунт Spotify видалено в налаштуваннях Android","Збережений вхід втрачено на магнітолі, наприклад після знеструмлення","Збережений вхід було втрачено й автоматично відновлено","Spotify завершив сеанс","Вихід з акаунта"},
+   {"Последнее событие входа","Магнитола изменила системный ID устройства. Spotify продолжает использовать исходный ID, поэтому вход остаётся действительным.","Выход в настройках Spotify","Spotify отклонил сохранённый вход (смена пароля или выход на всех устройствах)","Spotify не разрешает этот аккаунт в этом плеере","Spotify больше не поддерживает способ входа этой версии","Spotify требует более новую версию приложения","Аккаунт Spotify удалён в настройках Android","Сохранённый вход потерян на магнитоле, например после отключения питания","Сохранённый вход был потерян и автоматически восстановлен","Spotify завершил сеанс","Выход из аккаунта"},
+   {"آخر حدث لتسجيل الدخول","غيّرت وحدة السيارة معرّف الجهاز في النظام. يواصل Spotify استخدام المعرّف الأصلي ليبقى تسجيل الدخول صالحًا.","تم تسجيل الخروج من إعدادات Spotify","رفض Spotify بيانات الدخول المحفوظة (تغيير كلمة المرور أو تسجيل الخروج من جميع الأجهزة)","لا يسمح Spotify بهذا الحساب على هذا المشغّل","لم يعد Spotify يدعم طريقة تسجيل الدخول في هذا الإصدار","يتطلب Spotify إصدارًا أحدث من التطبيق","تمت إزالة حساب Spotify من إعدادات Android","فُقدت بيانات الدخول المحفوظة على وحدة السيارة، مثلًا بعد انقطاع الكهرباء","فُقدت بيانات الدخول المحفوظة وتمت استعادتها تلقائيًا","أنهى Spotify الجلسة","تم تسجيل الخروج"},
+   {"最近一次登录事件","车机更改了系统设备 ID。Spotify 继续使用原始 ID，登录保持有效。","已在 Spotify 设置中退出登录","Spotify 拒绝了保存的登录信息（已更改密码或在所有设备上退出）","Spotify 不允许此账号在此播放器上使用","Spotify 已不再支持此版本的登录方式","Spotify 需要更新版本的应用","已在 Android 设置中移除 Spotify 账号","车机上保存的登录信息已丢失，例如断电后","保存的登录信息曾丢失，已自动恢复","Spotify 结束了会话","已退出登录"}
+  };
+  String lang=Locale.getDefault().getLanguage();int row=lang.equals("uk")?1:lang.equals("ru")?2:lang.equals("ar")?3:lang.equals("zh")?4:0;
+  for(int i=0;i<keys.length;i++)if(keys[i].equals(key))return values[row][i];
+  return values[row][keys.length-1];
+ }
+}

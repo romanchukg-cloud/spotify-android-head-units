@@ -1,6 +1,6 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.6 adds BYD ambient music rhythm. Local test.7 adds Support and structured diagnostics. Build identity and output filename are generated from `build-info.json`.
+This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.7 adds Support and structured diagnostics. Local test.8 keeps the Spotify sign-in stable on head units. Build identity and output filename are generated from `build-info.json`.
 
 The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
 
@@ -26,7 +26,7 @@ export APKTOOL_JAR=/path/to/apktool_2.11.1.jar
 export HU_KEYSTORE=/path/to/your.keystore
 export HU_KEYSTORE_PASS=pass:your_password
 ./adapter/build.sh
-python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.7.apk --min-api 28
+python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.8.apk --min-api 28
 ```
 
 The optional variables `ANDROID_HOME` and `BUILD_TOOLS_VERSION` select the SDK and tools; local defaults match Android Studio on macOS. `adapter/tests/build.sh` builds test APKs signed with `HU_KEYSTORE` (the test keystore password defaults to `android`; set `HU_KEYSTORE_PASS` for another key). Only run instrumentation on disposable emulators: its checks change head-unit preferences and playback state.
@@ -37,7 +37,7 @@ The fresh input-to-APK build was verified before publication. ZIP timestamps and
 
 ```sh
 ./adapter/tests/build.sh
-adb install -r adapter/Spotify-5.5.0-HeadUnit-test.7.apk
+adb install -r adapter/Spotify-5.5.0-HeadUnit-test.8.apk
 adb install adapter/tests/out/client.apk
 adb install adapter/tests/out/test.apk
 python3 adapter/tests/matrix.py emulator-5554 35
@@ -101,3 +101,20 @@ The three-report private queue persists exact bodies, random UUIDv4 keys and ran
 **Pending** is local, **Queued** means durable server acceptance, and **Report sent** requires a confirmed URL in this exact GitHub repository. Cancellation applies only before delivery is claimed. Removing a local copy frees a queue slot and does not delete a public issue.
 
 Build `zsh adapter/tests/diagnostics/build.sh` after compiling the adapter. Install its `out/reader.apk` and `out/main.apk` on disposable emulators, then run `adb -s SERIAL shell am instrument -w hu.diagnostics/local.spotify.unified.DiagnosticTests`. Run `-e phase ui` for production Support/notice views with a fake transport. Run `-e phase seed`, force-stop `hu.diagnostics`, then `-e phase verify` for real process-restart persistence. The fixture never schedules the real HTTP upload service. No automated suite should create public test issues. See [test.7 validation](../reports/headunit-test.7.md) for actual coverage and remaining vehicle checks.
+
+## Local test.8: Sign-in stability
+
+Spotify Automotive 5.5.0 signs out, and deletes its saved login, in four situations. test.8 fixes the ones caused by the head unit and records the reason for all of them.
+
+| Cause in the SDK | test.8 |
+| --- | --- |
+| login5 rejects the saved login with `INVALID_CREDENTIALS`, `NOT_ALLOWED` or `UNSUPPORTED_LOGIN_PROTOCOL` (`is.e`, mapping in `za.d`) | The saved login is tied to the device ID, which the SDK reads from `ANDROID_ID` (`ib.c`, `v5.q`). `HeadUnitIdentity` keeps the ID seen on the first test.8 start, so firmware that regenerates `ANDROID_ID` no longer invalidates the login. The rejection code is recorded. |
+| Any `ACCOUNT_REMOVED` broadcast for Spotify's account type (`AccountRemovedBroadcastReceiver`), whatever the account name | Signs out only when the removed Android account is the active user. A stale account left behind by an account switch, removals during a switch and Spotify's own removals after it has signed out are ignored. |
+| Remote minimum version above 5.5.0 (`ac.j.h`, `android-spotify-ubiquity/min_version`) | Unchanged and recorded as `deprecated`. The fix is a newer Spotify base. |
+| The SDK starts without its stored user although nobody signed out, for example after a power cut during a write | Once per boot, just before the SDK's startup read (`ac.j` and `vr.e` constructors), the last active account is put back from the encrypted Accounts vault. The vault copy is refreshed 20 seconds after every sign-in. If that fails, `storage_missing` is recorded and QR sign-in appears as before. |
+
+**Head unit settings** shows the last sign-in event with its time, and a note when the system device ID changed. Unexpected sign-outs are recorded as `auth` failures in diagnostics (`permission_denied`, `schema_mismatch` or `internal_error`), so automatic reports include them when automatic sending is on. A sign-out in Spotify settings and the removal of the active Android account stay local. No usernames, IDs or credentials leave the backend process.
+
+`tests/signin/run.sh` runs plain-JVM checks of the decisions: ID pinning, reason classification, the stale-removal filter, one recovery per boot and the diagnostics codes (`ANDROID_JAR` may point at any full framework jar). `../tools/apk_audit.py` adds three `Sign-in /` checks for the SDK hooks, and every new smali patch must match exactly once.
+
+Checked without the build inputs or the signing key: the new patches applied to smali disassembled from the published test.7 APK (each matched once), the patched DEX and the helper DEX assembled, all 35 cross-DEX helper references resolve, the three new audit checks pass on the patched smali and fail on test.7, and the 39 JVM checks pass. **Not yet verified:** a build from the prepared inputs, a real sign-in on an emulator or head unit, an actual `ANDROID_ID` change and recovery after a power cut.

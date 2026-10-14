@@ -21,6 +21,6 @@ public final class HeadUnitPreferences {
  public static boolean resume(){return store().getBoolean("resume",HeadUnitProfile.get(context)==HeadUnitProfile.Kind.GENERIC);}
  public static boolean playOnOpen(){return store().getBoolean("play_open",false);}
  public static int scale(){return Math.max(80,Math.min(130,store().getInt("scale",100)));}
- public static Bundle read(){Bundle b=new Bundle();b.putString("profile",HeadUnitProfile.get(context).name());b.putBoolean("stop_close",stopOnClose());b.putBoolean("external",external());b.putBoolean("resume",resume());b.putBoolean("play_open",playOnOpen());b.putInt("scale",scale());return b;}
+ public static Bundle read(){Bundle b=new Bundle();b.putString("profile",HeadUnitProfile.get(context).name());b.putBoolean("stop_close",stopOnClose());b.putBoolean("external",external());b.putBoolean("resume",resume());b.putBoolean("play_open",playOnOpen());b.putInt("scale",scale());b.putAll(HeadUnitAccounts.summary(context));return b;}
  public static void write(Bundle b){SharedPreferences.Editor e=store().edit();for(String key:new String[]{"stop_close","external","resume","play_open"})if(b.containsKey(key))e.putBoolean(key,b.getBoolean(key));if(b.containsKey("scale"))e.putInt("scale",Math.max(80,Math.min(130,b.getInt("scale"))));if(b.containsKey("resume") && !b.getBoolean("resume"))e.putBoolean("boot_restore_pending",false).putBoolean("screen_playing",false).remove("shutdown_playing");if(!e.commit())throw new IllegalStateException("Settings save failed");}
 }

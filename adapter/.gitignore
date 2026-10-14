@@ -23,3 +23,5 @@ tests/rhythm/out/
 tests/diagnostics/out/
 generated/
 /support/
+
+tests/signin/out/

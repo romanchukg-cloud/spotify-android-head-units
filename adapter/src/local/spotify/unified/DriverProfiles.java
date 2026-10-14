@@ -85,15 +85,13 @@ public final class DriverProfiles {
   if(!"restore".equals(method) && !"add".equals(method))throw new IllegalArgumentException("Unknown profile operation");
   Object target=null;
   if("restore".equals(method)){
-   JSONObject profile=find(vault,id);String name=profile.getString("user");byte[] credential=Base64.decode(profile.getString("credential"),Base64.NO_WRAP);
-   if(credential.length==0)throw new IllegalStateException("Missing reusable login");
-   Class<?> blob=Class.forName("ya.c"),info=Class.forName("ya.e"),token=Class.forName("ya.a");
-   Object auth=blob.getConstructor(String.class,byte[].class).newInstance(name,credential);
-   target=info.getConstructor(String.class,token,blob).newInstance(name,null,auth);
+   JSONObject profile=find(vault,id);
+   target=userInfo(profile.getString("user"),Base64.decode(profile.getString("credential"),Base64.NO_WRAP));
   } else if(vault.getJSONArray("profiles").length()>=8)throw new IllegalStateException("Profile limit reached");
   // The saved vault is committed before changing the SDK's active-user slot.
   // Failures restore that slot before returning; the caller never restarts then.
   local.spotify.close.PlaybackGate.beginAccountTransition(context);
+  HeadUnitAccounts.switching(context,target==null);
   try {
    // storeUser does not replace an existing slot (userAlreadyExists).
    clearSlot(store);
@@ -105,9 +103,32 @@ public final class DriverProfiles {
     if(!username(current(store)).equals(username(user))){clearSlot(store);if(user!=null)checkStored(single(store.getClass().getMethod("n",Class.forName("ya.e")).invoke(store,user)));}
     recovered=true;
    }catch(Exception ignored){}
-   if(recovered)local.spotify.close.PlaybackGate.abortAccountTransition(context);
+   if(recovered){local.spotify.close.PlaybackGate.abortAccountTransition(context);if(user!=null)HeadUnitAccounts.loggedIn(username(user));}
    throw failure;
   }
   return restartResult(context,target==null);
+ }
+ private static Object userInfo(String name,byte[] credential)throws Exception {
+  if(credential.length==0)throw new IllegalStateException("Missing reusable login");
+  Class<?> blob=Class.forName("ya.c"),info=Class.forName("ya.e"),token=Class.forName("ya.a");
+  Object auth=blob.getConstructor(String.class,byte[].class).newInstance(name,credential);
+  return info.getConstructor(String.class,token,blob).newInstance(name,null,auth);
+ }
+ static boolean hasStoredUser(Object store)throws Exception {return current(store)!=null;}
+ /** Copies the active user's current reusable login into the vault; backend process only. */
+ static synchronized void syncActive(Context context){
+  Object store=storage;if(store==null)return;
+  try{ProfileVault disk=new ProfileVault(context);JSONObject vault=disk.read();if(!saveCurrent(vault,current(store)).isEmpty())disk.write(vault);}
+  catch(Exception e){android.util.Log.w("SpotifyProfiles","Saved login sync skipped ("+e.getClass().getSimpleName()+")");}
+ }
+ /** Puts a saved login back into an empty SDK user slot, without the switch/restart flow. */
+ static synchronized boolean restoreSaved(Context context,Object store,String user)throws Exception {
+  JSONArray profiles=new ProfileVault(context).read().getJSONArray("profiles");
+  for(int i=0;i<profiles.length();i++){
+   JSONObject p=profiles.getJSONObject(i);if(!user.equals(p.getString("user")))continue;
+   checkStored(single(store.getClass().getMethod("n",Class.forName("ya.e")).invoke(store,userInfo(user,Base64.decode(p.getString("credential"),Base64.NO_WRAP)))));
+   return true;
+  }
+  return false;
  }
 }

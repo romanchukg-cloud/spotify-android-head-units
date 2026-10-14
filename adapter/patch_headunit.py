@@ -118,3 +118,31 @@ app.set(A+'allowBackup','false')
 E.SubElement(app,'provider',{A+'name':'local.spotify.unified.ProfilesProvider',A+'authorities':'com.spotify.music.local.profiles',A+'exported':'false'})
 E.SubElement(app,'activity',{A+'name':'local.spotify.unified.ProfilesActivity',A+'process':':profiles',A+'exported':'false',A+'taskAffinity':'com.spotify.music.profiles',A+'excludeFromRecents':'true',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
 m.write(out/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
+
+# Sign-in stability: a stable device ID, recorded sign-out reasons, ignored
+# removals of inactive Android accounts and one recovery of a saved login lost
+# on the head unit. Every pattern must match exactly once in the stable SDK.
+H='Llocal/spotify/unified/HeadUnitAccounts;->'
+def signin(rel,changes):
+ p=out/'smali'/rel;s=(stable/'smali'/rel).read_text()
+ for pattern,repl in changes:
+  assert len(re.findall(pattern,s,flags=re.S))==1,(rel,pattern)
+  s=re.sub(pattern,repl,s,count=1,flags=re.S)
+ p.write_text(s)
+def at_entry(sig,code):return (r'(\.method '+re.escape(sig)+r'\n    \.locals \d+\n)',lambda m:m[1]+'\n    '+code+'\n')
+# Saved logins are bound to the device ID, which the SDK reads from ANDROID_ID.
+device_id=(r'(const-string (\w+), "android_id"\n\n    )invoke-static \{(\w+), \2\}, Landroid/provider/Settings\$Secure;->getString\(Landroid/content/ContentResolver;Ljava/lang/String;\)Ljava/lang/String;',
+ lambda m:m[1]+'invoke-static {'+m[3]+', '+m[2]+'}, Llocal/spotify/unified/HeadUnitIdentity;->secureString(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;')
+signin('ib/c.smali',[device_id]);signin('v5/q.smali',[device_id])
+signin('za/d.smali',[(r'(invoke-virtual \{\w+\}, Lcom/spotify/authentication/login5esperanto/EsAccessTokenClient\$ErrorResponse;->j\(\)Lfb/b;\n\n    move-result-object (\w+)\n)',lambda m:m[1]+'\n    invoke-static {'+m[2]+'}, '+H+'tokenError(Ljava/lang/Object;)V\n')])
+signin('is/e.smali',[(r'(    const-string \w+, "Auth response: InvalidCredentials\. logging out user\.\.\."\n)',lambda m:'    invoke-static {}, '+H+'serverRejected()V\n\n'+m[1])])
+for rel in ['ac/j.smali','vr/e.smali']:
+ signin(rel,[(r'(\.method public constructor <init>\((?:(?!\.end method).)*?)(    invoke-virtual \{(\w+)\}, Lca/c;->d\(\)Lio/reactivex/rxjava3/core/Single;)',lambda m:m[1]+'    invoke-static {'+m[3]+'}, '+H+'beforeStartupRead(Ljava/lang/Object;)V\n\n'+m[2]),
+  at_entry('public final d(Leb/a;Llu/i;)Ljava/lang/Object;','invoke-static {p1}, '+H+'logoutRequested(Ljava/lang/Object;)V')])
+signin('zb/a.smali',[at_entry('public final a()V','invoke-static {}, '+H+'deprecated()V'),
+ at_entry('public final b(Ljava/lang/String;)V','invoke-static {p1}, '+H+'androidAccount(Ljava/lang/String;)V'),
+ at_entry('public final c(Ljava/lang/String;)V','invoke-static {p1}, '+H+'loggedIn(Ljava/lang/String;)V'),
+ at_entry('public final d(Leb/a;)V','invoke-static {p1}, '+H+'loggedOut(Ljava/lang/Object;)V')])
+signin('com/spotify/automotive/accountmanagerv2/AccountRemovedBroadcastReceiver.smali',[at_entry('public final onReceive(Landroid/content/Context;Landroid/content/Intent;)V',
+ 'invoke-static {p1, p2}, '+H+'ignoreRemoval(Landroid/content/Context;Landroid/content/Intent;)Z\n    move-result v0\n    if-eqz v0, :hu_account_removal\n    return-void\n    :hu_account_removal')])
+print('Sign-in patches: device ID, sign-out reasons, account removal, recovery')
