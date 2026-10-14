@@ -1,0 +1,132 @@
+# Builds a head-unit test release from the previous published APK plus main
+# (adapter/incremental_release.py), signs it with the release key and, when
+# asked, publishes it as a prerelease. Every check must pass before publishing.
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      base_tag:
+        description: Previous published release tag
+        default: v5.5.0-headunit-test.7
+        required: true
+      base_info:
+        description: Metadata of that release
+        default: reports/headunit-test.7/release.json
+        required: true
+      since:
+        description: patch_headunit.py section added after the base release
+        default: Sign-in stability
+        required: true
+      title:
+        description: Release title after "5.5.0 headunit-test.N — "
+        default: Stable sign-in
+        required: true
+      publish:
+        description: Create the GitHub prerelease
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency: release
+
+jobs:
+  release:
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Tools
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/jadx.zip" https://github.com/skylot/jadx/releases/download/v1.5.1/jadx-1.5.1.zip
+          echo "12fd966431903b8e15c36e5007f19343475be7d8f2a55f082e7a929eeabc937e  $RUNNER_TEMP/jadx.zip" | sha256sum -c -
+          unzip -q -j "$RUNNER_TEMP/jadx.zip" lib/jadx-1.5.1-all.jar -d "$RUNNER_TEMP"
+          curl -fsSL -o "$RUNNER_TEMP/apktool.jar" https://github.com/iBotPeaches/Apktool/releases/download/v2.11.1/apktool_2.11.1.jar
+          echo "56d59c524fc764263ba8d345754d8daf55b1887818b15cd3b594f555d249e2db  $RUNNER_TEMP/apktool.jar" | sha256sum -c -
+          mkdir -p "$RUNNER_TEMP/bin"
+          printf '#!/bin/sh\nexec java -jar "%s" "$@"\n' "$RUNNER_TEMP/apktool.jar" > "$RUNNER_TEMP/bin/apktool"
+          chmod +x "$RUNNER_TEMP/bin/apktool" && echo "$RUNNER_TEMP/bin" >> "$GITHUB_PATH"
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          PLATFORM=$(ls -d "$ANDROID_HOME"/platforms/android-* | sort -V | tail -1)
+          { echo "BT=$BT"; echo "BUILD_TOOLS_VERSION=$(basename "$BT")"; echo "ANDROID_JAR=$PLATFORM/android.jar"; echo "ANDROID_SDK_ROOT=$ANDROID_HOME"; } >> "$GITHUB_ENV"
+
+      - name: Base release
+        run: |
+          gh release download "${{ inputs.base_tag }}" --pattern '*.apk' --dir "$RUNNER_TEMP/base"
+          echo "BASE_APK=$(ls "$RUNNER_TEMP"/base/*.apk)" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: |
+          python3 adapter/incremental_release.py --base "$BASE_APK" --base-info "${{ inputs.base_info }}" \
+            --since "${{ inputs.since }}" --tools "$RUNNER_TEMP/jadx-1.5.1-all.jar" --android-jar "$ANDROID_JAR" \
+            --work "$RUNNER_TEMP/work" --out "$RUNNER_TEMP/unsigned.apk"
+          python3 -c 'import json;b=json.load(open("adapter/build-info.json"));print("LABEL="+b["label"]);print("APK_NAME="+b["apk_name"])' >> "$GITHUB_ENV"
+
+      - name: Sign
+        env:
+          HU_KEYSTORE_B64: ${{ secrets.HU_KEYSTORE_B64 }}
+          HU_KEYSTORE_PASS: ${{ secrets.HU_KEYSTORE_PASS || 'pass:android' }}
+          HU_KEY_PASS: ${{ secrets.HU_KEY_PASS || 'pass:android' }}
+          HU_KEY_ALIAS: ${{ secrets.HU_KEY_ALIAS || 'androiddebugkey' }}
+        run: |
+          test -n "$HU_KEYSTORE_B64" || { echo "::error::Add the HU_KEYSTORE_B64 repository secret"; exit 1; }
+          mkdir -p dist
+          echo "$HU_KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/release.keystore"
+          "$BT/zipalign" -P 16 -f 4 "$RUNNER_TEMP/unsigned.apk" "$RUNNER_TEMP/aligned.apk"
+          "$BT/apksigner" sign --ks "$RUNNER_TEMP/release.keystore" --ks-pass "$HU_KEYSTORE_PASS" \
+            --ks-key-alias "$HU_KEY_ALIAS" --key-pass "$HU_KEY_PASS" --min-sdk-version 28 \
+            --out "dist/$APK_NAME" "$RUNNER_TEMP/aligned.apk"
+          rm -f "$RUNNER_TEMP/release.keystore"
+
+      - name: Verify signature
+        run: |
+          "$BT/apksigner" verify --verbose --print-certs --min-sdk-version 28 "dist/$APK_NAME" | tee "$RUNNER_TEMP/certs.txt"
+          "$BT/zipalign" -c -P 16 4 "dist/$APK_NAME"
+          expected=$(python3 -c 'import json,sys;print(json.load(open(sys.argv[1]))["certificateSha256"])' "${{ inputs.base_info }}")
+          grep -q "SHA-256 digest: $expected" "$RUNNER_TEMP/certs.txt" || { echo "::error::Signing certificate differs from the base release"; exit 1; }
+
+      - name: Checks
+        run: |
+          ANDROID_JAR="$ANDROID_JAR" bash adapter/tests/signin/run.sh
+          python3 tools/apk_compat_audit.py "dist/$APK_NAME" --min-api 28 --no-api | tee dist/compat-audit.md
+          python3 tools/apk_audit.py "dist/$APK_NAME" --min-api 28 | tee dist/apk-audit.txt
+          python3 - <<'EOF'
+          import hashlib,json,os,subprocess
+          apk="dist/"+os.environ["APK_NAME"];base=json.load(open("${{ inputs.base_info }}"))
+          build=json.load(open("adapter/build-info.json"))
+          info={"file":os.environ["APK_NAME"],"sha256":hashlib.sha256(open(apk,"rb").read()).hexdigest(),"size":os.path.getsize(apk),
+                "package":"com.spotify.music","versionCode":build["version_code"],"versionName":base["versionName"],
+                "minSdk":base["minSdk"],"targetSdk":base["targetSdk"],"certificateSha256":base["certificateSha256"],
+                "published":False,"installedOnCar":False,
+                "releaseUrl":"https://github.com/${{ github.repository }}/releases/tag/v5.5.0-"+build["label"],
+                "sourceCommit":os.environ["GITHUB_SHA"],"base":base["file"]}
+          json.dump(info,open("dist/release.json","w"),indent=2);print(json.dumps(info,indent=2))
+          EOF
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.LABEL }}
+          path: dist/
+
+      - name: Publish prerelease
+        if: inputs.publish
+        run: |
+          python3 - <<'EOF' > "$RUNNER_TEMP/notes.md"
+          import json,os
+          label=os.environ["LABEL"];info=json.load(open("dist/release.json"))
+          print(open("reports/"+label+"/release-notes.md").read().rstrip())
+          print("\nAPK: `%s` · %s bytes · `com.spotify.music` · versionCode **%d**." % (info["file"],format(info["size"],","),info["versionCode"]))
+          print("\nSHA-256: `%s`." % info["sha256"])
+          print("\n[Download page](https://romanchukg-cloud.github.io/spotify-android-head-units/) · [Source](https://github.com/romanchukg-cloud/spotify-android-head-units/tree/%s/adapter)" % info["sourceCommit"])
+          EOF
+          gh release create "v5.5.0-$LABEL" "dist/$APK_NAME" --prerelease --target "$GITHUB_SHA" \
+            --title "5.5.0 $LABEL — ${{ inputs.title }}" --notes-file "$RUNNER_TEMP/notes.md"

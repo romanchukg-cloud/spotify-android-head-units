@@ -25,3 +25,4 @@ generated/
 /support/
 
 tests/signin/out/
+incremental/

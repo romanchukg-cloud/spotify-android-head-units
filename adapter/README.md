@@ -33,6 +33,12 @@ The optional variables `ANDROID_HOME` and `BUILD_TOOLS_VERSION` select the SDK a
 
 The fresh input-to-APK build was verified before publication. ZIP timestamps and resource compiler normalization can change whole-APK hashes between builds; verify the downloaded release against the published hash.
 
+## Releasing without the input APKs
+
+`incremental_release.py` builds the next test release from the previous published APK: it re-applies the smali patch section added since that release (`--since`, a `# …` heading in `patch_headunit.py`) to the published backend DEX, recompiles the helper DEX from `src/` and sets the `build-info.json` versionCode. Resources, the UI DEX and native libraries stay byte-identical, and the script refuses a base APK whose SHA-256 differs from its `reports/<release>/release.json`.
+
+The **Release** GitHub Actions workflow (`.github/workflows/release.yml`, run manually) does this, signs with the `HU_KEYSTORE_B64` repository secret (base64 of the release keystore; optional `HU_KEYSTORE_PASS`, `HU_KEY_ALIAS`, `HU_KEY_PASS` default to the debug-keystore values), requires the certificate of the base release, runs the sign-in tests and both APK audits, uploads the APK as an artifact and, with `publish`, creates the prerelease from `reports/<label>/release-notes.md`. `build.sh` with the prepared inputs remains the reference build.
+
 ## Verification
 
 ```sh
