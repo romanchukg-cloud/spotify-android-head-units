@@ -20,4 +20,4 @@ https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download
 Release notes:
 https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.9
 
-Android 9+. Experimental test release: checked on Android 9 and 13 emulators (update over test.8, start, update check), not yet in a car. Installing a newer build through the app can only be tried once test.10 is out.
+Android 9+. Experimental test release. Installed in a car on DiLink 5.0 / Android 12 as an update over the previous build, without uninstalling, and started normally; also checked on Android 9 and 13 emulators. Not tested yet: installing a newer build through the app (possible once test.10 is out), DiLink 5.1 / Android 13 and other head units.
