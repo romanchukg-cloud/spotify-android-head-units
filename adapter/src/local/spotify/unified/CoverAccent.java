@@ -16,7 +16,7 @@ final class CoverAccent {
  private static final String UI="com.spotify.music.ui";private static final long PERIOD=700;
  private static final WeakHashMap<Activity,CoverAccent> running=new WeakHashMap<>();
  private final Activity activity;private final Handler main=new Handler(Looper.getMainLooper());private final boolean dark;
- private Drawable lastCover;private Drawable barOriginal,pageOriginal;private View bar,page;
+ private Drawable lastCover;private Drawable barOriginal,pageOriginal,barTint,pageTint;private View bar,page;private Integer lastColor;
  private final Runnable tick=this::tick;
  private CoverAccent(Activity a){activity=a;dark=(a.getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;}
  static void start(Activity a,boolean enabled){
@@ -36,7 +36,10 @@ final class CoverAccent {
     int id=activity.getResources().getIdentifier("iv_cover","id",UI);
     View art=id==0?null:cover.findViewById(id);
     Drawable d=art instanceof ImageView?((ImageView)art).getDrawable():null;
-    if(d!=null && d!=lastCover){Integer color=vivid(d);if(color!=null){lastCover=d;apply(color);}}
+    if(d!=null && d!=lastCover){Integer color=vivid(d);if(color!=null){lastCover=d;lastColor=color;barTint=null;pageTint=null;}}
+    // Views can appear or be rebound after the colour was taken (the player panel, a new process).
+    if(lastColor!=null)apply(lastColor);
+    if(d!=null)queueCover(d);
    }
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Cover colour unavailable",e);}
   main.postDelayed(tick,PERIOD);
@@ -63,9 +66,38 @@ final class CoverAccent {
  private static float lin(int v){float s=v/255f;return s<=0.03928f?s/12.92f:(float)Math.pow((s+0.055)/1.055,2.4);}
  private void apply(int color){
   float density=activity.getResources().getDisplayMetrics().density;
-  if(bar!=null){if(barOriginal==null)barOriginal=bar.getBackground();GradientDrawable d=new GradientDrawable();d.setCornerRadius(18*density);d.setColor(tone(color,dark,0.42f));bar.setBackground(d);}
-  if(page!=null){if(pageOriginal==null)pageOriginal=page.getBackground();int base=dark?0xff181818:0xffffffff;
-   GradientDrawable d=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{tone(color,dark,dark?0.45f:1f),base,base});d.setCornerRadius(22*density);page.setBackground(d);}
+  if(bar!=null && (barTint==null || bar.getBackground()!=barTint)){
+   if(barOriginal==null)barOriginal=bar.getBackground();
+   if(barTint==null){GradientDrawable d=new GradientDrawable();d.setCornerRadius(18*density);d.setColor(tone(color,dark,0.42f));barTint=d;}
+   bar.setBackground(barTint);
+  }
+  if(page!=null && (pageTint==null || page.getBackground()!=pageTint)){
+   if(pageOriginal==null)pageOriginal=page.getBackground();int base=dark?0xff181818:0xffffffff;
+   if(pageTint==null){GradientDrawable d=new GradientDrawable(GradientDrawable.Orientation.TL_BR,new int[]{tone(color,dark,dark?0.45f:1f),base,base});d.setCornerRadius(22*density);pageTint=d;}
+   page.setBackground(pageTint);
+  }
  }
- private void restore(){if(bar!=null && barOriginal!=null)bar.setBackground(barOriginal);if(page!=null && pageOriginal!=null)page.setBackground(pageOriginal);lastCover=null;}
+ /**
+  * The queue's "Now playing" row gets no artwork from Spotify Automotive, so its cover stays
+  * empty; show the mini-player's cover there, rounded like the other rows.
+  */
+ private void queueCover(Drawable cover){
+  View list=find("queue");if(!(list instanceof ViewGroup) || !list.isShown())return;
+  int coverId=activity.getResources().getIdentifier("img_cover","id",UI);if(coverId==0)return;
+  ViewGroup rows=(ViewGroup)list;
+  for(int i=0;i<rows.getChildCount();i++){
+   View row=rows.getChildAt(i);if(!row.isSelected())continue;
+   View v=row.findViewById(coverId);if(!(v instanceof ImageView))continue;ImageView image=(ImageView)v;
+   Drawable shown=image.getDrawable();
+   if(shown!=null && image.getTag(TAG)==null)continue;   // real artwork
+   if(shown!=null && image.getTag(TAG)==cover)continue;  // already showing the current cover
+   Drawable copy=cover.getConstantState()!=null?cover.getConstantState().newDrawable(activity.getResources()).mutate():cover;
+   image.setImageDrawable(copy);image.setScaleType(ImageView.ScaleType.CENTER_CROP);image.setVisibility(View.VISIBLE);image.setTag(TAG,cover);
+   final float radius=8*activity.getResources().getDisplayMetrics().density;
+   image.setOutlineProvider(new ViewOutlineProvider(){public void getOutline(View view,Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),radius);}});
+   image.setClipToOutline(true);
+  }
+ }
+ private static final int TAG=0x7f5a0001;
+ private void restore(){if(bar!=null && barOriginal!=null)bar.setBackground(barOriginal);if(page!=null && pageOriginal!=null)page.setBackground(pageOriginal);lastCover=null;lastColor=null;barTint=null;pageTint=null;}
 }

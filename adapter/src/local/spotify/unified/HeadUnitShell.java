@@ -46,7 +46,10 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
    }
    // The mini-player and the expanded player stay aligned with the content card. Their
    // container spans the gap next to the rail, so it must not paint its own background.
-   if(sheet!=null){int[] p=window(pager);place(sheet,p[0],p[0]+pager.getWidth(),-1,-1);if(sheet.getParent() instanceof View && ((View)sheet.getParent()).getBackground()!=null)((View)sheet.getParent()).setBackground(null);}
+   if(sheet!=null){int[] p=window(pager);place(sheet,p[0],p[0]+pager.getWidth(),-1,-1);
+    if(sheet.getParent() instanceof View){View holder=(View)sheet.getParent();if(holder.getBackground()!=null)holder.setBackground(null);
+     // The expanded player covers the content card exactly, rounded corners included.
+     margins(holder,-1,gap,-1,gap);}}
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Rounded layout unavailable",e);}
  }
  /**

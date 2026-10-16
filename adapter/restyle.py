@@ -53,8 +53,9 @@ PALETTE = {
     'colorHighlight': ('#ffebebeb', '#ff2a2a2a'),
     'colorSecondary': ('#ff555555', '#ffb3b3b3'),
     'colorBar': ('#29000000', '#4dffffff'),
-    'colorShadowStart': ('#00f6f6f6', None),
-    'colorShadowEnd': ('#fff6f6f6', None),
+    # The Classic fade under the mini-player shows as a band between the rounded cards.
+    'colorShadowStart': ('#00000000', '#00000000'),
+    'colorShadowEnd': ('#00000000', '#00000000'),
     'colorDialogBackground': ('#ffffffff', '#ff242424'),
     'colorDialogText': ('#ff121212', None),
     'colorDialogDivider': ('#ffe0e0e0', None),
