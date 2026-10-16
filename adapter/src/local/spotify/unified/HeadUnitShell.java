@@ -51,7 +51,10 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
    if(sheet!=null){int[] p=window(pager);place(sheet,p[0],p[0]+pager.getWidth(),-1,-1);
     if(sheet.getParent() instanceof View){View holder=(View)sheet.getParent();if(holder.getBackground()!=null)holder.setBackground(null);
      // The expanded player covers the content card exactly, rounded corners included.
-     margins(holder,-1,gap,-1,gap);}}
+     margins(holder,-1,gap,-1,gap);}
+    // The interface dims the sheet's rectangle while the player is open; clipped to the card's
+    // rounded shape, the dimming no longer shows at the player's corners.
+    if(!sheet.getClipToOutline()){final float corner=radius;sheet.setOutlineProvider(new ViewOutlineProvider(){public void getOutline(View view,android.graphics.Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),corner);}});sheet.setClipToOutline(true);}}
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Rounded layout unavailable",e);}
  }
  /**

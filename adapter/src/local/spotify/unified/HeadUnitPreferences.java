@@ -16,7 +16,8 @@ public final class HeadUnitPreferences {
   if(!e.commit())throw new IllegalStateException("Head unit preferences unavailable");
  }
  public static SharedPreferences store(){return context.getSharedPreferences("headunit_v1",0);}
- public static boolean stopOnClose(){return store().getBoolean("stop_close",HeadUnitProfile.get(context)==HeadUnitProfile.Kind.BYD);}
+ /** Closing Spotify always stops the music (owner decision, test.10); the old "stop_close" choice is ignored. */
+ public static boolean stopOnClose(){return true;}
  public static boolean external(){return store().getBoolean("external",HeadUnitProfile.get(context)!=HeadUnitProfile.Kind.BYD);}
  public static boolean resume(){return store().getBoolean("resume",HeadUnitProfile.get(context)==HeadUnitProfile.Kind.GENERIC);}
  public static boolean playOnOpen(){return store().getBoolean("play_open",false);}
@@ -24,5 +25,5 @@ public final class HeadUnitPreferences {
  public static boolean coverAccent(){return store().getBoolean("cover_accent",true);}
  public static int scale(){return Math.max(80,Math.min(130,store().getInt("scale",100)));}
  public static Bundle read(){Bundle b=new Bundle();b.putString("profile",HeadUnitProfile.get(context).name());b.putBoolean("stop_close",stopOnClose());b.putBoolean("external",external());b.putBoolean("resume",resume());b.putBoolean("play_open",playOnOpen());b.putInt("scale",scale());b.putString("ui_style",style());b.putBoolean("cover_accent",coverAccent());b.putAll(HeadUnitAccounts.summary(context));return b;}
- public static void write(Bundle b){SharedPreferences.Editor e=store().edit();for(String key:new String[]{"stop_close","external","resume","play_open","cover_accent"})if(b.containsKey(key))e.putBoolean(key,b.getBoolean(key));if(b.containsKey("ui_style"))e.putString("ui_style",HeadUnitStyle.modern(b.getString("ui_style"))?HeadUnitStyle.NEW:HeadUnitStyle.CLASSIC);if(b.containsKey("scale"))e.putInt("scale",Math.max(80,Math.min(130,b.getInt("scale"))));if(b.containsKey("resume") && !b.getBoolean("resume"))e.putBoolean("boot_restore_pending",false).putBoolean("screen_playing",false).remove("shutdown_playing");if(!e.commit())throw new IllegalStateException("Settings save failed");}
+ public static void write(Bundle b){SharedPreferences.Editor e=store().edit();for(String key:new String[]{"external","resume","play_open","cover_accent"})if(b.containsKey(key))e.putBoolean(key,b.getBoolean(key));if(b.containsKey("ui_style"))e.putString("ui_style",HeadUnitStyle.modern(b.getString("ui_style"))?HeadUnitStyle.NEW:HeadUnitStyle.CLASSIC);if(b.containsKey("scale"))e.putInt("scale",Math.max(80,Math.min(130,b.getInt("scale"))));if(b.containsKey("resume") && !b.getBoolean("resume"))e.putBoolean("boot_restore_pending",false).putBoolean("screen_playing",false).remove("shutdown_playing");if(!e.commit())throw new IllegalStateException("Settings save failed");}
 }

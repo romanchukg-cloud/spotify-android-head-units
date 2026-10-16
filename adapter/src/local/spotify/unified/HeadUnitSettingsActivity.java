@@ -26,7 +26,7 @@ public final class HeadUnitSettingsActivity extends Activity {
  private void openSpotify(){startActivity(new Intent().setClassName(getPackageName(),"com.spotify.automotive.settingspage.SettingsPageActivity"));}
  private void classic(Bundle b){
   classicHeader();
-  for(String key:new String[]{"stop_close","external","resume","play_open"}){
+  for(String key:new String[]{"external","resume","play_open"}){
    Switch row=new Switch(this);row.setText(HuText.get(key.equals("stop_close")?"close":key));row.setTextColor(Color.WHITE);row.setTextSize(18);row.setMinHeight(dp(60));row.setChecked(b.getBoolean(key));list.addView(row,new LinearLayout.LayoutParams(-1,-2));
    row.setOnCheckedChangeListener((button,value)->{Bundle change=new Bundle();change.putBoolean(key,value);save(change);});
   }
@@ -67,7 +67,7 @@ public final class HeadUnitSettingsActivity extends Activity {
   stepper.addView(ui.circle("+",HuText.get("scale")+" +",v->{if(scale[0]<130){scale[0]+=5;value.setText(scale[0]+"%");Bundle change=new Bundle();change.putInt("scale",scale[0]);save(change);}}));
   appearance.addView(ui.row(HuText.get("scale"),null,stepper));
   LinearLayout playback=ui.card(HuText.get("channel"));
-  String[] keys={"resume","play_open","stop_close","external"};
+  String[] keys={"resume","play_open","external"};
   for(int i=0;i<keys.length;i++){
    String key=keys[i];if(i>0)ui.divider(playback);
    HuUi.Toggle toggle=new HuUi.Toggle(ui,b.getBoolean(key));

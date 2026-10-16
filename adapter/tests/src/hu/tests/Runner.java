@@ -24,10 +24,10 @@ public class Runner extends Instrumentation {
    ok(HeadUnitProfile.get(c)==HeadUnitProfile.Kind.GENERIC,"ordinary tablet is GENERIC");
    ok(c.getPackageManager().getComponentEnabledSetting(new ComponentName(c,"local.bydui.com.vivid.spotify.service.MediaManagerService"))==2,"BYD service disabled");
    HeadUnitPreferences.store().edit().clear().commit();HeadUnitPreferences.write(new Bundle());
-   ok(!HeadUnitPreferences.stopOnClose()&&HeadUnitPreferences.external()&&HeadUnitPreferences.resume()&&!HeadUnitPreferences.playOnOpen(),"GENERIC defaults; open autoplay opt-in");
+   ok(HeadUnitPreferences.stopOnClose()&&HeadUnitPreferences.external()&&HeadUnitPreferences.resume()&&!HeadUnitPreferences.playOnOpen(),"GENERIC defaults; closing always stops; open autoplay opt-in");
    Bundle b=new Bundle();b.putBoolean("stop_close",false);HeadUnitSettings.call(c,"set",b);PlaybackGate.change(c,false);
-   c.getContentResolver().call(Uri.parse("content://com.spotify.music.local.closecontrol"),"close",null,null);ok(!PlaybackGate.blocked(),"task removal option OFF keeps gate open");
-   b.putBoolean("stop_close",true);HeadUnitSettings.call(c,"set",b);c.getContentResolver().call(Uri.parse("content://com.spotify.music.local.closecontrol"),"close",null,null);ok(PlaybackGate.blocked(),"task removal option ON closes gate");
+   ok(HeadUnitPreferences.stopOnClose(),"a stored stop_close=false is ignored");
+   c.getContentResolver().call(Uri.parse("content://com.spotify.music.local.closecontrol"),"close",null,null);ok(PlaybackGate.blocked(),"task removal closes gate");
    PlaybackGate.userPlay();ok(!PlaybackGate.blocked(),"explicit PLAY reopens gate");
    PlaybackGate.openForUi(c,new Binder());java.lang.reflect.Field f=PlaybackGate.class.getDeclaredField("uiDeath");f.setAccessible(true);((IBinder.DeathRecipient)f.get(null)).binderDied();ok(!PlaybackGate.blocked(),"binder death leaves gate open");
    HeadUnitPreferences.store().edit().putBoolean("was_playing",true).putBoolean("screen_playing",true).putBoolean("boot_restore_pending",true).commit();HeadUnitRuntime.explicitPause(c);ok(!HeadUnitPreferences.store().getBoolean("was_playing",true)&&!HeadUnitPreferences.store().getBoolean("screen_playing",true)&&!HeadUnitPreferences.store().getBoolean("boot_restore_pending",true),"explicit pause clears wake/reboot resume");
