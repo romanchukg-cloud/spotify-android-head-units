@@ -11,6 +11,7 @@ import android.view.*;
 final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,ViewTreeObserver.OnPreDrawListener {
  private static final String UI="com.spotify.music.ui";private static final float GAP=6,RADIUS=22;
  private static final java.util.WeakHashMap<Activity,HeadUnitShell> installed=new java.util.WeakHashMap<>();
+ private CornerMask mask;
  private final Activity activity;private final boolean dark;private final int gap,radius,ground,card,rail;
  private HeadUnitShell(Activity a){
   activity=a;float d=a.getResources().getDisplayMetrics().density;gap=Math.round(GAP*d);radius=Math.round(RADIUS*d);
@@ -31,6 +32,9 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
    if(left==null || pager==null || !(left.getParent() instanceof ViewGroup))return;
    ViewGroup root=(ViewGroup)left.getParent();
    if(!(root.getBackground() instanceof GradientDrawable)){GradientDrawable g=new GradientDrawable();g.setColor(ground);root.setBackground(g);}
+   // The app's own corners: black masks blend with BYD's black status bar and dock.
+   if(mask==null){mask=new CornerMask(radius+gap);root.getOverlay().add(mask);}
+   if(mask.getBounds().width()!=root.getWidth() || mask.getBounds().height()!=root.getHeight())mask.setBounds(0,0,root.getWidth(),root.getHeight());
    View menu=right!=null && right.getVisibility()==View.VISIBLE?right:left;boolean rightHand=menu==right;
    if(menu.getVisibility()!=View.VISIBLE)return;
    card(menu,rail);card(pager,card);
@@ -93,6 +97,16 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
   if(android.os.Build.VERSION.SDK_INT>=30){WindowInsetsController c=w.getInsetsController();
    int mask=WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS|WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
    if(c!=null && (c.getSystemBarsAppearance()&mask)!=(dark?0:mask))c.setSystemBarsAppearance(dark?0:mask,mask);}
+ }
+ /** Paints the area outside a rounded rectangle black, concentric with the cards' corners. */
+ static final class CornerMask extends android.graphics.drawable.Drawable {
+  private final float radius;private final android.graphics.Paint paint=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);private final android.graphics.Path path=new android.graphics.Path();
+  CornerMask(float radius){this.radius=radius;paint.setColor(0xff000000);}
+  protected void onBoundsChange(android.graphics.Rect b){path.reset();path.setFillType(android.graphics.Path.FillType.EVEN_ODD);path.addRect(b.left,b.top,b.right,b.bottom,android.graphics.Path.Direction.CW);path.addRoundRect(b.left,b.top,b.right,b.bottom,radius,radius,android.graphics.Path.Direction.CW);}
+  public void draw(android.graphics.Canvas c){c.drawPath(path,paint);}
+  public void setAlpha(int a){paint.setAlpha(a);}
+  public void setColorFilter(android.graphics.ColorFilter f){paint.setColorFilter(f);}
+  public int getOpacity(){return android.graphics.PixelFormat.TRANSLUCENT;}
  }
  private static int[] window(View v){int[] xy=new int[2];v.getLocationInWindow(xy);return xy;}
  /**
