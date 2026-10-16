@@ -72,7 +72,8 @@
     "support": "Open Head unit settings → Support. Send diagnostics lets you preview approved technical data before sending. Reports go to our shared server and a limited summary may appear in this project’s PUBLIC GitHub Issues. Automatically send diagnostics is selected on the first-use notice and starts only after Continue; you can turn it off in Support. Automatic reports cover measured integration failures only, at most one new report per day. Manual sending, pending status/cancellation and ZIP export remain available with automatic sending off. Reports exclude account data, song/playlist names, location and screenshots. Technical metadata is not a guarantee of anonymity.",
     "shots": [
       "Home in the New style in a BYD car, day theme",
-      "Library with the Settings button, day theme"
+      "Library with the Settings button, day theme",
+      "Library at night, the mini-player tinted by the cover"
     ]
   },
   "uk": {
@@ -145,7 +146,8 @@
     "source": "Наш Java-код інтеграції, патчі, скрипти складання, аудит і тести емуляторів доступні в репозиторії. Закритий SDK Spotify та інтерфейс BYD є локальними вхідними файлами складання.",
     "shots": [
       "Головна в Новому стилі в авто BYD, денна тема",
-      "Бібліотека з кнопкою Settings, денна тема"
+      "Бібліотека з кнопкою Settings, денна тема",
+      "Бібліотека вночі, міні-плеєр у кольорі обкладинки"
     ]
   },
   "ru": {
@@ -218,7 +220,8 @@
     "source": "Наш Java-код интеграции, патчи, скрипты сборки, аудит и тесты эмуляторов доступны в репозитории. Закрытый SDK Spotify и интерфейс BYD — локальные входные файлы сборки.",
     "shots": [
       "Главная в Новом стиле в машине BYD, дневная тема",
-      "Библиотека с кнопкой Settings, дневная тема"
+      "Библиотека с кнопкой Settings, дневная тема",
+      "Библиотека ночью, мини-плеер в цвете обложки"
     ]
   },
   "ar": {
@@ -291,7 +294,8 @@
     "source": "تتوفر شيفرة Java الخاصة بالتكامل وسكربتات التعديل والبناء والتدقيق واختبارات المحاكيات في المستودع. خدمة Spotify وواجهة BYD المغلقتان تُستخدمان كمدخلات بناء محلية.",
     "shots": [
       "الصفحة الرئيسية بالنمط الجديد في سيارة BYD، المظهر النهاري",
-      "المكتبة مع زر Settings، المظهر النهاري"
+      "المكتبة مع زر Settings، المظهر النهاري",
+      "المكتبة ليلًا، والمشغّل المصغّر بلون صورة الغلاف"
     ]
   },
   "zh-Hans": {
@@ -364,7 +368,8 @@
     "source": "仓库提供我们的 Java 集成代码、补丁与构建脚本、审计工具及模拟器测试源码。闭源 Spotify 后端和 BYD 界面作为本地构建输入。",
     "shots": [
       "BYD 车内的新版样式主页（日间主题）",
-      "带有 Settings 按钮的媒体库（日间主题）"
+      "带有 Settings 按钮的媒体库（日间主题）",
+      "夜间的媒体库，迷你播放器采用封面颜色"
     ]
   }
 }

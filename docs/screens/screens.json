@@ -8,5 +8,10 @@
     "file": "car-library-day.jpg",
     "width": 1600,
     "height": 900
+  },
+  {
+    "file": "car-library-night.jpg",
+    "width": 1600,
+    "height": 900
   }
 ]
