@@ -32,7 +32,7 @@ def clean():
     for d in RES.iterdir():
         if d.is_dir() and 'car' in d.name.split('-')[1:]:
             shutil.rmtree(d)
-    for f in list(RES.glob('*/hu_*.xml')) + list(RES.glob('font/hu_*.ttf')):
+    for f in list(RES.glob('*/hu_*.xml')) + list(RES.glob('font/hu_*.ttf')):  # values-*/hu_strings.xml included
         f.unlink()
 
 
@@ -66,6 +66,8 @@ NEW_COLORS = {
     'hu_page_bg': ('#ffffffff', '#ff181818'),
     'hu_nav_selected': ('#ffebebeb', '#ff2a2a2a'),
     'hu_chip_bg': ('#ffebebeb', '#ff2a2a2a'),
+    'hu_row_bg': ('#ffececec', '#ff232323'),
+    'hu_row_current': ('#ffdcdcdc', '#ff333333'),
 }
 
 
@@ -95,6 +97,10 @@ def colors():
 SHAPES = {
     'hu_now_playing_bar_bg': '<shape xmlns:android="%s"><corners android:radius="18.0dip" /><solid android:color="@color/hu_bar_bg" /></shape>' % ANDROID,
     'hu_now_playing_page_bg': '<shape xmlns:android="%s"><corners android:radius="22.0dip" /><solid android:color="@color/hu_page_bg" /></shape>' % ANDROID,
+    # Material "settings" icon (Apache 2.0), in the text colour.
+    'hu_ic_settings': ('<vector xmlns:android="%s" android:width="28.0dip" android:height="28.0dip" android:viewportWidth="24.0" android:viewportHeight="24.0">'
+                       '<path android:fillColor="@color/colorPrimary" android:pathData="M19.14,12.94c0.04,-0.3 0.06,-0.61 0.06,-0.94c0,-0.32 -0.02,-0.64 -0.07,-0.94l2.03,-1.58c0.18,-0.14 0.23,-0.41 0.12,-0.61l-1.92,-3.32c-0.12,-0.22 -0.37,-0.29 -0.59,-0.22l-2.39,0.96c-0.5,-0.38 -1.03,-0.7 -1.62,-0.94L14.4,2.81c-0.04,-0.24 -0.24,-0.41 -0.48,-0.41h-3.84c-0.24,0 -0.43,0.17 -0.47,0.41L9.25,5.35C8.66,5.59 8.12,5.92 7.63,6.29L5.24,5.33c-0.22,-0.08 -0.47,0 -0.59,0.22L2.74,8.87C2.62,9.08 2.66,9.34 2.86,9.48l2.03,1.58C4.84,11.36 4.8,11.69 4.8,12s0.02,0.64 0.07,0.94l-2.03,1.58c-0.18,0.14 -0.23,0.41 -0.12,0.61l1.92,3.32c0.12,0.22 0.37,0.29 0.59,0.22l2.39,-0.96c0.5,0.38 1.03,0.7 1.62,0.94l0.36,2.54c0.05,0.24 0.24,0.41 0.48,0.41h3.84c0.24,0 0.44,-0.17 0.47,-0.41l0.36,-2.54c0.59,-0.24 1.13,-0.56 1.62,-0.94l2.39,0.96c0.22,0.08 0.47,0 0.59,-0.22l1.92,-3.32c0.12,-0.22 0.07,-0.47 -0.12,-0.61L19.14,12.94zM12,15.6c-1.98,0 -3.6,-1.62 -3.6,-3.6s1.62,-3.6 3.6,-3.6s3.6,1.62 3.6,3.6S13.98,15.6 12,15.6z" /></vector>') % ANDROID,
+    'hu_round_button': '<shape xmlns:android="%s" android:shape="oval"><solid android:color="@color/hu_chip_bg" /></shape>' % ANDROID,
     'hu_root_menu_item_bg': ('<selector xmlns:android="{a}">'
                              '<item android:state_selected="true"><inset android:insetLeft="14.0dip" android:insetRight="14.0dip" android:insetTop="10.0dip" android:insetBottom="10.0dip">'
                              '<shape><corners android:radius="20.0dip" /><solid android:color="@color/hu_nav_selected" /></shape></inset></item>'
@@ -169,6 +175,8 @@ THEME_ITEMS = {
     'now_playing_rest_time_text_color': '@color/colorSecondary',
     'now_playing_bar_bg': '@drawable/hu_now_playing_bar_bg',
     'now_playing_page_bg': '@drawable/hu_now_playing_page_bg',
+    'queue_bg_color': '@color/hu_row_bg',            # queue rows stand out from the panel by day
+    'now_playing_cover_bg': '@color/hu_row_current',  # the current row and cover placeholders
 }
 
 
@@ -200,6 +208,8 @@ DIMENS = {
     'fragment_details_list_img_radius': '10.0dip',
     'font_size_caption': '16.0sp',
     'small_radius': '12.0dip',
+    # The expanded player covers the content card exactly instead of sitting inside it.
+    'now_playing_page_padding': '0.0dip',
     'medium_radius': '14.0dip',
     # The title and artist move under the player cover, so the cover gets smaller.
     'now_playing_page_cover_size': lambda v: scaled(v, 0.9),
@@ -263,6 +273,10 @@ def mini_player(root):
     """Controls first (closest to the driver in a left-hand-drive car), then like, cover and title."""
     ids = by_id(root)
     tint_like(ids)
+    # The card's shadow follows its rounded background instead of its rectangular bounds.
+    for card in root.iter():
+        if card.get(A + 'tag') == 'binding_1' and card.get(A + 'outlineProvider') == 'bounds':
+            card.set(A + 'outlineProvider', 'background')
     order = [i for i in ('control_button_skip_to_previous', 'control_button_play', 'control_button_skip_to_next',
                          'control_button_collect', 'now_playing_bar_cover') if i in ids]
     if 'control_button_play' not in ids or 'title_layout' not in ids or 'now_playing_bar_cover' not in ids:
@@ -336,9 +350,42 @@ def player(root):
     return True
 
 
+SETTINGS = {'values': 'Settings', 'values-uk': 'Налаштування', 'values-ru': 'Настройки', 'values-ar': 'الإعدادات',
+            'values-zh': '设置', 'values-zh-rCN': '设置', 'values-zh-rHK': '設定', 'values-zh-rMO': '設定', 'values-zh-rTW': '設定'}
+
+
+def strings():
+    for folder, text in SETTINGS.items():
+        if folder == 'values' or (RES / folder).is_dir():
+            write(RES / folder / 'hu_strings.xml', resources(['<string name="hu_settings">%s</string>' % text]))
+
+
+def library_header(root):
+    """The Library title opens the settings: show it as a settings button."""
+    ids = by_id(root)
+    if 'iv_logo' not in ids or 'tv_name' not in ids:
+        return False
+    logo, name = ids['iv_logo'], ids['tv_name']
+    logo.set(A + 'src', '@drawable/hu_ic_settings')
+    logo.set(A + 'background', '@drawable/hu_round_button')
+    logo.set(A + 'scaleType', 'centerInside')
+    logo.set(A + 'contentDescription', '@string/hu_settings')
+    name.set(A + 'text', '@string/hu_settings')
+    return True
+
+
+def equaliser():
+    """The day equaliser is black and disappears on the grey current row; use the green one."""
+    source = RES / 'raw-night/playing_animation.gif'
+    if not source.exists():
+        raise SystemExit('restyle: raw-night/playing_animation.gif not found')
+    (RES / 'raw-car').mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(source, RES / 'raw-car/playing_animation.gif')
+
+
 def layouts():
     counts = {}
-    for name, transform in (('now_playing_bar', mini_player), ('fragment_now_playing', player)):
+    for name, transform in (('now_playing_bar', mini_player), ('fragment_now_playing', player), ('fragment_category', library_header)):
         for path in sorted(RES.glob('layout*/%s.xml' % name)):
             if 'car' in path.parent.name.split('-'):
                 continue
@@ -349,7 +396,7 @@ def layouts():
             target.parent.mkdir(parents=True, exist_ok=True)
             tree.write(target, encoding='utf-8', xml_declaration=True)
             counts[name] = counts.get(name, 0) + 1
-    if counts.get('now_playing_bar', 0) < 7 or counts.get('fragment_now_playing', 0) < 7:
+    if counts.get('now_playing_bar', 0) < 7 or counts.get('fragment_now_playing', 0) < 7 or counts.get('fragment_category', 0) < 7:
         raise SystemExit('restyle: expected seven layout variants each, got %s' % counts)
     return counts
 
@@ -357,6 +404,8 @@ def layouts():
 if __name__ == '__main__':
     clean()
     fonts()
+    strings()
+    equaliser()
     colors()
     drawables()
     theme()

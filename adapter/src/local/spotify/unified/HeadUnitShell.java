@@ -8,7 +8,7 @@ import android.view.*;
  * small gap, on a darker (night) or greyer (day) ground. MainFragment positions the rail, the
  * pager and the bottom sheet in code, so the cards are applied after every layout pass.
  */
-final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener {
+final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,ViewTreeObserver.OnPreDrawListener {
  private static final String UI="com.spotify.music.ui";private static final float GAP=6,RADIUS=22;
  private static final java.util.WeakHashMap<Activity,HeadUnitShell> installed=new java.util.WeakHashMap<>();
  private final Activity activity;private final boolean dark;private final int gap,radius,ground,card,rail;
@@ -20,7 +20,7 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener {
  static void install(Activity a){
   if(!HeadUnitStyle.modern() || installed.containsKey(a))return;
   HeadUnitShell s=new HeadUnitShell(a);installed.put(a,s);
-  a.getWindow().getDecorView().getViewTreeObserver().addOnGlobalLayoutListener(s);
+  ViewTreeObserver o=a.getWindow().getDecorView().getViewTreeObserver();o.addOnGlobalLayoutListener(s);o.addOnPreDrawListener(s);
  }
  private View find(String name){int id=activity.getResources().getIdentifier(name,"id",UI);return id==0?null:activity.findViewById(id);}
  public void onGlobalLayout(){
@@ -44,9 +44,24 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener {
     place(menu,r[0]+gap,window(menu)[0]+menu.getWidth(),gap,gap);
     place(pager,window(menu)[0]+menu.getWidth()+gap,r[0]+width-gap,gap,gap);
    }
-   // The mini-player and the expanded player stay aligned with the content card.
-   if(sheet!=null){int[] p=window(pager);place(sheet,p[0],p[0]+pager.getWidth(),-1,-1);}
+   // The mini-player and the expanded player stay aligned with the content card. Their
+   // container spans the gap next to the rail, so it must not paint its own background.
+   if(sheet!=null){int[] p=window(pager);place(sheet,p[0],p[0]+pager.getWidth(),-1,-1);if(sheet.getParent() instanceof View && ((View)sheet.getParent()).getBackground()!=null)((View)sheet.getParent()).setBackground(null);}
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Rounded layout unavailable",e);}
+ }
+ /**
+  * The expanded player's panel lies under the mini-player. Collapsed, it must not show around
+  * the mini-player card; it fades in while the sheet is dragged open.
+  */
+ public boolean onPreDraw(){
+  try{
+   View sheet=find("rl_container"),page=find("now_playing_page_bg"),bar=find("bar");
+   if(sheet==null || page==null || bar==null || !(sheet.getParent() instanceof View) || page.getBackground()==null)return true;
+   float collapsed=((View)sheet.getParent()).getHeight()-bar.getHeight();
+   float open=collapsed<=0?1f:Math.max(0f,Math.min(1f,(collapsed-sheet.getTop())/(collapsed*0.25f)));
+   int alpha=Math.round(255*open);if(page.getBackground().getAlpha()!=alpha)page.getBackground().mutate().setAlpha(alpha);
+  }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Player panel fade unavailable",e);}
+  return true;
  }
  private static int[] window(View v){int[] xy=new int[2];v.getLocationInWindow(xy);return xy;}
  /**
