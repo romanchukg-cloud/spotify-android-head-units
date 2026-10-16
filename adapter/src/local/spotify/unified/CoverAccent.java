@@ -78,25 +78,50 @@ final class CoverAccent {
   }
  }
  /**
-  * The queue's "Now playing" row gets no artwork from Spotify Automotive, so its cover stays
-  * empty; show the mini-player's cover there, rounded like the other rows.
+  * The queue's "Now playing" row: the interface hides its cover and shows an equaliser GIF that
+  * never loads on the head unit, so the row looked empty. Show the mini-player's cover there,
+  * rounded like the other rows, with an animated equaliser on top.
   */
  private void queueCover(Drawable cover){
   View list=find("queue");if(!(list instanceof ViewGroup) || !list.isShown())return;
-  int coverId=activity.getResources().getIdentifier("img_cover","id",UI);if(coverId==0)return;
-  ViewGroup rows=(ViewGroup)list;
+  int coverId=activity.getResources().getIdentifier("img_cover","id",UI),eqId=activity.getResources().getIdentifier("playing_animation","id",UI);if(coverId==0)return;
+  ViewGroup rows=(ViewGroup)list;float density=activity.getResources().getDisplayMetrics().density;
   for(int i=0;i<rows.getChildCount();i++){
    View row=rows.getChildAt(i);if(!row.isSelected())continue;
-   View v=row.findViewById(coverId);if(!(v instanceof ImageView))continue;ImageView image=(ImageView)v;
-   Drawable shown=image.getDrawable();
-   if(shown!=null && image.getTag(TAG)==null)continue;   // real artwork
-   if(shown!=null && image.getTag(TAG)==cover)continue;  // already showing the current cover
-   Drawable copy=cover.getConstantState()!=null?cover.getConstantState().newDrawable(activity.getResources()).mutate():cover;
-   image.setImageDrawable(copy);image.setScaleType(ImageView.ScaleType.CENTER_CROP);image.setVisibility(View.VISIBLE);image.setTag(TAG,cover);
-   final float radius=8*activity.getResources().getDisplayMetrics().density;
-   image.setOutlineProvider(new ViewOutlineProvider(){public void getOutline(View view,Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),radius);}});
-   image.setClipToOutline(true);
+   View v=row.findViewById(coverId);
+   if(v instanceof ImageView){ImageView image=(ImageView)v;
+    if(image.getTag(TAG)!=cover || image.getDrawable()==null){
+     image.setImageDrawable(cover.getConstantState()!=null?cover.getConstantState().newDrawable(activity.getResources()).mutate():cover);image.setScaleType(ImageView.ScaleType.CENTER_CROP);image.setTag(TAG,cover);
+     final float radius=8*density;image.setOutlineProvider(new ViewOutlineProvider(){public void getOutline(View view,Outline outline){outline.setRoundRect(0,0,view.getWidth(),view.getHeight(),radius);}});image.setClipToOutline(true);
+    }
+    if(image.getVisibility()!=View.VISIBLE)image.setVisibility(View.VISIBLE);
+   }
+   View e=eqId==0?null:row.findViewById(eqId);
+   if(e instanceof ImageView){ImageView eq=(ImageView)e;
+    if(!(eq.getDrawable() instanceof Equalizer)){Equalizer d=new Equalizer(density);eq.setImageDrawable(d);d.start();}
+    if(eq.getVisibility()!=View.VISIBLE)eq.setVisibility(View.VISIBLE);
+   }
   }
+ }
+ /** Three green bars moving on a dimmed rounded square, redrawn about 30 times a second. */
+ static final class Equalizer extends Drawable implements Animatable,Runnable {
+  private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);private final float density;private boolean running;
+  Equalizer(float density){this.density=density;}
+  public void draw(Canvas c){
+   Rect r=getBounds();float w=r.width(),h=r.height();
+   paint.setColor(0x73000000);c.drawRoundRect(r.left,r.top,r.right,r.bottom,8*density,8*density,paint);
+   paint.setColor(0xff1ed760);long t=android.os.SystemClock.uptimeMillis();float bar=w*0.14f,gap=w*0.1f,x=r.left+(w-3*bar-2*gap)/2,base=r.top+h*0.78f,top=h*0.56f;
+   for(int i=0;i<3;i++){double phase=t/(170.0+60*i)+i*1.7;float f=running?(float)(0.35+0.65*Math.abs(Math.sin(phase))):0.5f;
+    c.drawRoundRect(x,base-top*f,x+bar,base,bar/2,bar/2,paint);x+=bar+gap;}
+   if(running)scheduleSelf(this,android.os.SystemClock.uptimeMillis()+33);
+  }
+  public void run(){invalidateSelf();}
+  public void start(){running=true;invalidateSelf();}
+  public void stop(){running=false;unscheduleSelf(this);}
+  public boolean isRunning(){return running;}
+  public void setAlpha(int a){paint.setAlpha(a);}
+  public void setColorFilter(ColorFilter f){paint.setColorFilter(f);}
+  public int getOpacity(){return PixelFormat.TRANSLUCENT;}
  }
  private static final int TAG=0x7f5a0001;
  private void restore(){if(bar!=null && barOriginal!=null)bar.setBackground(barOriginal);if(page!=null && pageOriginal!=null)page.setBackground(pageOriginal);lastCover=null;lastColor=null;barTint=null;pageTint=null;}

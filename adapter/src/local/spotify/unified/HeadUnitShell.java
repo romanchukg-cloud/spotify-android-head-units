@@ -21,9 +21,11 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
   if(!HeadUnitStyle.modern() || installed.containsKey(a))return;
   HeadUnitShell s=new HeadUnitShell(a);installed.put(a,s);
   ViewTreeObserver o=a.getWindow().getDecorView().getViewTreeObserver();o.addOnGlobalLayoutListener(s);o.addOnPreDrawListener(s);
+  systemBars(a.getWindow(),s.dark);
  }
  private View find(String name){int id=activity.getResources().getIdentifier(name,"id",UI);return id==0?null:activity.findViewById(id);}
  public void onGlobalLayout(){
+  systemBars(activity.getWindow(),dark);
   try{
    View left=find("root_menu"),right=find("right_driver_root_menu"),pager=find("view_pager"),sheet=find("rl_container");
    if(left==null || pager==null || !(left.getParent() instanceof ViewGroup))return;
@@ -65,6 +67,29 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
    int alpha=Math.round(255*open);if(page.getBackground().getAlpha()!=alpha)page.getBackground().mutate().setAlpha(alpha);
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Player panel fade unavailable",e);}
   return true;
+ }
+ /**
+  * BYD's status bar and dock follow the foreground window's light/dark bar appearance (SystemUI
+  * LightBarController): without a light request they turn black even in the light theme.
+  */
+ @SuppressWarnings("deprecation")
+ static void systemBars(Window w,boolean dark){barColor(w,dark?0xff000000:0xffe4e4e4);lightBars(w,dark);}
+ /** The window paints the area under the bars in the ground colour instead of a translucent black scrim. */
+ static void barColor(Window w,int color){
+  int translucent=WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS|WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION;
+  if((w.getAttributes().flags&translucent)!=0)w.clearFlags(translucent);
+  if((w.getAttributes().flags&WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)==0)w.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+  if(w.getStatusBarColor()!=color)w.setStatusBarColor(color);
+  if(w.getNavigationBarColor()!=color)w.setNavigationBarColor(color);
+ }
+ @SuppressWarnings("deprecation")
+ static void lightBars(Window w,boolean dark){
+  View d=w.getDecorView();int light=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+  int flags=d.getSystemUiVisibility(),wanted=dark?flags&~light:flags|light;
+  if(flags!=wanted)d.setSystemUiVisibility(wanted);
+  if(android.os.Build.VERSION.SDK_INT>=30){WindowInsetsController c=w.getInsetsController();
+   int mask=WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS|WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+   if(c!=null && (c.getSystemBarsAppearance()&mask)!=(dark?0:mask))c.setSystemBarsAppearance(dark?0:mask,mask);}
  }
  private static int[] window(View v){int[] xy=new int[2];v.getLocationInWindow(xy);return xy;}
  /**
