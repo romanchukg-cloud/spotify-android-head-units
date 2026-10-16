@@ -1,5 +1,11 @@
 Test.10 brings a redesigned interface, the **New style**, closer to today's Spotify. It is on by default; the previous look stays available as **Classic**.
 
+![Home in the New style in a BYD car, day theme](https://romanchukg-cloud.github.io/spotify-android-head-units/screens/car-home-day.jpg)
+
+![Library with the Settings button, day theme](https://romanchukg-cloud.github.io/spotify-android-head-units/screens/car-library-day.jpg)
+
+![Library at night, the mini-player tinted by the cover](https://romanchukg-cloud.github.io/spotify-android-head-units/screens/car-library-night.jpg)
+
 - **New style:** rounded cards with small gaps, the Figtree typeface, day and night themes that follow the car, rounded app corners, and the mini-player as the footer of the content card. Prefer the old look? Head unit settings → Appearance → Classic.
 - **Colour from cover art:** the mini-player and the player take the colour of the current cover. Separate switch, on by default.
 - **Player:** the controls come first, then like, cover and title. The **like button** now appears and works.
