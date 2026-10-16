@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 10,
+  "version": "test.10",
+  "version_code": 95487,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.10/Spotify-5.5.0-HeadUnit-test.10.apk",
+  "sha256": "ccf440e37acd3208f2b076d1023bfec9d5370c626230b65f12980b73f6fcf806",
+  "size": 58222521,
+  "notes": "New style: a redesigned interface closer to today's Spotify, on by default (Classic stays in Head unit settings > Appearance). Rounded cards, the Figtree typeface, day and night themes, colour from cover art, cover and equaliser in the queue, a working like button and new Head unit settings. Closing Spotify always stops the music. Sign-in and settings are kept. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.10",
+  "min_sdk": 28
+}
