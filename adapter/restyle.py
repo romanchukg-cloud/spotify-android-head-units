@@ -96,7 +96,8 @@ def colors():
 
 # ---------------------------------------------------------------- drawables
 SHAPES = {
-    'hu_now_playing_bar_bg': '<shape xmlns:android="%s"><corners android:radius="18.0dip" /><solid android:color="@color/hu_bar_bg" /></shape>' % ANDROID,
+    # The mini-player is the content card's footer: its bottom corners match the card's.
+    'hu_now_playing_bar_bg': '<shape xmlns:android="%s"><corners android:topLeftRadius="18.0dip" android:topRightRadius="18.0dip" android:bottomLeftRadius="22.0dip" android:bottomRightRadius="22.0dip" /><solid android:color="@color/hu_bar_bg" /></shape>' % ANDROID,
     'hu_now_playing_page_bg': '<shape xmlns:android="%s"><corners android:radius="22.0dip" /><solid android:color="@color/hu_page_bg" /></shape>' % ANDROID,
     # Material "settings" icon (Apache 2.0), in the text colour.
     'hu_ic_settings': ('<vector xmlns:android="%s" android:width="28.0dip" android:height="28.0dip" android:viewportWidth="24.0" android:viewportHeight="24.0">'
@@ -211,6 +212,7 @@ DIMENS = {
     'small_radius': '12.0dip',
     # The expanded player covers the content card exactly instead of sitting inside it.
     'now_playing_page_padding': '0.0dip',
+    'now_playing_bar_height': '112.0dip',
     'medium_radius': '14.0dip',
     # The title and artist move under the player cover, so the cover gets smaller.
     'now_playing_page_cover_size': lambda v: scaled(v, 0.9),
@@ -274,9 +276,12 @@ def mini_player(root):
     """Controls first (closest to the driver in a left-hand-drive car), then like, cover and title."""
     ids = by_id(root)
     tint_like(ids)
-    # The card's shadow follows its rounded background instead of its rectangular bounds.
+    # A footer of the content card: no outer padding and no shadow (the shadow was clipped to a
+    # rectangle around the card's rounded corner).
+    root.set(A + 'padding', '0.0dip')
     for card in root.iter():
-        if card.get(A + 'tag') == 'binding_1' and card.get(A + 'outlineProvider') == 'bounds':
+        if card.get(A + 'tag') == 'binding_1':
+            card.set(A + 'elevation', '0.0dip')
             card.set(A + 'outlineProvider', 'background')
     order = [i for i in ('control_button_skip_to_previous', 'control_button_play', 'control_button_skip_to_next',
                          'control_button_collect', 'now_playing_bar_cover') if i in ids]

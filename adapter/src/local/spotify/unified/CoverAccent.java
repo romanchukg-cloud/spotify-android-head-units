@@ -68,7 +68,7 @@ final class CoverAccent {
   float density=activity.getResources().getDisplayMetrics().density;
   if(bar!=null && (barTint==null || bar.getBackground()!=barTint)){
    if(barOriginal==null)barOriginal=bar.getBackground();
-   if(barTint==null){GradientDrawable d=new GradientDrawable();d.setCornerRadius(18*density);d.setColor(tone(color,dark,0.42f));barTint=d;}
+   if(barTint==null){GradientDrawable d=new GradientDrawable();float t=18*density,b=22*density;d.setCornerRadii(new float[]{t,t,t,t,b,b,b,b});d.setColor(tone(color,dark,0.42f));barTint=d;}
    bar.setBackground(barTint);
   }
   if(page!=null && (pageTint==null || page.getBackground()!=pageTint)){
