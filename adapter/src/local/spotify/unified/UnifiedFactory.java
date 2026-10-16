@@ -8,7 +8,8 @@ public final class UnifiedFactory extends AppComponentFactory {
    private int playerTask=-1;
    public void onActivityResumed(Activity a){
     if(a.getClass().getName().equals("local.bydui.com.vivid.spotify.MainActivity")){
-     try{int scale=HeadUnitSettings.call(a,"get",null).getInt("scale",100);if(a.getResources().getConfiguration().densityDpi!=HeadUnitSettings.density(a,scale)){a.recreate();return;}}catch(RuntimeException ignored){}
+     boolean cover=true;try{android.os.Bundle settings=HeadUnitSettings.call(a,"get",null);if(HeadUnitSettings.stale(a)){HeadUnitSettings.restartPlayer(a);return;}cover=settings.getBoolean("cover_accent",true);}catch(RuntimeException ignored){}
+     CoverAccent.start(a,cover);HeadUnitShell.install(a);
     }
     if(a.getClass().getName().equals("local.bydui.com.vivid.spotify.MainActivity") && playerTask!=a.getTaskId()){
      playerTask=a.getTaskId();
@@ -16,8 +17,12 @@ public final class UnifiedFactory extends AppComponentFactory {
      if(!switching){try{HeadUnitSettings.call(a,"ui_open",null);}catch(RuntimeException ignored){}DiagnosticNoticeActivity.maybeShow(a);UpdateDialog.maybeOffer(a);}
     }
     ProfileButton.install(a);
+    String own=a.getClass().getName();
+    if(own.equals(DiagnosticActivity.class.getName()) || own.equals(DiagnosticNoticeActivity.class.getName()) || own.equals(ProfilesActivity.class.getName())){
+     try{if(HeadUnitStyle.modern(HeadUnitSettings.call(a,"get",null).getString("ui_style",HeadUnitStyle.NEW)))HuUi.adopt(a);}catch(RuntimeException ignored){}
+    }
    }
-   public void onActivityCreated(Activity a,android.os.Bundle b){DiagnosticLog.init(a);}public void onActivityStarted(Activity a){}public void onActivityPaused(Activity a){}public void onActivityStopped(Activity a){}public void onActivitySaveInstanceState(Activity a,android.os.Bundle b){}public void onActivityDestroyed(Activity a){}
+   public void onActivityCreated(Activity a,android.os.Bundle b){DiagnosticLog.init(a);}public void onActivityStarted(Activity a){}public void onActivityPaused(Activity a){CoverAccent.stop(a);}public void onActivityStopped(Activity a){}public void onActivitySaveInstanceState(Activity a,android.os.Bundle b){}public void onActivityDestroyed(Activity a){}
   });return app;
  }
 }

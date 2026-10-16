@@ -10,7 +10,29 @@ public final class HeadUnitSettings {
  public static Bundle call(Context c,String method,Bundle args){Uri uri=Uri.parse("content://"+c.getPackageName()+".local.headunit");Bundle b=c.getContentResolver().call(uri,method,null,args);if(b==null)throw new IllegalStateException("Settings service unavailable");return b;}
  public static void open(Activity a){a.startActivity(new Intent(a,HeadUnitSettingsActivity.class));}
  public static int density(Context c,int scale){DisplayMetrics d=new DisplayMetrics();c.getSystemService(WindowManager.class).getDefaultDisplay().getRealMetrics(d);return Math.round(d.densityDpi*scale/100f);}
+ /** Applies the UI scale and the Classic/New style to the player's base context. */
  public static Context scaled(Context c){
-  try{int scale=call(c,"get",null).getInt("scale",100);Configuration config=new Configuration(c.getResources().getConfiguration());int old=config.densityDpi;config.densityDpi=density(c,scale);if(old>0){config.screenWidthDp=Math.round(config.screenWidthDp*old/(float)config.densityDpi);config.screenHeightDp=Math.round(config.screenHeightDp*old/(float)config.densityDpi);config.smallestScreenWidthDp=Math.round(config.smallestScreenWidthDp*old/(float)config.densityDpi);}return c.createConfigurationContext(config);}catch(RuntimeException e){android.util.Log.w("SpotifyHU","UI scale unavailable; using device density");return c;}
+  Bundle b;
+  try{b=call(c,"get",null);}catch(RuntimeException e){android.util.Log.w("SpotifyHU","Head unit settings unavailable; using device density and the default style");b=new Bundle();}
+  try{
+   Configuration config=new Configuration(c.getResources().getConfiguration());
+   if(b.containsKey("scale")){int old=config.densityDpi;config.densityDpi=density(c,b.getInt("scale"));if(old>0){config.screenWidthDp=Math.round(config.screenWidthDp*old/(float)config.densityDpi);config.screenHeightDp=Math.round(config.screenHeightDp*old/(float)config.densityDpi);config.smallestScreenWidthDp=Math.round(config.smallestScreenWidthDp*old/(float)config.densityDpi);}}
+   HeadUnitStyle.apply(config,HeadUnitStyle.modern(b.getString("ui_style",HeadUnitStyle.NEW)));
+   return c.createConfigurationContext(config);
+  }catch(RuntimeException e){android.util.Log.w("SpotifyHU","UI scale unavailable; using device density");return c;}
+ }
+ /**
+  * Restarts the interface process with a fresh player. Recreating the BYD-derived activity
+  * restores fragments whose delayed callbacks outlive their views (CategoryFragment,
+  * MainFragment); playback runs in the backend process and continues.
+  */
+ public static void restartPlayer(Activity a){
+  a.startActivity(new Intent(a,a.getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
+  a.finish();android.os.Process.killProcess(android.os.Process.myPid());
+ }
+ /** True when the activity's resources no longer match the saved scale or style. */
+ public static boolean stale(Activity a){
+  Bundle b=call(a,"get",null);Configuration config=a.getResources().getConfiguration();
+  return config.densityDpi!=density(a,b.getInt("scale",100)) || HeadUnitStyle.applied(config)!=HeadUnitStyle.modern(b.getString("ui_style",HeadUnitStyle.NEW));
  }
 }

@@ -32,10 +32,12 @@ public final class ParcelBridge {
   finally {parcel.recycle();}
  }
  public static Parcelable getParcelable(Bundle b,String key){return adapt(b.getParcelable(key));}
+ /** SavedStateHandle stores its keys (Strings) through this call too, so only Parcelables are adapted. */
+ @SuppressWarnings({"unchecked","rawtypes"})
  public static ArrayList<Parcelable> getParcelableArrayList(Bundle b,String key){
-  ArrayList<Parcelable> source=b.getParcelableArrayList(key);
+  ArrayList source=b.getParcelableArrayList(key);
   if(source==null)return null;
-  ArrayList<Parcelable> out=new ArrayList<>(source.size());for(Parcelable p:source)out.add(adapt(p));return out;
+  ArrayList out=new ArrayList(source.size());for(Object o:source)out.add(o instanceof Parcelable?adapt((Parcelable)o):o);return out;
  }
  public static Parcelable[] getParcelableArray(Bundle b,String key){
   Parcelable[] source=b.getParcelableArray(key);if(source==null)return null;

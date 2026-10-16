@@ -4,11 +4,13 @@ from merge_resources import merge,xml
 from build_config import BUILD
 b=Path(__file__).resolve().parent;p=b.parent/'spotify55-adaptation';bt=Path(os.environ.get('ANDROID_SDK_ROOT',os.environ.get('ANDROID_HOME',str(Path.home()/'Library/Android/sdk'))))/'build-tools'/os.environ.get('BUILD_TOOLS_VERSION','35.0.0')
 cm=json.loads((b/'class-map.json').read_text());refs={int(k,16):int(v,16) for k,v in json.loads((b/'manifest-refs.json').read_text()).items()}
+FONTS='res/font/hu_'
 def transform(s):
  if s in cm:return cm[s]
  if s=='com.vivid.music.byd':return 'com.spotify.music'
  if s.startswith('com.vivid.music.byd.'):return 'com.spotify.music.'+s[len('com.vivid.music.byd.'):]
- if s.startswith('res/'):return 'ui/'+s
+ # Fonts stay under res/: ResourcesImpl.loadFont only loads font files whose path starts with res/.
+ if s.startswith('res/') and not s.startswith(FONTS):return 'ui/'+s
  return s
 with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as sdk,zipfile.ZipFile(b/'ui-resources.apk') as ui,zipfile.ZipFile(b/'backend-rebuilt.apk') as built,zipfile.ZipFile(b/'unsigned.apk','w') as out:
  for info in sdk.infolist():
@@ -24,7 +26,7 @@ with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as sdk,zipfile.ZipFile(b
   if n.startswith('META-INF/services/'):
    dest='META-INF/services/'+transform(n[len('META-INF/services/'):]);out.writestr(dest,'\n'.join(transform(v) for v in ui.read(n).decode().splitlines())+'\n');continue
   if not n.startswith(('res/','assets/')):continue
-  data=ui.read(n);dest='ui/'+n if n.startswith('res/') else n
+  data=ui.read(n);dest='ui/'+n if n.startswith('res/') and not n.startswith(FONTS) else n
   if dest in out.namelist():
    assert out.read(dest)==data,('Asset collision',dest);continue
   if data[:4]==b'\x03\x00\x08\x00':data=xml(data,transform)

@@ -148,3 +148,15 @@ curl -fsS https://diagnostics.localcharge.app/v1/updates/spotify-android-head-un
 ```
 
 The server caches a record for five minutes and rejects lower builds or versionCodes. test.8 and earlier have no updater: install test.9 manually once.
+
+## Local test.10: Classic and New style
+
+The New style is the default; Head unit settings has a Classic / New switch and a separate "Colour from cover art" switch. Classic keeps the BYD-derived interface unchanged.
+
+- **Resources.** `restyle.py` runs after `patch_resources.py` and writes the New style as `car` UI-mode resources (`values-car`, `layout-w840dp-h480dp-car`, …) derived from the local decoded interface, so no BYD layouts are committed: a palette for day and night, a copy of `Theme_VIVID_MUSIC_Base` with New attributes, rounded drawables (mini-player card, player panel, navigation highlight, filter pills, list rows), larger radii and reordered mini-player and player layouts (controls first, then like, cover and title). Data-binding tags, ids and view types are unchanged. The right-hand-drive player layouts keep their Classic arrangement.
+- **Selection.** `HeadUnitStyle` sets the UI-mode type of the player's configuration to CAR for the New style. AppCompat's day/night handling drops that type from the activity configuration, so `MainActivity.getResources()` (patch section `# Restyle`) returns the styled resources. A change of style or scale restarts the interface process (`HeadUnitSettings.restartPlayer`); playback runs in the backend process and continues.
+- **Like button.** Spotify Automotive publishes its like actions as `like`/`unlike`, the interface only matched `likeTrack`/`unlikeTrack`, so the button never appeared. In the New style `HeadUnitStyle.actionMatches` accepts both; the click sends the backend's own id.
+- **Code-side styling.** `HeadUnitShell` turns the navigation rail and the content area into rounded cards with a 6 dp gap; `CoverAccent` tints the mini-player and the player panel with the most vivid colour of the current cover (24×24 sample, contrast-limited); `HuUi` builds the New settings screen and restyles Support, the diagnostics notice and Accounts.
+- **Fix.** `ParcelBridge.getParcelableArrayList` no longer casts SavedStateHandle keys to `Parcelable`; recreating the player with Library open (for example on a day/night switch) crashed since test.3.
+
+A full `build.sh` is required: `incremental_release.py` keeps resources byte-identical.

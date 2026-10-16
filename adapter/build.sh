@@ -6,6 +6,7 @@ BT="$SDK_ROOT/build-tools/${BUILD_TOOLS_VERSION:-35.0.0}"
 ANDROID_JAR="$SDK_ROOT/platforms/android-35/android.jar"
 APKTOOL_JAR=${APKTOOL_JAR:?Set APKTOOL_JAR to apktool 2.11.1 jar}
 python3 patch_resources.py
+python3 restyle.py
 python3 prepare.py
 python3 build_config.py
 javac -cp "$APKTOOL_JAR" Assemble.java
