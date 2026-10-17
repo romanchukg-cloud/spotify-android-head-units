@@ -18,7 +18,8 @@ import java.util.concurrent.*;
  * The queue editor (player process): the backend's media-session queue with large rows. A row plays
  * that track; its minus button removes it (support-library command REMOVE_QUEUE_ITEM_AT, which the
  * backend turns into a new queue without the track). The header starts a song or artist radio
- * (spotify:station:…) from the current track, clears the tracks added to the queue and opens Jam.
+ * (spotify:station:…) from the current track, clears the tracks added to the queue, opens Jam and
+ * sets the sleep timer (HeadUnitSleep).
  */
 public final class HeadUnitQueueActivity extends Activity {
  static final String REMOVE_AT="android.support.v4.media.session.command.REMOVE_QUEUE_ITEM_AT",INDEX="android.support.v4.media.session.command.ARGUMENT_INDEX",
@@ -26,7 +27,8 @@ public final class HeadUnitQueueActivity extends Activity {
   SERVICE="com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService";
  private final Handler main=new Handler(Looper.getMainLooper());
  private final ExecutorService covers=Executors.newSingleThreadExecutor();
- private MediaBrowser browser;private MediaController controller;private HuUi ui;private LinearLayout rows;private TextView songRadio,artistRadio,clear;
+ private MediaBrowser browser;private MediaController controller;private HuUi ui;private LinearLayout rows;private TextView songRadio,artistRadio,clear,sleep;
+ private final Runnable sleepLabel=this::updateSleep;
  private final MediaController.Callback callback=new MediaController.Callback(){
   public void onQueueChanged(List<MediaSession.QueueItem> queue){render();}
   public void onMetadataChanged(MediaMetadata metadata){render();}
@@ -38,8 +40,14 @@ public final class HeadUnitQueueActivity extends Activity {
   LinearLayout page=new LinearLayout(this);page.setOrientation(LinearLayout.VERTICAL);page.setPadding(ui.dp(20),ui.dp(4),ui.dp(32),ui.dp(24));scroll.addView(page);
   LinearLayout header=new LinearLayout(this);header.setGravity(Gravity.CENTER_VERTICAL);header.setMinimumHeight(ui.dp(84));
   header.addView(ui.back());TextView title=ui.label(HuText.get("queue"),34,ui.text,true);title.setPadding(ui.dp(8),0,0,0);header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-  songRadio=pill(HuText.get("song_radio"),v->radio(false));artistRadio=pill(HuText.get("artist_radio"),v->radio(true));clear=pill(HuText.get("clear_queue"),v->clearQueued());
-  header.addView(pill(HuText.get("jam"),v->HeadUnitJam.open(this)));header.addView(songRadio);header.addView(artistRadio);header.addView(clear);page.addView(header);
+  page.addView(header);
+  // Actions on their own row, scrollable when the screen is narrow.
+  HorizontalScrollView actionsScroll=new HorizontalScrollView(this);actionsScroll.setHorizontalScrollBarEnabled(false);
+  LinearLayout actions=new LinearLayout(this);actions.setGravity(Gravity.CENTER_VERTICAL);actions.setPadding(0,0,0,ui.dp(8));actionsScroll.addView(actions);
+  songRadio=pill(HuText.get("song_radio"),v->radio(false));artistRadio=pill(HuText.get("artist_radio"),v->radio(true));clear=pill(HuText.get("clear_queue"),v->clearQueued());sleep=pill(HuText.get("sleep_timer"),v->sleepMenu());
+  actions.addView(pill(HuText.get("jam"),v->HeadUnitJam.open(this)));actions.addView(songRadio);actions.addView(artistRadio);actions.addView(sleep);actions.addView(clear);
+  ((LinearLayout.LayoutParams)actions.getChildAt(0).getLayoutParams()).setMarginStart(ui.dp(8));
+  page.addView(actionsScroll);updateSleep();
   rows=new LinearLayout(this);rows.setOrientation(LinearLayout.VERTICAL);page.addView(rows);
   setContentView(scroll);
   browser=new MediaBrowser(this,new ComponentName(getPackageName(),SERVICE),new MediaBrowser.ConnectionCallback(){
@@ -48,7 +56,7 @@ public final class HeadUnitQueueActivity extends Activity {
   },null);
   browser.connect();
  }
- protected void onDestroy(){if(controller!=null)controller.unregisterCallback(callback);if(browser!=null)browser.disconnect();covers.shutdownNow();super.onDestroy();}
+ protected void onDestroy(){main.removeCallbacks(sleepLabel);if(controller!=null)controller.unregisterCallback(callback);if(browser!=null)browser.disconnect();covers.shutdownNow();super.onDestroy();}
  private TextView pill(String text,View.OnClickListener click){
   TextView t=ui.label(text,18,ui.text,true);t.setGravity(Gravity.CENTER);t.setMinHeight(ui.dp(64));t.setPadding(ui.dp(24),0,ui.dp(24),0);
   t.setBackground(ui.pressable(ui.control,ui.dp(32)));t.setOnClickListener(click);
@@ -104,6 +112,27 @@ public final class HeadUnitQueueActivity extends Activity {
     if(b!=null)main.post(()->{if(view.isAttachedToWindow())view.setImageBitmap(b);});
    }catch(Exception ignored){}
   });
+ }
+ /** The sleep timer's label: remaining minutes or "end of track", refreshed every 30 s. */
+ private void updateSleep(){
+  Bundle s;try{s=HeadUnitSleep.state(this);}catch(RuntimeException e){s=new Bundle();}
+  long left=s.getLong("left");
+  sleep.setText(left<=0?HuText.get("sleep_timer"):HuText.get("sleep_timer")+" · "+(s.getBoolean("end_of_track")?HuText.get("end_of_track"):String.format(HuText.get("minutes"),(left+59999)/60000)));
+  sleep.setTextColor(left>0?ui.accent:ui.text);
+  main.removeCallbacks(sleepLabel);if(left>0)main.postDelayed(sleepLabel,30000);
+ }
+ private void sleepMenu(){
+  final java.util.ArrayList<String> labels=new java.util.ArrayList<>();final java.util.ArrayList<Long> delays=new java.util.ArrayList<>();
+  long active;try{active=HeadUnitSleep.state(this).getLong("left");}catch(RuntimeException e){active=0;}
+  if(active>0){labels.add(HuText.get("sleep_off"));delays.add(0L);}
+  for(int m:new int[]{15,30,45}){labels.add(String.format(HuText.get("minutes"),m));delays.add(m*60000L);}
+  labels.add(HuText.get("hour"));delays.add(3600000L);
+  final long track=HeadUnitSleep.trackLeft(controller);if(track>0){labels.add(HuText.get("end_of_track"));delays.add(-1L);}
+  new android.app.AlertDialog.Builder(this).setTitle(HuText.get("sleep_timer")).setItems(labels.toArray(new String[0]),(d,w)->{
+   long delay=delays.get(w);
+   if(delay==0)HeadUnitSleep.cancel(this);else if(delay<0)HeadUnitSleep.set(this,track,true);else HeadUnitSleep.set(this,delay,false);
+   updateSleep();
+  }).show();
  }
  private void removeAt(int index){Bundle b=new Bundle();b.putInt(INDEX,index);controller.sendCommand(REMOVE_AT,b,null);}
  /** Removes the tracks added to the queue, from the last one up, so earlier indexes stay valid. */

@@ -193,3 +193,11 @@ Checked on an Android 12 emulator with a signed-in account: the cross and add-to
 Spotify's own settings page (`SettingsPageActivity`) already runs Jam (Start a Jam, QR code for up to 5 friends, End Jam). The queue page has a Jam button next to the edit button (`hu_queue_jam`, 14 layouts) and the queue editor a **Jam** pill; both open that page with an extra, and `HeadUnitJam.opened` (patch section `# Jam`, called from the page's `onCreate`) keeps the Jam section at the top while the page loads and after Start a Jam, until the user scrolls, so the QR code fits on the head unit's screen. The Jam browser actions of the backend stay unused (their remote flag `is_jam_custom_action_enabled` is off).
 
 Checked on an Android 12 emulator with a signed-in Premium account: Start a Jam shows the QR code fully on screen from both buttons; End Jam ends it.
+
+## Local test.12: Sleep timer
+
+The queue editor has a **Sleep timer** pill: 15, 30 or 45 minutes, 1 hour or the end of the current track (from the session's duration and position); while set, the pill shows the minutes left or "End of track" and offers **Off**. `HeadUnitSleep` runs the timer in the music process, which stays alive while music plays, through the private settings provider (`sleep_set`, `sleep_cancel`, `sleep_get`): an inexact alarm may fire minutes late (Android's window is up to 75 % of the delay) and exact alarms need a permission on Android 12+. At the time it pauses as an explicit user pause (`HeadUnitRuntime.explicitPause`), so no automatic resume follows.
+
+Not available in Spotify Automotive 5.5.0 and therefore not added: Smart Shuffle (the client only has the shuffle / disable-shuffle actions) and an audiobooks section (the backend's Library offers Playlists, Podcasts, Albums, Artists and Downloads).
+
+Checked on an Android 12 emulator with a signed-in account: "End of track" paused 2 s into the next track, the 15-minute timer showed its minutes and Off cancelled it.

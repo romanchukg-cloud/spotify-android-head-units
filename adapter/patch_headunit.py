@@ -238,3 +238,4 @@ print('Queue editor: edit button and queue activity')
 signin('com/spotify/automotive/settingspage/SettingsPageActivity.smali',[(r'(\.method public final onCreate\(Landroid/os/Bundle;\)V\n(?:(?!\.end method).)*?)(    return-void\n)',
  lambda m:m[1]+'    invoke-static {p0}, Llocal/spotify/unified/HeadUnitJam;->opened(Landroid/app/Activity;)V\n\n'+m[2])])
 print('Jam: buttons on the queue page and in the queue editor, settings page scrolls to Jam')
+
