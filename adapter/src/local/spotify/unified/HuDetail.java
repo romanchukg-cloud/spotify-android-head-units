@@ -56,10 +56,12 @@ final class HuDetail {
   header.addView(title);header.addView(subtitle);header.addView(meta);
   LinearLayout buttons=new LinearLayout(ui.activity);buttons.setGravity(Gravity.CENTER);buttons.setPadding(0,ui.dp(16),0,0);
   int playSize=ui.dp(72);ImageView play=new ImageView(ui.activity);play.setScaleType(ImageView.ScaleType.FIT_CENTER);int pad=playSize*28/100;play.setPadding(pad,pad,pad,pad);
-  play.setBackground(ui.pressable(0xff1ed760,playSize/2f));buttons.addView(play,new LinearLayout.LayoutParams(playSize,playSize));
-  ImageView shuffle=HuControls.button(ui,"encore_icon_shuffle_24",HuText.get("shuffle_play"),ui.dp(64),null);((LinearLayout.LayoutParams)shuffle.getLayoutParams()).setMarginStart(ui.dp(12));buttons.addView(shuffle);
-  if("show".equals(kind))shuffle.setVisibility(View.GONE);
-  ImageView download=HuControls.button(ui,"encore_icon_download_24",HuText.get("download"),ui.dp(64),null);download.setVisibility(View.GONE);buttons.addView(download);
+  play.setBackground(ui.pressable(0xff1ed760,playSize/2f));
+  // Shuffle, play in the middle, download; a button a page lacks keeps its place, so play stays centred.
+  ImageView shuffle=HuControls.button(ui,"encore_icon_shuffle_24",HuText.get("shuffle_play"),ui.dp(64),null);buttons.addView(shuffle);
+  if("show".equals(kind))shuffle.setVisibility(View.INVISIBLE);
+  LinearLayout.LayoutParams playParams=new LinearLayout.LayoutParams(playSize,playSize);playParams.setMargins(ui.dp(20),0,ui.dp(20),0);buttons.addView(play,playParams);
+  ImageView download=HuControls.button(ui,"encore_icon_download_24",HuText.get("download"),ui.dp(64),null);download.setVisibility(View.INVISIBLE);buttons.addView(download);
   header.addView(buttons);
 
   // The list: the header above it on narrow content, beside it on wide content.
@@ -176,7 +178,7 @@ final class HuDetail {
  /**
   * The page's download button, as on the BYD-derived pages (HeadUnitDownloads): download;
   * downloading (tap stops); downloaded (tap asks before removing). Hidden for items without a
-  * download action. A requested download can report "download" until Spotify starts it.
+  * download action (keeping its place). A requested download can report "download" until Spotify starts it.
   */
  private static final class Download {
   private final HuUi ui;private final HuSession session;private final String id;private final ImageView view;
@@ -193,9 +195,9 @@ final class HuDetail {
    if(HeadUnitDownloads.DOWNLOAD.equals(value) && SystemClock.elapsedRealtime()<pendingUntil)value=HeadUnitDownloads.DOWNLOADING;
    else if(!HeadUnitDownloads.DOWNLOADING.equals(value))pendingUntil=0;
    state=value;
-   if(value==null){view.setVisibility(View.GONE);return;}
+   if(value==null){view.setVisibility(View.INVISIBLE);return;}
    int res=ui.activity.getResources().getIdentifier("ic_action_"+value,"drawable",ui.activity.getPackageName());
-   Drawable d=res==0?null:ui.activity.getDrawable(res);if(d==null){view.setVisibility(View.GONE);return;}
+   Drawable d=res==0?null:ui.activity.getDrawable(res);if(d==null){view.setVisibility(View.INVISIBLE);return;}
    d=d.mutate();d.setTint(HeadUnitDownloads.DOWNLOADED.equals(value)?ui.accent:ui.text);view.setImageDrawable(d);view.setVisibility(View.VISIBLE);
    view.setContentDescription(HuText.get(HeadUnitDownloads.DOWNLOAD.equals(value)?"download":HeadUnitDownloads.DOWNLOADING.equals(value)?"stop_download":"remove_download"));
    main.removeCallbacks(poll);if(HeadUnitDownloads.DOWNLOADING.equals(value))main.postDelayed(poll,POLL);
