@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 11,
+  "version": "test.11",
+  "version_code": 95488,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.11/Spotify-5.5.0-HeadUnit-test.11.apk",
+  "sha256": "6e1cf2566026f08859861fc63ab1a6a53eba8c84d1329c29985708e4e7030fe7",
+  "size": 58251193,
+  "notes": "Offline downloads (experimental): download playlists and albums and play them without a connection (Spotify Premium). Voice search when the head unit has a speech recogniser. A queue editor with song and artist radio, Jam with a QR code for passengers, and a fix for a crash when removing a track from the queue. Sign-in and settings are kept. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.11",
+  "min_sdk": 28
+}

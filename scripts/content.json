@@ -3,14 +3,26 @@
     "name": "Spotify for Android Head Units",
     "title": "Spotify for Android Head Units — one app",
     "description": "Experimental Spotify Automotive 5.5.0 for Android head units, with a BYD-derived interface in one APK.",
-    "badge": "Experimental build · 5.5.0 · test.10",
+    "badge": "Experimental build · 5.5.0 · test.11",
     "headline": "Familiar interface.",
     "highlight": "One app.",
     "intro": "An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.",
-    "download": "Download test.10 APK",
-    "meta": "Android 9+ · 55.5 MiB · unofficial adaptation",
+    "download": "Download test.11 APK",
+    "meta": "Android 9+ · 55.6 MiB · unofficial adaptation",
     "languages": "Language",
     "cards": [
+      [
+        "Offline downloads",
+        "Download playlists and albums and listen without a connection (Spotify Premium). Library → Downloads lists them. Experimental."
+      ],
+      [
+        "Queue, radio and Jam",
+        "Edit the queue in a large view, start a song or artist radio, and share the music with passengers through Jam's QR code."
+      ],
+      [
+        "Voice search",
+        "A microphone in the search field when the head unit has a speech recogniser: say what to play and it starts."
+      ],
       [
         "New style",
         "A redesign closer to today's Spotify: rounded cards, the Figtree typeface, day and night themes that follow the car and colour from cover art. Classic stays in Head unit settings → Appearance."
@@ -49,9 +61,9 @@
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Headunit-test.10 adds the New style, on by default: rounded cards, the Figtree typeface, day and night themes, colour from cover art, a reordered player with a working like button, the cover and an equaliser in the queue, rounded app corners and new Head unit settings. Classic keeps the previous interface. Closing Spotify always stops the music, and switching day/night with Library open no longer crashes the player. Because the interface resources changed, it was made with the full reference build. The release audit reports 45 PASS / 0 FAIL, 152 updater and 39 sign-in checks pass, and the signing certificate equals test.9. In the owner's car (BYD DiLink 5.0 / Android 12) test.10 was installed as an update over test.9: sign-in and music were kept, and the New style was checked in the day theme without a crash. On an Android 12 emulator with a signed-in account it kept the sign-in after updating over test.9 and was checked in day and night, at 1024×600 and in portrait, switching between Classic and New.",
-    "pendingStrong": "Experimental headunit-test.10.",
-    "pending": "The first update from test.9 to test.10 through the app has not yet been seen on a head unit. The New style has not been checked in Arabic (right-to-left) or with right-hand-drive layouts, which keep the Classic player arrangement. Real vehicle sleep/reboot, account A → B → A, offline downloads, steering-wheel controls, DiLink 5.1 / Android 13 and other head units remain unverified.",
+    "tested": "Headunit-test.11 adds offline downloads (experimental, Spotify Premium), voice search when the head unit has a speech recogniser, a queue editor with song and artist radio, and Jam with a QR code for passengers. It also fixes a crash of the music process when a track was removed from or added to the queue. Because the interface changed, it was made with the full reference build. The release audit reports 45 PASS / 0 FAIL, 152 updater and 39 sign-in checks pass, and the signing certificate equals test.10. On Android 9 and 13 emulators test.11 installs as an update over test.10 and runs its update check without a crash. On an Android 12 emulator with a signed-in Premium account, downloads played offline (also after a cold start), voice search worked with a test recogniser, and queue editing, radio and Jam worked.",
+    "pendingStrong": "Experimental headunit-test.11.",
+    "pending": "Test.11 has not been checked in a car yet, and whether BYD DiLink has a speech recogniser for the microphone button is unknown. Spotify keeps downloads off for its Automotive client; this build turns the client's support on, so Spotify may change how downloads behave. The New style in Arabic (right-to-left), right-hand-drive layouts, DiLink 5.1 / Android 13 and other head units remain unverified.",
     "installTitle": "How to install",
     "steps": [
       "Use the download button above to get the APK, then transfer it to the infotainment system.",
@@ -80,14 +92,26 @@
     "name": "Spotify для Android-магнітол",
     "title": "Spotify для Android-магнітол — один додаток",
     "description": "Експериментальний Spotify Automotive 5.5.0 для Android-магнітол з інтерфейсом на основі BYD в одному APK.",
-    "badge": "Експериментальна збірка · 5.5.0 · test.10",
+    "badge": "Експериментальна збірка · 5.5.0 · test.11",
     "headline": "Звичний інтерфейс.",
     "highlight": "Один додаток.",
     "intro": "Експериментальний плеєр Spotify Automotive для Android-магнітол. Інтерфейс на основі BYD та музичний сервіс об’єднані в одному APK з однією іконкою і штатним входом Spotify.",
-    "download": "Завантажити APK test.10",
-    "meta": "Android 9+ · 55,5 MiB · неофіційна адаптація",
+    "download": "Завантажити APK test.11",
+    "meta": "Android 9+ · 55,6 MiB · неофіційна адаптація",
     "languages": "Мова",
     "cards": [
+      [
+        "Офлайн-завантаження",
+        "Завантажуйте плейлісти й альбоми і слухайте без мережі (Spotify Premium). Вони в Бібліотеці → Downloads. Експериментально."
+      ],
+      [
+        "Черга, радіо й Jam",
+        "Редагуйте чергу на великому екрані, вмикайте радіо пісні чи виконавця й діліться музикою з пасажирами через QR-код Jam."
+      ],
+      [
+        "Голосовий пошук",
+        "Мікрофон у полі пошуку, якщо в магнітолі є розпізнавання мовлення: скажіть, що увімкнути, — і воно заграє."
+      ],
       [
         "Новий стиль",
         "Редизайн, ближчий до сучасного Spotify: заокруглені картки, шрифт Figtree, денна й нічна теми за авто та колір з обкладинки. Класичний вигляд лишається в Налаштуваннях магнітоли → Вигляд."
@@ -126,9 +150,9 @@
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Headunit-test.10 додає Новий стиль, увімкнений за замовчуванням: заокруглені картки, шрифт Figtree, денну й нічну теми, колір з обкладинки, перекомпонований плеєр із робочою кнопкою «подобається», обкладинку й еквалайзер у черзі, заокруглені кути застосунку та нові Налаштування магнітоли. Класичний стиль зберігає попередній інтерфейс. Закриття Spotify тепер завжди зупиняє музику, а перемикання дня й ночі з відкритою Бібліотекою більше не обвалює плеєр. Оскільки змінилися ресурси інтерфейсу, збірку зроблено повним еталонним збиранням. Release-аудит: 45 PASS / 0 FAIL, пройдено 152 перевірки оновлювача й 39 перевірок входу, сертифікат підпису збігається з test.9. В авто власника (BYD DiLink 5.0 / Android 12) test.10 встановлено оновленням поверх test.9: вхід і музика збереглися, Новий стиль перевірено в денній темі без збоїв. На емуляторі Android 12 з реальним акаунтом вхід зберігся після оновлення з test.9; перевірено день і ніч, 1024×600 і портретну орієнтацію, перемикання Класичний ↔ Новий.",
-    "pendingStrong": "Експериментальна headunit-test.10.",
-    "pending": "Перше оновлення з test.9 до test.10 через сам застосунок на магнітолі ще не спостерігали. Новий стиль не перевіряли арабською (справа наліво) і з розкладкою для правого керма, де плеєр лишається класичним. Також не перевірені реальний сон/перезавантаження авто, акаунти A → B → A, офлайн-завантаження, кнопки на кермі, DiLink 5.1 / Android 13 та інші магнітоли.",
+    "tested": "Headunit-test.11 додає офлайн-завантаження (експериментально, Spotify Premium), голосовий пошук, якщо в магнітолі є розпізнавання мовлення, редактор черги з радіо пісні й виконавця та Jam із QR-кодом для пасажирів. Також виправлено падіння процесу музики під час видалення треку з черги чи додавання в неї. Оскільки змінився інтерфейс, збірку зроблено повним еталонним збиранням. Release-аудит: 45 PASS / 0 FAIL, пройдено 152 перевірки оновлювача й 39 перевірок входу, сертифікат підпису збігається з test.10. На емуляторах Android 9 і 13 test.11 встановлюється оновленням поверх test.10 і перевіряє оновлення без збоїв. На емуляторі Android 12 з акаунтом Premium завантажене грало без мережі (зокрема після холодного старту), голосовий пошук працював з тестовим розпізнавачем, редагування черги, радіо й Jam працювали.",
+    "pendingStrong": "Експериментальна headunit-test.11.",
+    "pending": "Test.11 ще не перевіряли в авто, і невідомо, чи є в BYD DiLink розпізнавання мовлення для кнопки мікрофона. Spotify тримає завантаження вимкненими для свого автомобільного клієнта; ця збірка вмикає наявну в клієнті підтримку, тож Spotify може змінити їхню поведінку. Новий стиль арабською (справа наліво), розкладки для правого керма, DiLink 5.1 / Android 13 та інші магнітоли ще не перевірені.",
     "installTitle": "Як встановити",
     "steps": [
       "Натисніть кнопку завантаження вище, щоб отримати APK, і перенесіть його в мультимедійну систему.",
@@ -154,14 +178,26 @@
     "name": "Spotify для Android-магнитол",
     "title": "Spotify для Android-магнитол — одно приложение",
     "description": "Экспериментальный Spotify Automotive 5.5.0 для Android-магнитол с интерфейсом на основе BYD в одном APK.",
-    "badge": "Экспериментальная сборка · 5.5.0 · test.10",
+    "badge": "Экспериментальная сборка · 5.5.0 · test.11",
     "headline": "Знакомый интерфейс.",
     "highlight": "Одно приложение.",
     "intro": "Экспериментальный плеер Spotify Automotive для Android-магнитол. Интерфейс на основе BYD и музыкальный сервис объединены в одном APK с одним значком и стандартным входом Spotify.",
-    "download": "Скачать APK test.10",
-    "meta": "Android 9+ · 55,5 MiB · неофициальная адаптация",
+    "download": "Скачать APK test.11",
+    "meta": "Android 9+ · 55,6 MiB · неофициальная адаптация",
     "languages": "Язык",
     "cards": [
+      [
+        "Офлайн-загрузки",
+        "Скачивайте плейлисты и альбомы и слушайте без сети (Spotify Premium). Они в Библиотеке → Downloads. Экспериментально."
+      ],
+      [
+        "Очередь, радио и Jam",
+        "Редактируйте очередь на большом экране, включайте радио песни или исполнителя и делитесь музыкой с пассажирами через QR-код Jam."
+      ],
+      [
+        "Голосовой поиск",
+        "Микрофон в поле поиска, если в магнитоле есть распознавание речи: скажите, что включить, — и оно заиграет."
+      ],
       [
         "Новый стиль",
         "Редизайн, близкий к современному Spotify: скруглённые карточки, шрифт Figtree, дневная и ночная темы по машине и цвет обложки. Классический вид остаётся в Настройках магнитолы → Внешний вид."
@@ -200,9 +236,9 @@
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Headunit-test.10 добавляет Новый стиль, включённый по умолчанию: скруглённые карточки, шрифт Figtree, дневную и ночную темы, цвет обложки, перекомпонованный плеер с рабочей кнопкой «нравится», обложку и эквалайзер в очереди, скруглённые углы приложения и новые Настройки магнитолы. Классический стиль сохраняет прежний интерфейс. Закрытие Spotify теперь всегда останавливает музыку, а переключение дня и ночи с открытой Библиотекой больше не роняет плеер. Поскольку изменились ресурсы интерфейса, сборка сделана полной эталонной сборкой. Release-аудит: 45 PASS / 0 FAIL, пройдены 152 проверки обновлений и 39 проверок входа, сертификат подписи совпадает с test.9. В машине владельца (BYD DiLink 5.0 / Android 12) test.10 установлен обновлением поверх test.9: вход и музыка сохранились, Новый стиль проверен в дневной теме без сбоев. На эмуляторе Android 12 с реальным аккаунтом вход сохранился после обновления с test.9; проверены день и ночь, 1024×600 и портретная ориентация, переключение Классический ↔ Новый.",
-    "pendingStrong": "Экспериментальная headunit-test.10.",
-    "pending": "Первое обновление с test.9 до test.10 через само приложение на магнитоле ещё не наблюдали. Новый стиль не проверяли на арабском (справа налево) и с раскладкой для правого руля, где плеер остаётся классическим. Также не проверены реальный сон/перезагрузка машины, аккаунты A → B → A, офлайн-загрузки, кнопки на руле, DiLink 5.1 / Android 13 и другие магнитолы.",
+    "tested": "Headunit-test.11 добавляет офлайн-загрузки (экспериментально, Spotify Premium), голосовой поиск, если в магнитоле есть распознавание речи, редактор очереди с радио песни и исполнителя и Jam с QR-кодом для пассажиров. Также исправлено падение процесса музыки при удалении трека из очереди или добавлении в неё. Поскольку изменился интерфейс, сборка сделана полной эталонной сборкой. Release-аудит: 45 PASS / 0 FAIL, пройдены 152 проверки обновлений и 39 проверок входа, сертификат подписи совпадает с test.10. На эмуляторах Android 9 и 13 test.11 устанавливается обновлением поверх test.10 и проверяет обновления без сбоев. На эмуляторе Android 12 с аккаунтом Premium скачанное играло без сети (в том числе после холодного старта), голосовой поиск работал с тестовым распознавателем, редактирование очереди, радио и Jam работали.",
+    "pendingStrong": "Экспериментальная headunit-test.11.",
+    "pending": "Test.11 ещё не проверяли в машине, и неизвестно, есть ли в BYD DiLink распознавание речи для кнопки микрофона. Spotify держит загрузки выключенными для своего автомобильного клиента; эта сборка включает имеющуюся в клиенте поддержку, поэтому Spotify может изменить их поведение. Новый стиль на арабском (справа налево), раскладки для правого руля, DiLink 5.1 / Android 13 и другие магнитолы ещё не проверены.",
     "installTitle": "Как установить",
     "steps": [
       "Нажмите кнопку скачивания выше, чтобы получить APK, и перенесите его в мультимедийную систему.",
@@ -228,14 +264,26 @@
     "name": "Spotify لوحدات الوسائط العاملة بنظام Android",
     "title": "Spotify لوحدات الوسائط العاملة بنظام Android — تطبيق واحد",
     "description": "نسخة تجريبية من Spotify Automotive 5.5.0 لوحدات الوسائط العاملة بنظام Android، بواجهة مستندة إلى BYD في ملف APK واحد.",
-    "badge": "إصدار تجريبي · 5.5.0 · test.10",
+    "badge": "إصدار تجريبي · 5.5.0 · test.11",
     "headline": "الواجهة المألوفة.",
     "highlight": "تطبيق واحد.",
     "intro": "مشغّل Spotify Automotive تجريبي لوحدات الوسائط العاملة بنظام Android. يجمع ملف APK واحد بين واجهة مستندة إلى BYD وخدمة الموسيقى، مع أيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify.",
-    "download": "تنزيل APK test.10",
-    "meta": "Android 9+ · 55.5 MiB · تعديل غير رسمي",
+    "download": "تنزيل APK test.11",
+    "meta": "Android 9+ · 55.6 MiB · تعديل غير رسمي",
     "languages": "اللغة",
     "cards": [
+      [
+        "التنزيلات دون اتصال",
+        "نزّل قوائم التشغيل والألبومات واستمع إليها دون اتصال (Spotify Premium). تجدها في المكتبة ← Downloads. ميزة تجريبية."
+      ],
+      [
+        "قائمة الانتظار والراديو وJam",
+        "عدّل قائمة الانتظار في شاشة كبيرة، وشغّل راديو الأغنية أو الفنان، وشارك الموسيقى مع الركاب عبر رمز QR في Jam."
+      ],
+      [
+        "البحث الصوتي",
+        "ميكروفون في حقل البحث إذا كانت الوحدة الرئيسية تدعم التعرف على الكلام: قل ما تريد تشغيله فيبدأ."
+      ],
       [
         "النمط الجديد",
         "تصميم جديد أقرب إلى Spotify الحالي: بطاقات بزوايا مستديرة، وخط Figtree، ومظهران نهاري وليلي يتبعان السيارة، ولون من صورة الغلاف. يبقى النمط الكلاسيكي في إعدادات الوحدة الرئيسية ← المظهر."
@@ -274,9 +322,9 @@
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "يضيف Headunit-test.10 النمط الجديد مفعّلًا افتراضيًا: بطاقات بزوايا مستديرة، وخط Figtree، ومظهرين نهاري وليلي، ولونًا من صورة الغلاف، ومشغّلًا بترتيب جديد مع زر إعجاب يعمل، وصورة الغلاف ومعادِلًا متحركًا في قائمة الانتظار، وزوايا مستديرة للتطبيق، وإعدادات جديدة للوحدة الرئيسية. يحافظ النمط الكلاسيكي على الواجهة السابقة. أصبح إغلاق Spotify يوقف الموسيقى دائمًا، ولم يعد التبديل بين النهار والليل والمكتبة مفتوحة يتسبب في تعطل المشغّل. ولأن موارد الواجهة تغيّرت، بُني الإصدار بالبناء المرجعي الكامل. أظهر تدقيق الإصدار 45 PASS / 0 FAIL، ونجحت 152 فحصًا للتحديثات و39 فحصًا لتسجيل الدخول، وشهادة التوقيع مطابقة لـ test.9. في سيارة المالك (BYD DiLink 5.0 / Android 12) ثُبِّت test.10 كتحديث فوق test.9: بقي تسجيل الدخول والموسيقى، وفُحص النمط الجديد في المظهر النهاري دون أعطال. على محاكي Android 12 بحساب حقيقي بقي تسجيل الدخول بعد التحديث من test.9، وفُحص النهار والليل، و1024×600 والوضع العمودي، والتبديل بين الكلاسيكي والجديد.",
-    "pendingStrong": "نسخة headunit-test.10 تجريبية.",
-    "pending": "لم يُشاهَد بعد أول تحديث من test.9 إلى test.10 عبر التطبيق نفسه على وحدة سيارة. لم يُفحص النمط الجديد بالعربية (من اليمين إلى اليسار) ولا مع تخطيط المقود الأيمن، حيث يبقى ترتيب المشغّل كلاسيكيًا. كما لم يُتحقق بعد من سكون السيارة وإعادة تشغيلها فعليًا، والحسابات A → B → A، والتنزيلات دون اتصال، وأزرار المقود، وDiLink 5.1 / Android 13، ووحدات السيارات الأخرى.",
+    "tested": "يضيف Headunit-test.11 التنزيلات دون اتصال (ميزة تجريبية، Spotify Premium)، والبحث الصوتي إذا كانت الوحدة الرئيسية تدعم التعرف على الكلام، ومحرر قائمة الانتظار مع راديو الأغنية والفنان، وJam مع رمز QR للركاب. كما يصلح تعطل عملية الموسيقى عند إزالة مقطع من قائمة الانتظار أو إضافته إليها. ولأن الواجهة تغيّرت، بُني الإصدار بالبناء المرجعي الكامل. أظهر تدقيق الإصدار 45 PASS / 0 FAIL، ونجحت 152 فحصًا للتحديثات و39 فحصًا لتسجيل الدخول، وشهادة التوقيع مطابقة لـ test.10. على محاكيات Android 9 و13 يُثبَّت test.11 كتحديث فوق test.10 ويتحقق من التحديثات دون أعطال. على محاكي Android 12 بحساب Premium، شُغّل المحتوى المنزّل دون اتصال (حتى بعد التشغيل البارد)، وعمل البحث الصوتي مع أداة تعرّف اختبارية، وعمل تحرير قائمة الانتظار والراديو وJam.",
+    "pendingStrong": "نسخة headunit-test.11 تجريبية.",
+    "pending": "لم يُفحص test.11 في سيارة بعد، ولا يُعرف ما إذا كانت BYD DiLink تملك أداة للتعرف على الكلام لزر الميكروفون. يُبقي Spotify التنزيلات معطلة لعميله في السيارات؛ وهذا الإصدار يفعّل الدعم الموجود في العميل، لذا قد يغيّر Spotify سلوكها. لم يُتحقق بعد من النمط الجديد بالعربية (من اليمين إلى اليسار)، وتخطيطات المقود الأيمن، وDiLink 5.1 / Android 13، ووحدات السيارات الأخرى.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "اضغط على زر التنزيل أعلاه للحصول على ملف APK، ثم انقله إلى نظام الوسائط في السيارة.",
@@ -302,14 +350,26 @@
     "name": "适用于 Android 车机的 Spotify",
     "title": "Android 车机 Spotify — 一个应用",
     "description": "适用于 Android 车机的 Spotify Automotive 5.5.0 实验版本，将基于比亚迪的界面整合到一个 APK 中。",
-    "badge": "实验版本 · 5.5.0 · test.10",
+    "badge": "实验版本 · 5.5.0 · test.11",
     "headline": "熟悉的界面。",
     "highlight": "一个应用。",
     "intro": "适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。",
-    "download": "下载 test.10 APK",
-    "meta": "Android 9+ · 55.5 MiB · 非官方适配",
+    "download": "下载 test.11 APK",
+    "meta": "Android 9+ · 55.6 MiB · 非官方适配",
     "languages": "语言",
     "cards": [
+      [
+        "离线下载",
+        "下载播放列表和专辑，无网络也能收听（Spotify Premium）。在媒体库 → Downloads 中查看。实验功能。"
+      ],
+      [
+        "队列、电台与 Jam",
+        "在大屏幕上编辑播放队列，开启歌曲或艺人电台，并通过 Jam 二维码与乘客共享音乐。"
+      ],
+      [
+        "语音搜索",
+        "若车机支持语音识别，搜索框中会出现麦克风：说出想听的内容即可播放。"
+      ],
       [
         "新版样式",
         "更接近当前 Spotify 的全新设计：圆角卡片、Figtree 字体、随车辆切换的日间和夜间主题，以及封面取色。经典样式仍可在主机设置 → 外观中选择。"
@@ -348,9 +408,9 @@
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "Headunit-test.10 新增默认启用的新版样式：圆角卡片、Figtree 字体、日间和夜间主题、封面取色、重新排布并带有可用“喜欢”按钮的播放器、播放队列中的封面和均衡器动画、圆角应用边框，以及全新的主机设置。经典样式保留原有界面。现在关闭 Spotify 总会停止音乐；在媒体库打开时切换日夜模式也不再导致播放器崩溃。由于界面资源有变化，本版本使用完整的参考构建流程构建。发布审计结果 45 PASS / 0 FAIL，152 项更新检查和 39 项登录检查通过，签名证书与 test.9 相同。在车主的车上（BYD DiLink 5.0 / Android 12），test.10 已作为 test.9 的更新安装：登录和音乐均保留，新版样式在日间主题下检查无崩溃。在已登录真实账号的 Android 12 模拟器上，从 test.9 更新后登录保持；已检查日间和夜间、1024×600 和竖屏，以及经典与新版之间的切换。",
-    "pendingStrong": "headunit-test.10 实验版本。",
-    "pending": "尚未在车机上看到通过应用本身从 test.9 更新到 test.10 的过程。新版样式尚未在阿拉伯语（从右到左）和右舵布局下检查，右舵布局的播放器保持经典排布。车辆真实休眠/重启、账号 A → B → A、离线下载、方向盘按键、DiLink 5.1 / Android 13 及其他车机也仍未验证。",
+    "tested": "Headunit-test.11 新增离线下载（实验功能，需 Spotify Premium）、车机支持语音识别时的语音搜索、带歌曲和艺人电台的播放队列编辑器，以及为乘客提供二维码的 Jam。同时修复了从队列移除或向队列添加曲目时音乐进程崩溃的问题。由于界面有变化，本版本使用完整的参考构建流程构建。发布审计结果 45 PASS / 0 FAIL，152 项更新检查和 39 项登录检查通过，签名证书与 test.10 相同。在 Android 9 和 13 模拟器上，test.11 可作为 test.10 的更新安装并检查更新，无崩溃。在登录 Premium 账号的 Android 12 模拟器上，下载内容可离线播放（包括冷启动后），语音搜索在测试识别器下正常，队列编辑、电台和 Jam 均正常。",
+    "pendingStrong": "headunit-test.11 实验版本。",
+    "pending": "test.11 尚未在车内检查，也不确定 BYD DiLink 是否提供可供麦克风按钮使用的语音识别。Spotify 对其车载客户端关闭了下载功能；本版本开启了客户端已有的支持，因此 Spotify 可能改变下载的行为。新版样式的阿拉伯语（从右到左）、右舵布局、DiLink 5.1 / Android 13 及其他车机仍未验证。",
     "installTitle": "安装方法",
     "steps": [
       "点击上方下载按钮获取 APK，然后将其传输到车载多媒体系统。",

@@ -1,0 +1,1 @@
+Offline downloads (experimental): download playlists and albums and play them without a connection (Spotify Premium). Voice search when the head unit has a speech recogniser. A queue editor with song and artist radio, Jam with a QR code for passengers, and a fix for a crash when removing a track from the queue. Sign-in and settings are kept. Experimental prerelease.
