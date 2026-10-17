@@ -18,6 +18,16 @@ final class HuBrowse {
  static String icon(MediaItem i){MediaDescriptionCompat d=i.getDescription();return d==null || d.getIconUri()==null?null:d.getIconUri().toString();}
  static String group(MediaItem i){MediaDescriptionCompat d=i.getDescription();Bundle e=d==null?null:d.getExtras();String g=e==null?null:e.getString(GROUP);return g==null?"":g.trim();}
  static boolean artist(MediaItem i){String id=id(i);return id!=null && id.startsWith("spotify:artist:");}
+ private static Bundle extras(MediaItem i){MediaDescriptionCompat d=i.getDescription();return d==null?null:d.getExtras();}
+ static long duration(MediaItem i){Bundle e=extras(i);return e==null?0:Math.max(0,e.getLong("android.media.metadata.DURATION"));}
+ static boolean explicit(MediaItem i){Bundle e=extras(i);return e!=null && e.getLong("android.media.IS_EXPLICIT")==1;}
+ static int number(MediaItem i){Bundle e=extras(i);return e==null?0:(int)e.getLong("android.media.metadata.TRACK_NUMBER");}
+ /** The item's browser actions (play, download, downloading, downloaded). */
+ static java.util.ArrayList<String> actions(MediaItem i){Bundle e=extras(i);java.util.ArrayList<String> a=e==null?null:e.getStringArrayList("androidx.media.utils.extras.CUSTOM_BROWSER_ACTION_ID_LIST");return a==null?new java.util.ArrayList<>():a;}
+ /** The Spotify URI of a media id, without the browse tree's query (?ref=…&pos=…). */
+ static String uri(String id){if(id==null)return null;int q=id.indexOf('?');return q<0?id:id.substring(0,q);}
+ /** playlist, album, artist or show (podcasts and audiobooks) for a page's media id, or null. */
+ static String kind(String id){String u=uri(id);if(u==null)return null;for(String k:new String[]{"playlist","album","artist","show"})if(u.startsWith("spotify:"+k+":"))return k;return null;}
  /** The first child whose id starts with the prefix (for example spotify:home in the root). */
  static MediaItem find(List<MediaItem> items,String prefix){for(MediaItem i:items)if(id(i)!=null && id(i).startsWith(prefix))return i;return null;}
  /** Items in their order, grouped by the backend's group titles. */

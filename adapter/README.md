@@ -236,3 +236,14 @@ Fixes after the first look in the car:
 - Our screens (the interface, Head unit settings, the queue editor, accounts, support) get the app's rounded outer corners (28 dp black mask), as the main screen has.
 
 Checked on the emulator: full screen, the car's split window size (635×604 dp) with the player open while resizing in both directions, a very small window, Head unit settings; no crash.
+
+## Local test.12: playlist, album, artist and show pages
+
+Cards now open pages (`HuDetail`); playable-only cards still play. Categories (Browse genres) open a grid with a back button. Back (button or system back) returns along the path of pages; the path survives rotation and resizing.
+
+- Header: back with the page type (Playlist, Album, Artist; shows — podcasts and audiobooks alike in the backend — get none), the cover (round for artists; shows without a cover use their first episode's), title, subtitle, the number of songs and their total time (hidden at 200 children, the backend's limit, as for Liked Songs), and centred buttons: play in Spotify green (pause when this page is what plays), shuffle play (turns shuffle on first; green while shuffle is on; artists start at a random top track) and download (the item's download / downloading / downloaded action, as on the BYD-derived pages).
+- List: tracks with album track numbers or covers, the explicit mark, artists and length; the playing one in the accent colour; a tap plays the track in this context (`playFromMediaId` with the backend's media id, which carries the context). Episodes show their date and length from the backend's subtitle. Browsable children (an artist's albums) are a row of cards. Wide content keeps the header beside the list, narrow content scrolls it above the list.
+- `HuSession.children`: pages asking for the same node share one request; an unanswered request is sent once more after 10 s; open requests are sent again after reconnecting. Covers that fail right after the backend starts are tried twice more.
+- The settings item of the navigation has its label like the other items.
+
+Checked on the emulator with the owner's account while the car was off: a playlist (play from a track, pause from the page), an artist (top tracks, albums row, an album from it and back), an album (track numbers), a genre grid with back, a podcast, Liked Songs (200 rows scroll), shuffle play (shuffle and pause were restored afterwards), portrait, rotation with the path kept, day and night; no crash. Download was not pressed (it can change the account's library).

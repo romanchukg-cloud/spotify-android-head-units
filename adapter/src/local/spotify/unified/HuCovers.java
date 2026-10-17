@@ -19,8 +19,12 @@ final class HuCovers {
  private static final LruCache<String,Bitmap> bitmaps=new LruCache<String,Bitmap>(24*1024*1024){protected int sizeOf(String k,Bitmap b){return b.getByteCount();}};
  private static final LruCache<String,Integer> colors=new LruCache<>(64);
  private HuCovers(){}
- /** Loads the cover at about the given size; done runs on the main thread (bitmap null when missing). */
- static void load(Context c,String uri,int size,Done done){
+ /**
+  * Loads the cover at about the given size; done runs on the main thread (bitmap null when missing).
+  * Right after the backend starts its image provider can fail; a failed cover is tried twice more.
+  */
+ static void load(Context c,String uri,int size,Done done){load(c,uri,size,done,0);}
+ private static void load(Context c,String uri,int size,Done done,int attempt){
   if(uri==null){done.cover(null,null);return;}
   String key=uri+"@"+size;Bitmap cached=bitmaps.get(key);
   if(cached!=null){done.cover(cached,colors.get(uri));return;}
@@ -35,7 +39,9 @@ final class HuCovers {
     try(java.io.InputStream in=app.getContentResolver().openInputStream(Uri.parse(uri))){b=BitmapFactory.decodeStream(in,null,d);}
     if(b!=null){bitmaps.put(key,b);if(color==null){color=CoverAccent.vivid(new BitmapDrawable(app.getResources(),b));if(color!=null)colors.put(uri,color);}}
    }catch(Exception e){android.util.Log.w("SpotifyHU","Cover unavailable: "+e.getClass().getSimpleName());}
-   final Bitmap result=b;final Integer tint=color;main.post(()->done.cover(result,tint));
+   final Bitmap result=b;final Integer tint=color;
+   if(result==null && attempt<2){main.postDelayed(()->load(app,uri,size,done,attempt+1),attempt==0?1500:4000);return;}
+   main.post(()->done.cover(result,tint));
   });
  }
  /** Shows the cover in an image view unless the view has meanwhile been given another one. */

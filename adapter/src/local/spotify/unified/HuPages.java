@@ -6,8 +6,8 @@ import java.util.*;
 /**
  * The content pages of our interface. Home shows the backend's groups ("Good evening", "Made
  * for …") as rows of cards; Recents and Browse are grids; Library has its sections (Playlists,
- * Podcasts, Albums, Artists, Downloads) as filter pills above a grid. A card plays its item for
- * now; playlist and album pages come next.
+ * Podcasts, Albums, Artists, Downloads) as filter pills above a grid. A card opens its page
+ * (HuDetail, or a grid with a back button for categories); a playable-only card plays.
  */
 final class HuPages {
  private HuPages(){}
@@ -52,10 +52,14 @@ final class HuPages {
   return scroll;
  }
 
- /** A grid of a node's children under a heading. */
- static View grid(HuUi ui,String title,String id,Open open){
+ /** A grid of a node's children under a heading; with back, a back button before the heading. */
+ static View grid(HuUi ui,String title,String id,Open open,Runnable back){
   LinearLayout page=new LinearLayout(ui.activity);page.setOrientation(LinearLayout.VERTICAL);page.setPadding(ui.dp(16),ui.dp(4),ui.dp(16),0);
-  if(title!=null)page.addView(heading(ui,title));
+  if(back!=null){
+   LinearLayout top=new LinearLayout(ui.activity);top.setGravity(Gravity.CENTER_VERTICAL);top.setPadding(0,ui.dp(8),0,0);
+   ImageView b=HuControls.button(ui,"encore_icon_chevron_left_24",HuText.get("back"),ui.dp(64),v->back.run());if(b.getDrawable()!=null)b.getDrawable().setAutoMirrored(true);top.addView(b);
+   TextView h=heading(ui,title==null?"":title);h.setPadding(ui.dp(8),0,ui.dp(8),0);top.addView(h,new LinearLayout.LayoutParams(0,-2,1));page.addView(top);
+  }else if(title!=null)page.addView(heading(ui,title));
   FrameLayout body=new FrameLayout(ui.activity);page.addView(body,new LinearLayout.LayoutParams(-1,0,1));
   fill(ui,body,id,open);
   return page;

@@ -6,6 +6,7 @@ import android.app.*;import android.content.*;import android.os.*;import android
  * tree with each item's custom browser actions and, with an action and an item id, sends the
  * action and watches the item's state. Output: logcat tag HU_PROBE.
  *   am start -n hu.downloads/.Probe [--es mode tree|action] [--ez hint false] [--es action download --es id ID] [--ei watch 120]
+ *   am start -n hu.downloads/.Probe --es mode tree --es id spotify:playlist:… --ei depth 0   (one node and its item)
  */
 public class Probe extends Activity {
  static final String TAG="HU_PROBE",ACTIONS="androidx.media.utils.extras.CUSTOM_BROWSER_ACTION_ID_LIST",ITEM="androidx.media.utils.extras.KEY_CUSTOM_BROWSER_ACTION_MEDIA_ITEM_ID";
@@ -15,7 +16,7 @@ public class Probe extends Activity {
   browser=new MediaBrowserCompat(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new MediaBrowserCompat.ConnectionCallback(){
    public void onConnected(){log("CONNECTED root="+browser.getRoot()+" extras="+dump(browser.getExtras()));
     String mode=getIntent().getStringExtra("mode");
-    if("action".equals(mode))action();else if("search".equals(mode))search();else if("uri".equals(mode))uri();else if("meta".equals(mode))meta();else{nodes.add(new String[]{browser.getRoot(),"0"});next();}}
+    if("action".equals(mode))action();else if("search".equals(mode))search();else if("uri".equals(mode))uri();else if("meta".equals(mode))meta();else{String start=getIntent().getStringExtra("id");nodes.add(new String[]{start==null?browser.getRoot():start,"0"});if(start!=null)item(start);next();}}
    public void onConnectionFailed(){log("REJECTED");finish();}
    public void onConnectionSuspended(){log("SUSPENDED");}
   },hints);browser.connect();
@@ -27,11 +28,16 @@ public class Probe extends Activity {
   browser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
    public void onChildrenLoaded(String parent,List<MediaBrowserCompat.MediaItem> children){
     log("NODE depth="+depth+" id="+parent+" children="+children.size());int n=0;
-    for(MediaBrowserCompat.MediaItem item:children){if(n++<12)log("  "+describe(item));if(item.isBrowsable() && depth<2 && n<=8)nodes.add(new String[]{item.getMediaId(),String.valueOf(depth+1)});}
+    int limit=getIntent().getIntExtra("depth",2),show=getIntent().getIntExtra("show",12);
+    for(MediaBrowserCompat.MediaItem item:children){if(n++<show)log("  "+describe(item));if(item.isBrowsable() && depth<limit && n<=8)nodes.add(new String[]{item.getMediaId(),String.valueOf(depth+1)});}
     browser.unsubscribe(parent);main.post(Probe.this::next);}
    public void onError(String parent){log("NODE ERROR "+parent);main.post(Probe.this::next);}
   });
  }
+ void item(String id){browser.getItem(id,new MediaBrowserCompat.ItemCallback(){
+   public void onItemLoaded(MediaBrowserCompat.MediaItem item){log("ITEM "+(item==null?"null":describe(item)));}
+   public void onError(String i){log("ITEM ERROR "+i);}
+  });}
  /** Plays the best match for a spoken-style query through the backend's media session (PLAY_FROM_SEARCH). */
  void search(){
   final String query=getIntent().getStringExtra("query");

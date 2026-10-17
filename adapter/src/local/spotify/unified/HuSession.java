@@ -44,6 +44,7 @@ final class HuSession {
      metadata=controller.getMetadata();state=controller.getPlaybackState();repeat=controller.getRepeatMode();
     }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Player session unavailable",e);}
     List<Runnable> tasks=new ArrayList<>(waiting);waiting.clear();for(Runnable r:tasks)r.run();
+    for(String parent:new ArrayList<>(pending.keySet()))load(parent,1);
     notifyListeners();
    }
    public void onConnectionFailed(){disconnect();main.postDelayed(HuSession.this::connect,3000);}
@@ -62,15 +63,36 @@ final class HuSession {
  void whenReady(Runnable task){if(ready())task.run();else{waiting.add(task);connect();}}
  /** The browse tree's root (spotify:navigation). */
  String root(){return browser==null?null:browser.getRoot();}
- /** Loads the children of a browse node once; done gets an empty list on errors. */
+ /**
+  * Loads the children of a browse node once; done gets an empty list on errors. Pages asking for
+  * the same node share one request; a request the backend leaves unanswered is sent once more,
+  * and requests still open when the connection drops are sent again after it returns.
+  */
  void children(String parent,java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>> done){
   whenReady(()->{
    if(browser==null || parent==null){done.accept(new ArrayList<>());return;}
-   browser.subscribe(parent,new MediaBrowserCompat.SubscriptionCallback(){
-    public void onChildrenLoaded(String id,List<MediaBrowserCompat.MediaItem> items){if(browser!=null)browser.unsubscribe(id);done.accept(items==null?new ArrayList<>():items);}
-    public void onError(String id){if(browser!=null)browser.unsubscribe(id);done.accept(new ArrayList<>());}
-   });
+   List<java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>>> w=pending.get(parent);
+   if(w!=null){w.add(done);return;}
+   w=new ArrayList<>();w.add(done);pending.put(parent,w);load(parent,1);
   });
+ }
+ private final java.util.Map<String,List<java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>>>> pending=new java.util.HashMap<>();
+ private void load(String parent,int attempt){
+  MediaBrowserCompat b=browser;if(b==null)return;
+  Runnable timeout=new Runnable(){public void run(){
+   if(!pending.containsKey(parent) || browser!=b)return;
+   try{b.unsubscribe(parent);}catch(RuntimeException ignored){}
+   if(attempt<2)load(parent,attempt+1);else deliver(parent,new ArrayList<>());
+  }};
+  b.subscribe(parent,new MediaBrowserCompat.SubscriptionCallback(){
+   public void onChildrenLoaded(String id,List<MediaBrowserCompat.MediaItem> items){main.removeCallbacks(timeout);if(browser!=null)browser.unsubscribe(id);deliver(parent,items==null?new ArrayList<>():items);}
+   public void onError(String id){main.removeCallbacks(timeout);if(browser!=null)browser.unsubscribe(id);deliver(parent,new ArrayList<>());}
+  });
+  main.postDelayed(timeout,10000);
+ }
+ private void deliver(String parent,List<MediaBrowserCompat.MediaItem> items){
+  List<java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>>> w=pending.remove(parent);
+  if(w!=null)for(java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>> c:w)c.accept(items);
  }
  /** Plays a browse item through the backend's "play" browser action, as a media host does. */
  void play(String mediaId){
@@ -79,10 +101,34 @@ final class HuSession {
    browser.sendCustomAction("play",b,null);
   });
  }
+ /** Plays a playable item (a track in its playlist, album or artist) as a media host does. */
+ void playItem(String mediaId){MediaControllerCompat.TransportControls t=controls();if(t!=null && mediaId!=null)t.playFromMediaId(mediaId,new Bundle());}
+ /** Loads one item (its current download state, for example); done gets null on errors. */
+ void item(String id,java.util.function.Consumer<MediaBrowserCompat.MediaItem> done){
+  whenReady(()->{
+   if(browser==null || id==null){done.accept(null);return;}
+   browser.getItem(id,new MediaBrowserCompat.ItemCallback(){
+    public void onItemLoaded(MediaBrowserCompat.MediaItem i){done.accept(i);}
+    public void onError(String i){done.accept(null);}
+   });
+  });
+ }
+ /** Sends an item's browser action (download, downloading, downloaded); done gets null or the error message. */
+ void action(String action,String id,java.util.function.Consumer<String> done){
+  whenReady(()->{
+   if(browser==null || id==null){done.accept("");return;}
+   Bundle b=new Bundle();b.putString("androidx.media.utils.extras.KEY_CUSTOM_BROWSER_ACTION_MEDIA_ITEM_ID",id);
+   browser.sendCustomAction(action,b,new MediaBrowserCompat.CustomActionCallback(){
+    public void onResult(String a,Bundle e,Bundle r){done.accept(null);}
+    public void onError(String a,Bundle e,Bundle d){String m=d==null?null:d.getString("androidx.media.utils.extras.KEY_CUSTOM_BROWSER_ACTION_RESULT_MESSAGE");done.accept(m==null?"":m);}
+   });
+  });
+ }
  String text(String key){if(metadata==null)return null;CharSequence t=metadata.getText(key);return t==null?metadata.getString(key):t.toString();}
  String title(){return text("android.media.metadata.TITLE");}
  String artist(){return text("android.media.metadata.ARTIST");}
  String art(){return metadata==null?null:metadata.getString("android.media.metadata.ALBUM_ART_URI");}
+ String contextUri(){return metadata==null?null:metadata.getString("com.spotify.music.extra.CONTEXT_URI");}
  String trackUri(){return metadata==null?null:metadata.getString("android.media.metadata.MEDIA_URI");}
  String artistUri(){return metadata==null?null:metadata.getString("com.spotify.music.extra.ARTIST_URI");}
  long duration(){return metadata==null?0:Math.max(0,metadata.getLong("android.media.metadata.DURATION"));}

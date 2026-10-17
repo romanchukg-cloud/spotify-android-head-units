@@ -16,16 +16,17 @@ final class HuRail extends LinearLayout {
   super(ui.activity);this.ui=ui;setOrientation(bar?HORIZONTAL:VERTICAL);setGravity(bar?Gravity.CENTER_VERTICAL:Gravity.CENTER_HORIZONTAL);
   int pad=ui.dp(bar?6:10);setPadding(pad,pad,pad,pad);
   setBackground(HuUi.round(ui.dark?0xff121212:0xffffffff,ui.dp(22)));setClipToOutline(true);setOutlineProvider(ViewOutlineProvider.BACKGROUND);
-  for(int i=0;i<PAGES.length;i++){
-   String key=PAGES[i];
+  for(int i=0;i<=PAGES.length;i++){
+   // The pages, then settings: an item like the others, with its label, that opens a screen.
+   String key=i<PAGES.length?PAGES[i]:"settings_short";
    LinearLayout item=new LinearLayout(ui.activity);item.setOrientation(VERTICAL);item.setGravity(Gravity.CENTER);item.setPadding(0,ui.dp(bar?6:10),0,ui.dp(bar?6:10));
    ImageView icon=new ImageView(ui.activity);item.addView(icon,new LayoutParams(ui.dp(32),ui.dp(32)));
-   TextView label=ui.label(HuText.get(key),15,ui.secondary,false);label.setGravity(Gravity.CENTER);label.setPadding(0,ui.dp(6),0,0);item.addView(label);
-   item.setOnClickListener(v->pick.page(key));item.setContentDescription(HuText.get(key));
-   addView(item,bar?new LayoutParams(0,-1,1):new LayoutParams(-1,0,1));items.put(key,item);icons.put(key,icon);labels.put(key,label);
+   TextView label=ui.label(HuText.get(key),15,ui.secondary,false);label.setGravity(Gravity.CENTER);label.setPadding(0,ui.dp(6),0,0);label.setSingleLine(true);label.setEllipsize(android.text.TextUtils.TruncateAt.END);item.addView(label);
+   item.setContentDescription(HuText.get(i<PAGES.length?key:"settings"));
+   addView(item,bar?new LayoutParams(0,-1,1):new LayoutParams(-1,0,1));
+   if(i==PAGES.length){item.setBackground(ui.pressable(0x00000000,ui.dp(18)));icon.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_gears_24",ui.secondary));item.setOnClickListener(v->settings.run());break;}
+   item.setOnClickListener(v->pick.page(key));items.put(key,item);icons.put(key,icon);labels.put(key,label);
   }
-  ImageView gear=HuControls.button(ui,"encore_icon_gears_24",HuText.get("settings"),ui.dp(72),v->settings.run());
-  addView(gear,new LayoutParams(ui.dp(72),ui.dp(72)));
  }
  void select(String key){
   for(int i=0;i<PAGES.length;i++){

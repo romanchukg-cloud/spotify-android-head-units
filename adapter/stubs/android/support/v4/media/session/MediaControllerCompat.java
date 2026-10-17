@@ -11,6 +11,7 @@ public class MediaControllerCompat {
   public abstract void play();public abstract void pause();public abstract void skipToNext();public abstract void skipToPrevious();
   public abstract void seekTo(long position);public abstract void setRepeatMode(int mode);public abstract void setShuffleMode(int mode);
   public abstract void skipToQueueItem(long id);public abstract void sendCustomAction(String action,Bundle extras);
+  public abstract void playFromMediaId(String mediaId,Bundle extras);
  }
  public static abstract class Callback {
   public void onSessionReady(){}public void onSessionDestroyed(){}
