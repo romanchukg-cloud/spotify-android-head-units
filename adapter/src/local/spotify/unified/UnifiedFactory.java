@@ -19,7 +19,7 @@ public final class UnifiedFactory extends AppComponentFactory {
     ProfileButton.install(a);
     String own=a.getClass().getName();
     if(own.equals(DiagnosticActivity.class.getName()) || own.equals(DiagnosticNoticeActivity.class.getName()) || own.equals(ProfilesActivity.class.getName())){
-     try{if(HeadUnitStyle.modern(HeadUnitSettings.call(a,"get",null).getString("ui_style",HeadUnitStyle.NEW)))HuUi.adopt(a);}catch(RuntimeException ignored){}
+     HuUi.adopt(a);
     }
    }
    public void onActivityCreated(Activity a,android.os.Bundle b){DiagnosticLog.init(a);}public void onActivityStarted(Activity a){}public void onActivityPaused(Activity a){CoverAccent.stop(a);}public void onActivityStopped(Activity a){}public void onActivitySaveInstanceState(Activity a,android.os.Bundle b){}public void onActivityDestroyed(Activity a){}

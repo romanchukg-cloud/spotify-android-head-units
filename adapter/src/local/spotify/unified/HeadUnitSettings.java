@@ -13,11 +13,11 @@ public final class HeadUnitSettings {
  /** Applies the UI scale and the Classic/New style to the player's base context. */
  public static Context scaled(Context c){
   Bundle b;
-  try{b=call(c,"get",null);}catch(RuntimeException e){android.util.Log.w("SpotifyHU","Head unit settings unavailable; using device density and the default style");b=new Bundle();}
+  try{b=call(c,"get",null);}catch(RuntimeException e){android.util.Log.w("SpotifyHU","Head unit settings unavailable; using device density");b=new Bundle();}
   try{
    Configuration config=new Configuration(c.getResources().getConfiguration());
    if(b.containsKey("scale")){int old=config.densityDpi;config.densityDpi=density(c,b.getInt("scale"));if(old>0){config.screenWidthDp=Math.round(config.screenWidthDp*old/(float)config.densityDpi);config.screenHeightDp=Math.round(config.screenHeightDp*old/(float)config.densityDpi);config.smallestScreenWidthDp=Math.round(config.smallestScreenWidthDp*old/(float)config.densityDpi);}}
-   HeadUnitStyle.apply(config,HeadUnitStyle.modern(b.getString("ui_style",HeadUnitStyle.NEW)));
+   HeadUnitStyle.apply(config);
    return c.createConfigurationContext(config);
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","UI scale unavailable; using device density");return c;}
  }
@@ -30,9 +30,9 @@ public final class HeadUnitSettings {
   a.startActivity(new Intent(a,a.getClass()).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK));
   a.finish();android.os.Process.killProcess(android.os.Process.myPid());
  }
- /** True when the activity's resources no longer match the saved scale or style. */
+ /** True when the activity's resources no longer match the saved scale or the style. */
  public static boolean stale(Activity a){
   Bundle b=call(a,"get",null);Configuration config=a.getResources().getConfiguration();
-  return config.densityDpi!=density(a,b.getInt("scale",100)) || HeadUnitStyle.applied(config)!=HeadUnitStyle.modern(b.getString("ui_style",HeadUnitStyle.NEW));
+  return config.densityDpi!=density(a,b.getInt("scale",100)) || !HeadUnitStyle.applied(config);
  }
 }

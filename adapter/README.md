@@ -201,3 +201,7 @@ The queue editor has a **Sleep timer** pill: 15, 30 or 45 minutes, 1 hour or the
 Not available in Spotify Automotive 5.5.0 and therefore not added: Smart Shuffle (the client only has the shuffle / disable-shuffle actions) and an audiobooks section (the backend's Library offers Playlists, Podcasts, Albums, Artists and Downloads).
 
 Checked on an Android 12 emulator with a signed-in account: "End of track" paused 2 s into the next track, the 15-minute timer showed its minutes and Off cancelled it.
+
+## Local test.12: one style
+
+The Classic style is gone: the New style is the only interface style. `HeadUnitStyle.apply` always sets the "car" UI-mode type (the generated resources stay as they are), Head unit settings has no style switch, a stored `ui_style` is ignored, and `HuUi.adopt`, `HeadUnitShell`, `CoverAccent` and the like-action alias no longer check a style. Checked on an Android 12 emulator: an older build switched to Classic opens in the New style after the update, without a crash.

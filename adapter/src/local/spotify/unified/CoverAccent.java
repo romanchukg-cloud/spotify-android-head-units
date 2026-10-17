@@ -21,7 +21,7 @@ final class CoverAccent {
  private CoverAccent(Activity a){activity=a;dark=(a.getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;}
  static void start(Activity a,boolean enabled){
   CoverAccent c=running.get(a);
-  if(!enabled || !HeadUnitStyle.modern()){if(c!=null){c.stopTicking();c.restore();running.remove(a);}return;}
+  if(!enabled){if(c!=null){c.stopTicking();c.restore();running.remove(a);}return;}
   if(c==null){c=new CoverAccent(a);running.put(a,c);}
   c.stopTicking();c.main.post(c.tick);
  }

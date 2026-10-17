@@ -19,7 +19,7 @@ final class HeadUnitShell implements ViewTreeObserver.OnGlobalLayoutListener,Vie
   ground=dark?0xff000000:0xffe4e4e4;card=dark?0xff121212:0xfff6f6f6;rail=dark?0xff121212:0xffffffff;
  }
  static void install(Activity a){
-  if(!HeadUnitStyle.modern() || installed.containsKey(a))return;
+  if(installed.containsKey(a))return;
   HeadUnitShell s=new HeadUnitShell(a);installed.put(a,s);
   ViewTreeObserver o=a.getWindow().getDecorView().getViewTreeObserver();o.addOnGlobalLayoutListener(s);o.addOnPreDrawListener(s);
   systemBars(a.getWindow(),s.dark);
