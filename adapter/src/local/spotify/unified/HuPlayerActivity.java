@@ -9,10 +9,12 @@ import java.util.*;
 /**
  * Our own interface (no BYD code): the navigation rail, the content card (Home, Recents, Browse,
  * Library, Search; playlist, album, artist and category pages opened from their cards) with
- * our mini-player as its footer, and our player sliding up over
- * them at full height, leaving the navigation in view. On portrait screens the navigation is a
- * bar along the bottom, under the mini-player, within reach. Opened from Head unit settings
- * while the BYD-derived interface stays the main one.
+ * our mini-player as its footer, and our player sliding up over them at full height, leaving the
+ * navigation in view. On portrait screens the navigation is a bar along the bottom, under the
+ * mini-player, within reach. This is the app's main screen: the launcher entry keeps the
+ * BYD-derived activity's name as an alias of it (launcher icons, the notification, profile
+ * switching and the BYD media service open it by that name). Signed out, the content shows the
+ * backend's sign-in request and opens its sign-in screen.
  */
 public final class HuPlayerActivity extends Activity {
  private HuUi ui;private HuSession session;private HuRail rail;private FrameLayout content;private HuNowPlaying player;
@@ -31,7 +33,7 @@ public final class HuPlayerActivity extends Activity {
  private final ArrayList<HuDetail.Target> restored=new ArrayList<>();private float contentWidth,contentHeight;
  protected void attachBaseContext(Context base){super.attachBaseContext(HeadUnitSettings.scaled(base));}
  protected void onCreate(Bundle state){
-  super.onCreate(state);ui=new HuUi(this);ui.window();session=HuSession.get(this);
+  super.onCreate(state);local.spotify.close.TaskGuardService.opened(this);ui=new HuUi(this);ui.window();session=HuSession.get(this);
   boolean accent;try{accent=HeadUnitSettings.call(this,"get",null).getBoolean("cover_accent",true);}catch(RuntimeException e){accent=true;}
   if(state!=null){
    page=state.getString("page",page);detail=HuDetail.Target.restore(state);searchQuery=state.getString("search");
@@ -66,6 +68,13 @@ public final class HuPlayerActivity extends Activity {
   // Day/night and other configuration changes recreate the screen; the open player stays open.
   if(state!=null && state.getBoolean("expanded")){expanded=true;player.setVisibility(View.VISIBLE);}
   content.addView(HuPages.message(ui,HuText.get("loading")));rail.select(page);
+  loadRoot();
+  session.add(signInWatch);
+ }
+ protected void onDestroy(){session.remove(signInWatch);main.removeCallbacksAndMessages(null);super.onDestroy();}
+ private final android.os.Handler main=new android.os.Handler(android.os.Looper.getMainLooper());
+ /** The browse tree's root: the tabs' nodes, then the current tab (and a restored page above it). */
+ private void loadRoot(){
   session.whenReady(()->session.children(session.root(),items->{
    String[][] prefixes={{"home","spotify:home"},{"recents","spotify:recently-played"},{"browse","spotify:browse"},{"library","spotify:library"}};
    for(String[] p:prefixes){MediaItem i=HuBrowse.find(items,p[1]);if(i!=null)ids.put(p[0],HuBrowse.id(i));}
@@ -78,6 +87,37 @@ public final class HuPlayerActivity extends Activity {
    }
    restored.clear();
   }));
+ }
+ // Signed out: a panel over the content with the backend's message and its sign-in button; signed
+ // in again, the tabs are loaded afresh.
+ private View signInPanel;
+ private final HuSession.Listener signInWatch=s->{
+  boolean needed=s.signIn()!=null;
+  if(needed && signInPanel==null){signInPanel=signInPanel();content.addView(signInPanel,new FrameLayout.LayoutParams(-1,-1));}
+  else if(!needed && signInPanel!=null){content.removeView(signInPanel);signInPanel=null;tabs.clear();levels.clear();detail=null;search=null;ids.clear();loadRoot();}
+ };
+ private View signInPanel(){
+  LinearLayout p=new LinearLayout(this);p.setOrientation(LinearLayout.VERTICAL);p.setGravity(Gravity.CENTER);p.setBackgroundColor(ui.card);p.setPadding(ui.dp(48),ui.dp(32),ui.dp(48),ui.dp(32));p.setClickable(true);
+  ImageView logo=new ImageView(this);logo.setImageDrawable(HuControls.icon(this,"encore_icon_spotify_logo_24",ui.text));p.addView(logo,new LinearLayout.LayoutParams(ui.dp(72),ui.dp(72)));
+  String message=session.errorMessage();TextView t=ui.label(message!=null && !message.isEmpty()?message:HuText.get("sign_in_hint"),24,ui.text,true);t.setGravity(Gravity.CENTER);t.setPadding(0,ui.dp(24),0,ui.dp(28));p.addView(t);
+  String label=session.signInLabel();TextView b=ui.label(label!=null && !label.isEmpty()?label:HuText.get("sign_in"),20,0xff000000,true);b.setGravity(Gravity.CENTER);b.setMinHeight(ui.dp(72));b.setPadding(ui.dp(48),0,ui.dp(48),0);
+  b.setBackground(ui.pressable(0xff1ed760,ui.dp(36)));b.setOnClickListener(v->launchSignIn());p.addView(b,new LinearLayout.LayoutParams(-2,ui.dp(72)));
+  return p;
+ }
+ /** Opens the backend's sign-in screen as the BYD-derived screen did (its pending intent). */
+ private boolean launchSignIn(){
+  android.app.PendingIntent pi=session.signIn();if(pi==null)return false;
+  try{
+   android.app.ActivityOptions o=android.app.ActivityOptions.makeBasic();if(android.os.Build.VERSION.SDK_INT>=34)o.setPendingIntentBackgroundActivityStartMode(android.app.ActivityOptions.MODE_BACKGROUND_ACTIVITY_START_ALLOWED);
+   int flags=Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP;startIntentSender(pi.getIntentSender(),null,flags,flags,0,o.toBundle());return true;
+  }catch(IntentSender.SendIntentException | RuntimeException e){android.util.Log.w("SpotifyHU","Sign-in screen unavailable",e);return false;}
+ }
+ /** A profile switch asks for the QR sign-in: it opens once the backend asks to sign in (up to 45 s). */
+ void signIn(){
+  main.post(new Runnable(){int attempts;public void run(){
+   if(isFinishing() || isDestroyed() || launchSignIn())return;
+   if(++attempts<180)main.postDelayed(this,250);else Toast.makeText(HuPlayerActivity.this,ProfileText.get("loginRetry"),Toast.LENGTH_LONG).show();
+  }});
  }
  /**
   * The window's size: the decor view follows rotation and split screens, not the keyboard. (The
@@ -121,6 +161,7 @@ public final class HuPlayerActivity extends Activity {
  private void place(View v,int direction){
   content.removeAllViews();if(v.getParent() instanceof ViewGroup)((ViewGroup)v.getParent()).removeView(v);
   content.addView(v,new FrameLayout.LayoutParams(-1,-1));
+  if(signInPanel!=null)content.addView(signInPanel,new FrameLayout.LayoutParams(-1,-1));
   v.animate().cancel();
   if(direction==0){v.setAlpha(1);v.setTranslationX(0);return;}
   float shift=ui.dp(36)*direction*(content.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);
@@ -148,6 +189,14 @@ public final class HuPlayerActivity extends Activity {
  private void collapse(){
   if(!expanded)return;expanded=false;
   player.animate().translationY(player.getHeight()).setDuration(200).withEndAction(()->player.setVisibility(View.GONE)).start();
+ }
+ /** A profile switch or a notification brings the screen back with a new intent (ProfileButton reads it). */
+ protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);}
+ /** A scale changed in Head unit settings applies when the screen is shown again. */
+ protected void onResume(){
+  super.onResume();
+  local.spotify.close.TaskGuardService.opened(this);
+  try{if(HeadUnitSettings.stale(this)){recreate();return;}}catch(RuntimeException ignored){}
  }
  /** Back: collapses the player, then goes back through the pages, then to Home, then leaves. */
  public void onBackPressed(){if(expanded)collapse();else if(detail!=null)back();else if(!"home".equals(page) && !ids.isEmpty())show("home");else super.onBackPressed();}

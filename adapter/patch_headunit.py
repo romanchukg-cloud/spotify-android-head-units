@@ -240,9 +240,15 @@ signin('com/spotify/automotive/settingspage/SettingsPageActivity.smali',[(r'(\.m
 print('Jam: buttons on the queue page and in the queue editor, settings page scrolls to Jam')
 
 
-# Our own interface (no BYD code), first screen: HuPlayerActivity with our mini-player and
-# player, opened from Head unit settings while the BYD-derived interface stays the player.
+# Our own interface (no BYD code) is the main screen. The launcher entry keeps the BYD-derived
+# activity's component name as an alias of HuPlayerActivity, so launcher icons, the playback
+# notification, profile switching and the BYD media service still open the app by that name; the
+# BYD-derived activity is no longer declared (its code stays in the DEX for now).
 p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
-E.SubElement(app,'activity',{A+'name':'local.spotify.unified.HuPlayerActivity',A+'process':':bydui',A+'exported':'false',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
+for n in list(app):
+ if n.tag=='activity' and n.get(A+'name')=='local.bydui.com.vivid.spotify.MainActivity':app.remove(n)
+E.SubElement(app,'activity',{A+'name':'local.spotify.unified.HuPlayerActivity',A+'process':':bydui',A+'exported':'false',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize',A+'windowSoftInputMode':'adjustResize'})
+alias=E.SubElement(app,'activity-alias',{A+'name':'local.bydui.com.vivid.spotify.MainActivity',A+'targetActivity':'local.spotify.unified.HuPlayerActivity',A+'exported':'true'})
+f=E.SubElement(alias,'intent-filter');E.SubElement(f,'action',{A+'name':'android.intent.action.MAIN'});E.SubElement(f,'category',{A+'name':'android.intent.category.LAUNCHER'})
 m.write(p,encoding='utf-8',xml_declaration=True)
-print('Own interface: player preview activity')
+print('Own interface: main screen (launcher alias local.bydui.com.vivid.spotify.MainActivity -> HuPlayerActivity)')

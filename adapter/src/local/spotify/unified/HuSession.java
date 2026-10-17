@@ -14,7 +14,7 @@ import java.util.List;
  */
 final class HuSession {
  interface Listener {void changed(HuSession session);}
- static final int STATE_PLAYING=3,STATE_BUFFERING=6,REPEAT_NONE=0,REPEAT_ONE=1,REPEAT_ALL=2;
+ static final int STATE_PLAYING=3,STATE_BUFFERING=6,STATE_ERROR=7,ERROR_AUTHENTICATION=3,REPEAT_NONE=0,REPEAT_ONE=1,REPEAT_ALL=2;
  private static final String SERVICE="com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService";
  private static HuSession instance;
  static HuSession get(Context c){if(instance==null)instance=new HuSession(c.getApplicationContext());return instance;}
@@ -152,6 +152,18 @@ final class HuSession {
   long d=duration();return Math.max(0,d>0?Math.min(p,d):p);
  }
  int repeat(){return repeat;}
+ /**
+  * Signed out: the backend's error state (AUTHENTICATION_EXPIRED) carries the sign-in screen
+  * (QR sign-in) as its resolution intent, which is returned here; null while signed in.
+  */
+ android.app.PendingIntent signIn(){
+  if(state==null || state.getState()!=STATE_ERROR || state.getErrorCode()!=ERROR_AUTHENTICATION || state.getExtras()==null)return null;
+  Object pi=state.getExtras().getParcelable("android.media.extras.ERROR_RESOLUTION_ACTION_INTENT");
+  return pi instanceof android.app.PendingIntent?(android.app.PendingIntent)pi:null;
+ }
+ /** The backend's own texts for signing in: its message and the button label (either may be null). */
+ String errorMessage(){CharSequence m=state==null?null:state.getErrorMessage();return m==null?null:m.toString();}
+ String signInLabel(){Bundle e=state==null?null:state.getExtras();return e==null?null:e.getString("android.media.extras.ERROR_RESOLUTION_ACTION_LABEL");}
  /** A session custom action by its ids (for example "like" / "unlike"), or null. */
  PlaybackStateCompat.CustomAction custom(String... ids){
   if(state==null || state.getCustomActions()==null)return null;

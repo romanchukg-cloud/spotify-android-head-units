@@ -11,7 +11,9 @@ public final class UnifiedFactory extends AppComponentFactory {
      boolean cover=true;try{android.os.Bundle settings=HeadUnitSettings.call(a,"get",null);if(HeadUnitSettings.stale(a)){HeadUnitSettings.restartPlayer(a);return;}cover=settings.getBoolean("cover_accent",true);}catch(RuntimeException ignored){}
      CoverAccent.start(a,cover);HeadUnitShell.install(a);
     }
-    if(a.getClass().getName().equals("local.bydui.com.vivid.spotify.MainActivity") && playerTask!=a.getTaskId()){
+    // The player screen, once per task: ours (HuPlayerActivity, the main screen) or the BYD-derived one.
+    boolean player=a.getClass().getName().equals("local.bydui.com.vivid.spotify.MainActivity") || a instanceof HuPlayerActivity;
+    if(player && playerTask!=a.getTaskId()){
      playerTask=a.getTaskId();
      boolean switching=a.getIntent().hasExtra(ProfileButton.ACK) || a.getIntent().getBooleanExtra("local.profile.qr",false);
      if(!switching){try{HeadUnitSettings.call(a,"ui_open",null);}catch(RuntimeException ignored){}DiagnosticNoticeActivity.maybeShow(a);UpdateDialog.maybeOffer(a);}

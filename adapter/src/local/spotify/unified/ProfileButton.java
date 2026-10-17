@@ -11,11 +11,12 @@ public final class ProfileButton {
  public static final String ACK="local.profile.launch.ack";
  public static void install(Activity a){
   String name=a.getClass().getName();
-  if(name.equals("local.bydui.com.vivid.spotify.MainActivity")){
+  if(name.equals("local.bydui.com.vivid.spotify.MainActivity") || a instanceof HuPlayerActivity){
    ResultReceiver ack=a.getIntent().getParcelableExtra(ACK);
    if(ack!=null){a.getIntent().removeExtra(ACK);ack.send(1,null);}
    if(a.getIntent().getBooleanExtra("local.profile.qr",false)){
-    a.getIntent().removeExtra("local.profile.qr");openLogin(a);
+    a.getIntent().removeExtra("local.profile.qr");
+    if(a instanceof HuPlayerActivity)((HuPlayerActivity)a).signIn();else openLogin(a);
    }
    return;
   }

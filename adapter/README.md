@@ -268,3 +268,13 @@ Checked on the emulator: typing (results while typing, keyboard open), submittin
 - The instrument cluster gets nothing from our interface (owner's decision).
 
 Checked on the emulator: back from a playlist to a scrolled Home, Library and back to Home with its scroll, Home tapped again (refresh), back from Library to Home, swipe up and down; no crash.
+
+## Local test.12: our interface is the main screen
+
+- The launcher entry keeps the BYD-derived activity's component name, `local.bydui.com.vivid.spotify.MainActivity`, as an `activity-alias` of `HuPlayerActivity` (patch_headunit.py); the BYD-derived activity is no longer declared (its code stays in the DEX for now). Launcher icons and pinned shortcuts, the playback notification, profile switching ("Back to Spotify", the QR hand-off) and the BYD media service open the app by that name and reach our screen. `HuPlayerActivity` keeps `configChanges=orientation|screenSize` and gets `windowSoftInputMode=adjustResize`.
+- What the BYD-derived main screen did on opening now happens for ours: `TaskGuardService.opened` (the playback gate and the task-removal guard) in `onCreate` and `onResume`; once per task `ui_open` (auto resume), the diagnostics notice and the update offer (UnifiedFactory); the profile hand-off acknowledgement and the QR sign-in request (ProfileButton → `HuPlayerActivity.signIn`); a changed interface scale rebuilds the screen.
+- Signed out, the backend's playback state is an error (AUTHENTICATION_EXPIRED) whose resolution intent opens Spotify's QR sign-in screen. The content then shows the backend's message and button ("Please log in to use Spotify.", "Log in") over the pages; the button opens that screen as the BYD-derived screen did (`startIntentSender`, background start allowed on Android 14+). Signed in again, the tabs load afresh.
+- The "New interface (test)" tile is gone from Head unit settings.
+- The BYD driving restriction (it blocked only the login and settings buttons) and the instrument cluster calls were dormant in this build (their start-up path never runs) and are not carried over.
+
+Checked: on the Android 12 emulator with the owner's account, an update in place, the launcher opening our screen (component shown as the alias), the playback gate opening, play and pause, Head unit settings, Accounts and "Back to Spotify"; on an Android 13 emulator (1024×600) signed out, an update from the published test.11 (95488 → 95489), the sign-in panel, "Log in" opening the QR sign-in screen and back, the forced update job (`up_to_date`), the backend process alive, no crash.
