@@ -7,6 +7,7 @@ import android.app.*;import android.content.*;import android.os.*;import android
  * action and watches the item's state. Output: logcat tag HU_PROBE.
  *   am start -n hu.downloads/.Probe [--es mode tree|action] [--ez hint false] [--es action download --es id ID] [--ei watch 120]
  *   am start -n hu.downloads/.Probe --es mode tree --es id spotify:playlist:… --ei depth 0   (one node and its item)
+ *   am start -n hu.downloads/.Probe --es mode find --es query "imagine dragons"   (browser search results)
  */
 public class Probe extends Activity {
  static final String TAG="HU_PROBE",ACTIONS="androidx.media.utils.extras.CUSTOM_BROWSER_ACTION_ID_LIST",ITEM="androidx.media.utils.extras.KEY_CUSTOM_BROWSER_ACTION_MEDIA_ITEM_ID";
@@ -16,7 +17,7 @@ public class Probe extends Activity {
   browser=new MediaBrowserCompat(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new MediaBrowserCompat.ConnectionCallback(){
    public void onConnected(){log("CONNECTED root="+browser.getRoot()+" extras="+dump(browser.getExtras()));
     String mode=getIntent().getStringExtra("mode");
-    if("action".equals(mode))action();else if("search".equals(mode))search();else if("uri".equals(mode))uri();else if("meta".equals(mode))meta();else{String start=getIntent().getStringExtra("id");nodes.add(new String[]{start==null?browser.getRoot():start,"0"});if(start!=null)item(start);next();}}
+    if("action".equals(mode))action();else if("find".equals(mode))find();else if("search".equals(mode))search();else if("uri".equals(mode))uri();else if("meta".equals(mode))meta();else{String start=getIntent().getStringExtra("id");nodes.add(new String[]{start==null?browser.getRoot():start,"0"});if(start!=null)item(start);next();}}
    public void onConnectionFailed(){log("REJECTED");finish();}
    public void onConnectionSuspended(){log("SUSPENDED");}
   },hints);browser.connect();
@@ -38,6 +39,14 @@ public class Probe extends Activity {
    public void onItemLoaded(MediaBrowserCompat.MediaItem item){log("ITEM "+(item==null?"null":describe(item)));}
    public void onError(String i){log("ITEM ERROR "+i);}
   });}
+ /** Searches through the browser (MediaBrowserServiceCompat.onSearch) and logs the results. */
+ void find(){
+  String query=getIntent().getStringExtra("query");int show=getIntent().getIntExtra("show",40);
+  browser.search(query,null,new MediaBrowserCompat.SearchCallback(){
+   public void onSearchResult(String q,Bundle e,List<MediaBrowserCompat.MediaItem> items){log("FIND "+q+" results="+items.size());int n=0;for(MediaBrowserCompat.MediaItem i:items)if(n++<show)log("  "+describe(i));}
+   public void onError(String q,Bundle e){log("FIND ERROR "+q);}
+  });
+ }
  /** Plays the best match for a spoken-style query through the backend's media session (PLAY_FROM_SEARCH). */
  void search(){
   final String query=getIntent().getStringExtra("query");

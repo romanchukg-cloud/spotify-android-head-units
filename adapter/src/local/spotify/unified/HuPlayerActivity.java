@@ -8,7 +8,7 @@ import android.widget.*;
 import java.util.*;
 /**
  * Our own interface (no BYD code): the navigation rail, the content card (Home, Recents, Browse,
- * Library; Search next; playlist, album, artist and category pages opened from their cards) with
+ * Library, Search; playlist, album, artist and category pages opened from their cards) with
  * our mini-player as its footer, and our player sliding up over
  * them at full height, leaving the navigation in view. On portrait screens the navigation is a
  * bar along the bottom, under the mini-player, within reach. Opened from Head unit settings
@@ -16,15 +16,17 @@ import java.util.*;
  */
 public final class HuPlayerActivity extends Activity {
  private HuUi ui;private HuSession session;private HuRail rail;private FrameLayout content;private HuNowPlaying player;
- private static String resized;
+ private static String resized;private int[] laid;
  private boolean expanded;private String page="home";private final Map<String,String> ids=new HashMap<>();
+ private static final int VOICE=7;
+ private HuSearch search;private String searchQuery,pendingVoice;
  private HuDetail.Target detail;private final ArrayDeque<HuDetail.Target> trail=new ArrayDeque<>();private float contentWidth,contentHeight;
  protected void attachBaseContext(Context base){super.attachBaseContext(HeadUnitSettings.scaled(base));}
  protected void onCreate(Bundle state){
   super.onCreate(state);ui=new HuUi(this);ui.window();session=HuSession.get(this);
   boolean accent;try{accent=HeadUnitSettings.call(this,"get",null).getBoolean("cover_accent",true);}catch(RuntimeException e){accent=true;}
   if(state!=null){
-   page=state.getString("page",page);detail=HuDetail.Target.restore(state);
+   page=state.getString("page",page);detail=HuDetail.Target.restore(state);searchQuery=state.getString("search");
    ArrayList<Bundle> saved=state.getParcelableArrayList("trail");if(saved!=null)for(Bundle b:saved){HuDetail.Target t=HuDetail.Target.restore(b);if(t!=null)trail.addLast(t);}
   }
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
@@ -46,11 +48,12 @@ public final class HuPlayerActivity extends Activity {
   setContentView(root);
   // Splitting the screen resizes the window without recreating the screen when the new size
   // crosses none of the app's resource size buckets; our layout depends on the size, so it is
-  // built again (once per size, should the measured size never match the configuration).
-  int laidWidth=cf.screenWidthDp,laidHeight=cf.screenHeightDp;
+  // built again (once per size). The window's own size counts: the keyboard leaves it alone.
   root.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{
-   float d=getResources().getDisplayMetrics().density;int w=Math.round(v.getWidth()/d),h=Math.round(v.getHeight()/d);String size=w+"x"+h;
-   if(w>0 && h>0 && (Math.abs(w-laidWidth)>48 || Math.abs(h-laidHeight)>48) && !size.equals(resized) && !isFinishing()){resized=size;v.post(this::recreate);}
+   int[] now=windowSize();if(now[0]<=0 || now[1]<=0)return;
+   if(laid==null){laid=now;return;}
+   int limit=ui.dp(48);String size=now[0]+"x"+now[1];
+   if((Math.abs(now[0]-laid[0])>limit || Math.abs(now[1]-laid[1])>limit) && !size.equals(resized) && !isFinishing()){resized=size;v.post(this::recreate);}
   });
   // Day/night and other configuration changes recreate the screen; the open player stays open.
   if(state!=null && state.getBoolean("expanded")){expanded=true;player.setVisibility(View.VISIBLE);}
@@ -58,12 +61,19 @@ public final class HuPlayerActivity extends Activity {
   session.whenReady(()->session.children(session.root(),items->{
    String[][] prefixes={{"home","spotify:home"},{"recents","spotify:recently-played"},{"browse","spotify:browse"},{"library","spotify:library"}};
    for(String[] p:prefixes){MediaItem i=HuBrowse.find(items,p[1]);if(i!=null)ids.put(p[0],HuBrowse.id(i));}
+   if(pendingVoice!=null){page="search";detail=null;trail.clear();}
    HuDetail.Target opened=detail;ArrayList<HuDetail.Target> path=new ArrayList<>(trail);show(page);
    if(opened!=null){trail.addAll(path);detail=opened;showDetail();}
   }));
  }
+ /**
+  * The window's size: the decor view follows rotation and split screens, not the keyboard. (The
+  * window metrics of this activity's scaled context keep the size it was created with.)
+  */
+ private int[] windowSize(){View d=getWindow().getDecorView();return new int[]{d.getWidth(),d.getHeight()};}
  /** Shows a page of the rail. */
  private void show(String key){
+  if(search!=null){searchQuery=search.query();search=null;}
   page=key;detail=null;trail.clear();rail.select(key);content.removeAllViews();
   HuPages.Open open=this::open;
   View v;
@@ -72,7 +82,9 @@ public final class HuPlayerActivity extends Activity {
    case "recents":v=HuPages.grid(ui,HuText.get("recents"),ids.get("recents"),open,null);break;
    case "browse":v=HuPages.grid(ui,HuText.get("browse"),ids.get("browse"),open,null);break;
    case "library":v=HuPages.library(ui,ids.get("library"),open);break;
-   default:v=HuPages.message(ui,HuText.get("search_next"));
+   default:
+    search=new HuSearch(ui,searchQuery,open,this::listen);v=search.view;
+    if(pendingVoice!=null){search.spoken(pendingVoice);pendingVoice=null;}
   }
   content.addView(v,new FrameLayout.LayoutParams(-1,-1));
  }
@@ -86,8 +98,19 @@ public final class HuPlayerActivity extends Activity {
   View v=HuBrowse.kind(detail.id)!=null?HuDetail.page(ui,detail,contentWidth,contentHeight,this::back,this::open):HuPages.grid(ui,detail.title,detail.id,this::open,this::back);
   content.addView(v,new FrameLayout.LayoutParams(-1,-1));
  }
+ /** The microphone: the head unit's speech recognition; the text comes back to the search page. */
+ private void listen(){try{startActivityForResult(HeadUnitVoice.recognizer(),VOICE);}catch(ActivityNotFoundException e){android.util.Log.w("SpotifyHU","Voice search unavailable",e);}}
+ protected void onActivityResult(int request,int result,Intent data){
+  super.onActivityResult(request,result,data);
+  if(request!=VOICE || result!=RESULT_OK || data==null)return;
+  ArrayList<String> heard=data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS);
+  String q=heard==null || heard.isEmpty() || heard.get(0)==null?"":heard.get(0).trim();if(q.isEmpty())return;
+  if(search!=null && detail==null && "search".equals(page))search.spoken(q);
+  else{pendingVoice=q;if(!ids.isEmpty())show("search");}
+ }
  private void back(){if(!trail.isEmpty()){detail=trail.pop();showDetail();}else show(page);}
  protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putString("page",page);if(detail!=null)detail.save(out);
+  out.putString("search",search!=null?search.query():searchQuery);
   ArrayList<Bundle> saved=new ArrayList<>();for(HuDetail.Target t:trail){Bundle b=new Bundle();t.save(b);saved.add(b);}out.putParcelableArrayList("trail",saved);
  }
  private void expand(){

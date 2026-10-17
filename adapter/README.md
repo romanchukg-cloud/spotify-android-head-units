@@ -247,3 +247,14 @@ Cards now open pages (`HuDetail`); playable-only cards still play. Categories (B
 - The settings item of the navigation has its label like the other items.
 
 Checked on the emulator with the owner's account while the car was off: a playlist (play from a track, pause from the page), an artist (top tracks, albums row, an album from it and back), an album (track numbers), a genre grid with back, a podcast, Liked Songs (200 rows scroll), shuffle play (shuffle and pause were restored afterwards), portrait, rotation with the path kept, day and night; no crash. Download was not pressed (it can change the account's library).
+
+## Local test.12: search in our interface
+
+- `HuSearch`: the microphone first (nearest the driver's hand; on the right in right-to-left languages), then the field with clear. Results of the backend's own media browser search (`MediaBrowserCompat.search`; the root says `SEARCH_SUPPORTED`) arrive while typing (after 450 ms) in its groups: Top Results, Songs, Albums, Artists, Playlists, Podcasts & Shows, Podcast episodes, Audiobooks; the same item twice in a group (top results) shows once. Cards open their pages, tracks and episodes play; back returns to the query and its results, which also survive rotation.
+- Voice: the head unit's speech recognition (as on the BYD-derived search screen); the spoken text plays the best match at once (`playFromSearch`) and shows the results for another choice.
+- With an empty field: the recent searches (the newest eight; kept when a search is submitted, spoken or used) and a button to clear them.
+- `HuList` now holds the list shared by pages and search results.
+- The keyboard shrinks the content, which the resize check took for a split screen and rebuilt the screen; it now compares the window's own size (the decor view: the activity's window metrics come from its scaled configuration and keep the size it was created with). The manifest gives this activity `configChanges=orientation|screenSize`, so rotation also relies on this check.
+- The mini-player's progress is a thin rounded bar inside the card over a faint track (a line along the very edge showed only as a short dark piece under the rounded corner).
+
+Checked on the emulator: typing (results while typing, keyboard open), submitting, voice with a test recogniser ("Imagine Dragons Believer": recogniser asked in en-US, Believer played, then paused), recent searches, an artist from the results and back, portrait and rotation in both directions with the query kept; no crash.

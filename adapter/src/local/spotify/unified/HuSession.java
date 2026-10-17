@@ -103,6 +103,18 @@ final class HuSession {
  }
  /** Plays a playable item (a track in its playlist, album or artist) as a media host does. */
  void playItem(String mediaId){MediaControllerCompat.TransportControls t=controls();if(t!=null && mediaId!=null)t.playFromMediaId(mediaId,new Bundle());}
+ /** Plays the best match for a query, as a voice request does (PLAY_FROM_SEARCH). */
+ void playSearch(String query){MediaControllerCompat.TransportControls t=controls();if(t!=null && query!=null)t.playFromSearch(query,new Bundle());}
+ /** Searches the backend (its media browser search); done gets the results, empty on errors. */
+ void search(String query,java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>> done){
+  whenReady(()->{
+   if(browser==null || query==null){done.accept(new ArrayList<>());return;}
+   browser.search(query,null,new MediaBrowserCompat.SearchCallback(){
+    public void onSearchResult(String q,Bundle e,List<MediaBrowserCompat.MediaItem> items){done.accept(items==null?new ArrayList<>():items);}
+    public void onError(String q,Bundle e){done.accept(new ArrayList<>());}
+   });
+  });
+ }
  /** Loads one item (its current download state, for example); done gets null on errors. */
  void item(String id,java.util.function.Consumer<MediaBrowserCompat.MediaItem> done){
   whenReady(()->{

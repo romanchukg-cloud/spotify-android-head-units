@@ -8,9 +8,11 @@ public class MediaBrowserCompat {
  public void subscribe(String id,SubscriptionCallback cb){}public void unsubscribe(String id){}
  public void getItem(String id,ItemCallback cb){}
  public void sendCustomAction(String action,Bundle extras,CustomActionCallback cb){}
+ public void search(String query,Bundle extras,SearchCallback cb){}
  public static class ConnectionCallback {public void onConnected(){}public void onConnectionFailed(){}public void onConnectionSuspended(){}}
  public static abstract class SubscriptionCallback {public void onChildrenLoaded(String parent,List<MediaItem> children){}public void onError(String parent){}}
  public static abstract class ItemCallback {public void onItemLoaded(MediaItem item){}public void onError(String id){}}
+ public static abstract class SearchCallback {public void onSearchResult(String query,Bundle extras,List<MediaItem> items){}public void onError(String query,Bundle extras){}}
  public static abstract class CustomActionCallback {public void onProgressUpdate(String action,Bundle extras,Bundle data){}public void onResult(String action,Bundle extras,Bundle result){}public void onError(String action,Bundle extras,Bundle data){}}
  public static class MediaItem implements Parcelable {
   public static final Parcelable.Creator<MediaItem> CREATOR=null;

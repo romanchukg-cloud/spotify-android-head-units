@@ -11,7 +11,7 @@ import android.widget.*;
  */
 final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final ImageView play,like,cover;private final TextView title,artist;
- private final Paint progress=new Paint(Paint.ANTI_ALIAS_FLAG);private final boolean accent;private float fraction;private String art;private int tint;
+ private final Paint progress=new Paint(Paint.ANTI_ALIAS_FLAG),track=new Paint(Paint.ANTI_ALIAS_FLAG);private final boolean accent;private float fraction;private String art;private int tint;
  private final Runnable tick=new Runnable(){public void run(){update();if(isAttachedToWindow() && session.playing())postDelayed(this,1000);}};
  HuMiniPlayer(HuUi ui,boolean accent,Runnable expand){
   super(ui.activity);this.ui=ui;this.accent=accent;session=HuSession.get(ui.activity);setWillNotDraw(false);
@@ -29,7 +29,7 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   title=HuControls.title(ui,21,1);artist=ui.label("",17,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
   texts.addView(title);texts.addView(artist);addView(texts,new LayoutParams(0,-2,1));
   cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());
-  progress.setColor(ui.text);
+  progress.setColor(ui.text);track.setColor(ui.text);track.setAlpha(46);
  }
  protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);}
  protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}
@@ -45,8 +45,10 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   ((GradientDrawable)getBackground()).setColor(t);
  }
  private void update(){long d=session.duration();fraction=d>0?Math.min(1f,session.position()/(float)d):0f;invalidate();}
+ /** The progress: a thin rounded bar inside the card, clear of its rounded corners, over a faint track. */
  protected void dispatchDraw(Canvas c){
-  super.dispatchDraw(c);float h=ui.dp(3),w=getWidth()*fraction;
-  c.drawRect(0,getHeight()-h,w,getHeight(),progress);
+  super.dispatchDraw(c);float h=ui.dp(3),inset=ui.dp(22),bottom=getHeight()-ui.dp(6),width=getWidth()-2*inset;if(width<=0)return;
+  c.drawRoundRect(inset,bottom-h,inset+width,bottom,h/2,h/2,track);
+  if(fraction>0)c.drawRoundRect(inset,bottom-h,inset+Math.max(h,width*fraction),bottom,h/2,h/2,progress);
  }
 }
