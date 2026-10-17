@@ -120,7 +120,9 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private void release(){swiping=false;if(velocity!=null){velocity.recycle();velocity=null;}}
 
  public void changed(HuSession s){
-  String t=s.title();title.setText(t==null?HuText.get("nothing_playing"):t);artist.setText(s.artist()==null?"":s.artist());
+  // A playback error (Premium required, no connection) shows in place of the artist.
+  String t=s.title(),error=s.playbackError();title.setText(t==null?HuText.get("nothing_playing"):t);
+  artist.setText(error!=null?error:s.artist()==null?"":s.artist());artist.setTextColor(error!=null?0xffe22134:ui.secondary);
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());HuControls.custom(ui,shuffle,s.shuffle(),s.shuffled());
   int mode=s.repeat();repeat.setImageDrawable(HuControls.icon(getContext(),mode==HuSession.REPEAT_ONE?"encore_icon_repeat_once_24":"encore_icon_repeat_24",mode==HuSession.REPEAT_NONE?ui.text:ui.accent));
   String a=s.art();

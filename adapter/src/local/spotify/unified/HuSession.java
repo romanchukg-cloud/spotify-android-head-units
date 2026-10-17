@@ -161,6 +161,11 @@ final class HuSession {
   Object pi=state.getExtras().getParcelable("android.media.extras.ERROR_RESOLUTION_ACTION_INTENT");
   return pi instanceof android.app.PendingIntent?(android.app.PendingIntent)pi:null;
  }
+ /** A playback error other than signing in (Premium required, not available, no connection), or null. */
+ String playbackError(){
+  if(state==null || state.getState()!=STATE_ERROR || signIn()!=null)return null;
+  CharSequence m=state.getErrorMessage();return m==null || m.length()==0?null:m.toString();
+ }
  /** The backend's own texts for signing in: its message and the button label (either may be null). */
  String errorMessage(){CharSequence m=state==null?null:state.getErrorMessage();return m==null?null:m.toString();}
  String signInLabel(){Bundle e=state==null?null:state.getExtras();return e==null?null:e.getString("android.media.extras.ERROR_RESOLUTION_ACTION_LABEL");}

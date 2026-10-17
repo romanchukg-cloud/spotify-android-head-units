@@ -46,7 +46,9 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
  protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);}
  protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}
  public void changed(HuSession s){
-  String t=s.title();title.setText(t==null?HuText.get("nothing_playing"):t);artist.setText(s.artist()==null?"":s.artist());
+  // A playback error (Premium required, no connection) shows in place of the artist.
+  String t=s.title(),error=s.playbackError();title.setText(t==null?HuText.get("nothing_playing"):t);
+  artist.setText(error!=null?error:s.artist()==null?"":s.artist());artist.setTextColor(error!=null?0xffe22134:ui.secondary);
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());
   String a=s.art();if(a==null?art!=null:!a.equals(art)){art=a;HuCovers.load(getContext(),a,ui.dp(76),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);tint(color);}});}
   update();removeCallbacks(tick);if(s.playing())postDelayed(tick,1000);
