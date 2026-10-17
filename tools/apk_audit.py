@@ -35,6 +35,10 @@ check('Private settings / playback components',provider is not None and provider
 receivers=[n for n in app.findall('receiver') if any(x.get(A+'name')=='android.intent.action.MEDIA_BUTTON' for x in n.findall('.//action'))]
 check('One cold-start media receiver',len(receivers)==1 and receivers[0].get(A+'name')=='local.spotify.unified.HeadUnitMediaReceiver')
 check('No vendor restore service',not any('RestoreStateService' in n.get(A+'name','') for n in app.findall('service')))
+# Our interface is the main screen; the launcher keeps the earlier component name as an alias of it.
+alias=component('activity-alias','local.bydui.com.vivid.spotify.MainActivity');own=component('activity','local.spotify.unified.HuPlayerActivity')
+launchers=[n.get(A+'name') for n in list(app.findall('activity'))+list(app.findall('activity-alias')) if any(c.get(A+'name')=='android.intent.category.LAUNCHER' for c in n.findall('.//category'))]
+check('Main screen is our interface',alias is not None and alias.get(A+'targetActivity')=='local.spotify.unified.HuPlayerActivity' and alias.get(A+'exported')=='true' and own is not None and own.get(A+'process')==':bydui' and component('activity','local.bydui.com.vivid.spotify.MainActivity') is None and launchers==['local.bydui.com.vivid.spotify.MainActivity'],f'launchers={launchers}')
 files={}
 for folder in root.glob('smali*'):
  for f in folder.rglob('*.smali'):
