@@ -11,10 +11,12 @@ python3 prepare.py
 python3 build_config.py
 javac -cp "$APKTOOL_JAR" Assemble.java
 java -cp ".:$APKTOOL_JAR" Assemble ui-smali ui.dex
-rm -rf classes helper-dex
-mkdir -p classes helper-dex
-javac -source 8 -target 8 -cp "$ANDROID_JAR" -d classes src/local/spotify/{close,unified}/*.java generated/local/spotify/unified/*.java
-"$BT/d8" --min-api 28 --lib "$ANDROID_JAR" --output helper-dex classes/local/spotify/{close,unified}/*.class
+rm -rf classes helper-dex stub-classes
+mkdir -p classes helper-dex stub-classes
+# The backend's own support-library media classes: compile-time only, never in the helper DEX.
+javac -source 8 -target 8 -cp "$ANDROID_JAR" -d stub-classes stubs/android/support/v4/media/*.java
+javac -source 8 -target 8 -cp "${ANDROID_JAR}:stub-classes" -d classes src/local/spotify/{close,unified}/*.java generated/local/spotify/unified/*.java
+"$BT/d8" --min-api 28 --lib "$ANDROID_JAR" --classpath stub-classes --output helper-dex classes/local/spotify/{close,unified}/*.class
 apktool b ui -o ui-resources.apk
 apktool b backend -o backend-rebuilt.apk
 python3 package.py

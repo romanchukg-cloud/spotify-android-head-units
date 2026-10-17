@@ -1,0 +1,60 @@
+package hu.downloads;
+import android.app.*;import android.content.*;import android.os.*;import android.support.v4.media.*;import java.util.*;
+/**
+ * Emulator probe for Spotify Automotive's offline downloads. Connects to the backend's
+ * MediaBrowserService as a media host (KEY_ROOT_HINT_MEDIA_HOST_VERSION), lists the browse
+ * tree with each item's custom browser actions and, with an action and an item id, sends the
+ * action and watches the item's state. Output: logcat tag HU_PROBE.
+ *   am start -n hu.downloads/.Probe [--es mode tree|action] [--ez hint false] [--es action download --es id ID] [--ei watch 120]
+ */
+public class Probe extends Activity {
+ static final String TAG="HU_PROBE",ACTIONS="androidx.media.utils.extras.CUSTOM_BROWSER_ACTION_ID_LIST",ITEM="androidx.media.utils.extras.KEY_CUSTOM_BROWSER_ACTION_MEDIA_ITEM_ID";
+ MediaBrowserCompat browser;final Handler main=new Handler(Looper.getMainLooper());final ArrayDeque<String[]> nodes=new ArrayDeque<>();int visited;
+ public void onCreate(Bundle b){super.onCreate(b);
+  Bundle hints=new Bundle();if(getIntent().getBooleanExtra("hint",true))hints.putString("androidx.car.app.mediaextensions.KEY_ROOT_HINT_MEDIA_HOST_VERSION","1.0.0");
+  browser=new MediaBrowserCompat(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new MediaBrowserCompat.ConnectionCallback(){
+   public void onConnected(){log("CONNECTED root="+browser.getRoot()+" extras="+dump(browser.getExtras()));
+    if("action".equals(getIntent().getStringExtra("mode")))action();else{nodes.add(new String[]{browser.getRoot(),"0"});next();}}
+   public void onConnectionFailed(){log("REJECTED");finish();}
+   public void onConnectionSuspended(){log("SUSPENDED");}
+  },hints);browser.connect();
+ }
+ /** Breadth-first walk: depth 3, at most 30 nodes. */
+ void next(){
+  String[] node=nodes.poll();if(node==null || visited>=30){log("TREE DONE nodes="+visited);return;}
+  visited++;final int depth=Integer.parseInt(node[1]);final String id=node[0];
+  browser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
+   public void onChildrenLoaded(String parent,List<MediaBrowserCompat.MediaItem> children){
+    log("NODE depth="+depth+" id="+parent+" children="+children.size());int n=0;
+    for(MediaBrowserCompat.MediaItem item:children){if(n++<12)log("  "+describe(item));if(item.isBrowsable() && depth<2 && n<=8)nodes.add(new String[]{item.getMediaId(),String.valueOf(depth+1)});}
+    browser.unsubscribe(parent);main.post(Probe.this::next);}
+   public void onError(String parent){log("NODE ERROR "+parent);main.post(Probe.this::next);}
+  });
+ }
+ void action(){
+  final String action=getIntent().getStringExtra("action"),id=getIntent().getStringExtra("id");final int watch=getIntent().getIntExtra("watch",90);
+  Bundle extras=new Bundle();extras.putString(ITEM,id);
+  browser.sendCustomAction(action,extras,new MediaBrowserCompat.CustomActionCallback(){
+   public void onProgressUpdate(String a,Bundle e,Bundle d){log("ACTION PROGRESS "+dump(d));}
+   public void onResult(String a,Bundle e,Bundle r){log("ACTION RESULT "+dump(r));}
+   public void onError(String a,Bundle e,Bundle d){log("ACTION ERROR "+dump(d));}
+  });
+  for(int s=0;s<=watch;s+=5)main.postDelayed(()->browser.getItem(id,new MediaBrowserCompat.ItemCallback(){
+   public void onItemLoaded(MediaBrowserCompat.MediaItem item){log("ITEM "+(item==null?"null":describe(item)));}
+   public void onError(String i){log("ITEM ERROR "+i);}
+  }),s*1000L);
+  main.postDelayed(()->log("WATCH DONE"),watch*1000L+3000);
+ }
+ static String describe(MediaBrowserCompat.MediaItem item){
+  MediaDescriptionCompat d=item.getDescription();
+  return (item.isBrowsable()?"B":"-")+(item.isPlayable()?"P":"-")+" id="+item.getMediaId()+" title="+d.getTitle()+" sub="+d.getSubtitle()+" extras="+dump(d.getExtras());
+ }
+ static String dump(Bundle b){
+  if(b==null)return "null";StringBuilder s=new StringBuilder("{");
+  for(String k:new TreeSet<>(b.keySet())){Object v=b.get(k);if(v instanceof Bundle)v=dump((Bundle)v);else if(v instanceof List){List<?> l=(List<?>)v;StringBuilder t=new StringBuilder("[");for(Object o:l)t.append(o instanceof Bundle?dump((Bundle)o):String.valueOf(o)).append(',');v=t.append(']');}
+   s.append(k.replace("androidx.media.utils.extras.","")).append('=').append(v).append(' ');}
+  return s.append('}').toString();
+ }
+ void log(String s){for(int i=0;i<s.length();i+=3500)android.util.Log.i(TAG,s.substring(i,Math.min(s.length(),i+3500)));}
+ protected void onDestroy(){if(browser!=null)browser.disconnect();super.onDestroy();}
+}

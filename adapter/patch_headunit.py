@@ -186,3 +186,25 @@ s+='''
 .end method
 ''';p.write_text(s)
 print('Restyle: like action aliases and New-style resources for the player')
+
+# Offline downloads: Spotify Automotive implements downloads (browser actions
+# download/downloading/downloaded, offline settings), but its remote
+# configuration android-automotive.is_offline_enabled keeps them off for this
+# client. The head unit treats the flag as on; Premium and Spotify's download
+# limits still apply on the server.
+signin('pq/d.smali',[(r'(    const-string v3, "is_offline_enabled"\n\n    invoke-virtual \{v2, v0, v3, v8\}, Lh6/q;->c\(Ljava/lang/String;Ljava/lang/String;Z\)Z\n\n    move-result v18\n)',
+ lambda m:m[1]+'\n    const/16 v18, 0x1\n')])
+# The backend adds these actions to items only for a media host, which it detects from
+# the host-version root hint of the last client that connected. The interface and the
+# media-button receiver connect without one, so every client counts as a media host.
+signin('ee/a.smali',[(r'\.method public final c\(\)Z\n.*?\.end method','.method public final c()Z\n    .locals 1\n    const/4 v0, 0x1\n    return v0\n.end method')])
+# Playlist and album pages show the download button (HeadUnitDownloads) next to the
+# favourite button; patch_resources.py lets the favourite button hold it.
+p=ui/'com/vivid/spotify/details/DetailFragment.smali';s=p.read_text()
+hook='''    iget-object p2, p0, Llocal/bydui/com/vivid/spotify/details/DetailFragment;->r0:Llocal/bydui/android/support/v4/media/MediaBrowserCompat$MediaItem;
+    invoke-static {p1, p2}, Llocal/spotify/unified/HeadUnitDownloads;->detail(Landroid/view/View;Landroid/os/Parcelable;)V
+'''
+s,n=re.subn(r'(\.method public y0\(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;\)Landroid/view/View;\n(?:(?!\.end method).)*?invoke-virtual \{p1\}, Llocal/bydui/androidx/databinding/ViewDataBinding;->G\(\)Landroid/view/View;\n\n    move-result-object p1\n)(\n    return-object p1\n\.end method)',lambda m:m[1]+hook+m[2],s,count=1,flags=re.S)
+if n!=1:raise SystemExit('Downloads: DetailFragment view hook not found')
+p.write_text(s)
+print('Offline downloads: client flag on, every client a media host, download button on detail pages')

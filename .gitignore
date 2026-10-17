@@ -10,3 +10,5 @@ __pycache__/
 
 # Internal shared diagnostics instructions/server sources stay local.
 support/
+# Compile-time stubs of the backend support library (not private support material).
+!/adapter/stubs/android/support/

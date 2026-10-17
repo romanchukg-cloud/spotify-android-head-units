@@ -75,3 +75,11 @@ for lang in ['uk','ru','ar','zh-rCN']:
  report[lang]={'owned_strings':len(keys),'missing':sorted(missing)};assert not missing,(lang,missing)
 (base/'translation-audit.json').write_text(json.dumps(report,indent=2,ensure_ascii=False))
 print('Landscape aliases and full app-owned uk/ru translations generated')
+# Downloads: on playlist and album pages the favourite button also holds the download button
+# (HeadUnitDownloads). Alone it keeps its size; with the second button it grows.
+favourite=re.compile(r'(<[A-Za-z.]+ [^>]*android:id="@id/btn_favorite"[^>]*?)android:layout_width="@dimen/common_btn_size"')
+for p in sorted(dst.glob('layout*/fragment_details_list.xml'))+sorted(dst.glob('xml*/fragment_details_list_scene.xml')):
+ layout=p.parent.name.startswith('layout');s=favourite.sub(lambda m:m[1]+'android:layout_width="wrap_content"'+(' android:minWidth="@dimen/common_btn_size"' if layout else ''),p.read_text())
+ if re.search(r'android:id="@id/btn_favorite"[^>]*android:layout_width="@dimen/common_btn_size"',s):raise SystemExit('Downloads: favourite button width not adapted in '+str(p))
+ p.write_text(s)
+print('Downloads: favourite button holds the download button')

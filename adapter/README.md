@@ -162,3 +162,14 @@ The New style is the default; Head unit settings has a Classic / New switch and 
 - **Fix.** `ParcelBridge.getParcelableArrayList` no longer casts SavedStateHandle keys to `Parcelable`; recreating the player with Library open (for example on a day/night switch) crashed since test.3.
 
 A full `build.sh` is required: `incremental_release.py` keeps resources byte-identical.
+
+## Local test.11: Offline downloads (experimental)
+
+Spotify Automotive 5.5.0 implements downloads: custom browser actions `download` / `downloading` / `downloaded` on playlists and albums, Library → **Downloads** (`spotify:library:downloads`) and the Offline and Storage sections of its own settings. Spotify keeps them off for this client with the remote configuration `android-automotive.is_offline_enabled`, and adds the actions to items only for a media host (a client that sent `KEY_ROOT_HINT_MEDIA_HOST_VERSION`).
+
+- **Backend** (patch section `# Offline downloads`): the flag reads as on (`pq/d`), and every client counts as a media host (`ee/a.c()`), because the stored host version is overwritten by whichever client connected last.
+- **Interface**: `HeadUnitDownloads` adds one button next to the favourite button on playlist and album pages (`DetailFragment` view hook). It reads the item's state through its own connection with the backend's support-library `MediaBrowserCompat` (compile-time stubs in `stubs/`, never in the helper DEX) and sends the action: download; downloading (tap stops); downloaded (tap asks before removing). A requested download shows as downloading until Spotify reports it. `patch_resources.py` lets the favourite button grow (`wrap_content`, `minWidth` = `common_btn_size`) in all layout and motion-scene variants.
+- **Server rules still apply**: downloads need Premium, Spotify's device limit for downloads applies, and downloading adds the item to Your Library, as in the phone app.
+- **Probe**: `tests/downloads` is an independent media-host client that lists the browse tree with each item's actions and sends an action to one item (logcat `HU_PROBE`).
+
+Checked on an Android 12 emulator with a signed-in Premium account: items carry the download actions; a one-track album and a playlist downloaded, appeared under Library → Downloads and played with the network off, also after a cold start; removal works. Not yet checked in a car.

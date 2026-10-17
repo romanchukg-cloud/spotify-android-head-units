@@ -235,11 +235,14 @@ def main():
     build_config.generate()
     sources = sorted(str(p) for p in (ADAPTER / 'src/local/spotify').glob('*/*.java'))
     sources += sorted(str(p) for p in (ADAPTER / 'generated/local/spotify/unified').glob('*.java'))
-    classes = a.work / 'classes'
-    run('javac', '-nowarn', '-source', '8', '-target', '8', '-cp', a.android_jar, '-d', classes, *sources)
+    classes, stubs = a.work / 'classes', a.work / 'stubs'
+    # The backend's own support-library media classes: compile-time only, never in the helper DEX.
+    run('javac', '-nowarn', '-source', '8', '-target', '8', '-cp', a.android_jar, '-d', stubs,
+        *sorted(str(p) for p in (ADAPTER / 'stubs').rglob('*.java')))
+    run('javac', '-nowarn', '-source', '8', '-target', '8', '-cp', '%s:%s' % (a.android_jar, stubs), '-d', classes, *sources)
     (a.work / 'helper').mkdir()
-    run(*java, 'com.android.tools.r8.D8', '--min-api', '28', '--lib', a.android_jar, '--output', a.work / 'helper',
-        *sorted(str(p) for p in classes.rglob('*.class')))
+    run(*java, 'com.android.tools.r8.D8', '--min-api', '28', '--lib', a.android_jar, '--classpath', stubs,
+        '--output', a.work / 'helper', *sorted(str(p) for p in classes.rglob('*.class')))
 
     changed = sorted(str(f.relative_to(out / 'smali')) for f in (out / 'smali').rglob('*.smali')
                      if f.read_bytes() != (stable / 'smali' / f.relative_to(out / 'smali')).read_bytes())

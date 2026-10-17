@@ -27,3 +27,5 @@ generated/
 tests/signin/out/
 tests/updates/out/
 incremental/
+stub-classes/
+tests/downloads/out/
