@@ -16,7 +16,17 @@ final class HuUi {
   divider=dark?0x12ffffff:0x14000000;accent=dark?0xff1ed760:0xff0f7a36;control=dark?0xff2e2e2e:0xffebebeb;selected=dark?0xffffffff:0xff121212;selectedInk=dark?0xff121212:0xffffffff;
  }
  int dp(float v){return Math.round(v*activity.getResources().getDisplayMetrics().density);}
- void window(){Window w=activity.getWindow();w.setStatusBarColor(bg);w.setNavigationBarColor(bg);HeadUnitShell.lightBars(w,dark);}
+ void window(){Window w=activity.getWindow();w.setStatusBarColor(bg);w.setNavigationBarColor(bg);HeadUnitShell.lightBars(w,dark);corners(activity);}
+ private static final java.util.WeakHashMap<Activity,Boolean> cornered=new java.util.WeakHashMap<>();
+ /**
+  * The app's rounded outer corners (card radius 22 dp + gap 6 dp), as on the main screen: a black
+  * mask over the content, black like BYD's status bar and dock.
+  */
+ static void corners(Activity a){
+  if(cornered.containsKey(a))return;View root=a.findViewById(android.R.id.content);if(root==null)return;cornered.put(a,Boolean.TRUE);
+  HeadUnitShell.CornerMask mask=new HeadUnitShell.CornerMask(28*a.getResources().getDisplayMetrics().density);root.getOverlay().add(mask);
+  root.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(mask.getBounds().width()!=v.getWidth() || mask.getBounds().height()!=v.getHeight())mask.setBounds(0,0,v.getWidth(),v.getHeight());});
+ }
  static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
  Drawable pressable(int color,float radius){return new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0x33ffffff:0x22000000),round(color,radius),round(0xff000000,radius));}
  private static Typeface regular,heavy;

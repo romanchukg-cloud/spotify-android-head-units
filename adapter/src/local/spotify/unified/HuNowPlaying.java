@@ -6,42 +6,55 @@ import android.widget.*;
 /**
  * Our player: a large cover, title, artist and like, a seek bar with times and the controls
  * (shuffle, previous, play/pause, next, repeat), on a gradient from the cover's colour. Wide
- * screens put the controls on the driver's side and the cover at the far end (right, or left in
- * right-to-left languages, by layout mirroring); narrow screens put the cover above them. The seek
- * bar, times and controls stay left-to-right in right-to-left languages, as media controls do in
- * Material. The top bar collapses the player and opens the queue editor and Jam.
+ * windows put the controls on the driver's side and the cover at the far end (right, or left in
+ * right-to-left languages, by layout mirroring); narrow ones put the cover above them. The cover
+ * takes only the room the texts and controls leave, so a split screen keeps the controls in view;
+ * small windows get smaller controls. The seek bar, times and controls stay left-to-right in
+ * right-to-left languages, as media controls do in Material. The top bar collapses the player and
+ * opens the queue editor and Jam; a swipe down collapses it too.
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
- private final HuUi ui;private final HuSession session;private final boolean accent;
+ private final HuUi ui;private final HuSession session;private final boolean accent;private final Runnable collapse;
  private final ImageView cover,play,like,shuffle,repeat;private final TextView title,artist,elapsed,remaining;private final SeekBar seek;
  private final GradientDrawable background;private String art;private boolean dragging;
+ private final int slop;private float downX,downY;private boolean swiping;private VelocityTracker velocity;
  private final Runnable tick=new Runnable(){public void run(){progress();if(isAttachedToWindow() && session.playing())postDelayed(this,500);}};
- HuNowPlaying(HuUi ui,boolean accent,Runnable collapse){
-  super(ui.activity);this.ui=ui;this.accent=accent;session=HuSession.get(ui.activity);
-  setOrientation(VERTICAL);setPaddingRelative(ui.dp(24),ui.dp(8),ui.dp(32),ui.dp(24));setClickable(true);
-  background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{ui.bg,ui.bg});setBackground(background);
+ /** width and height: the room the player gets, in dp. */
+ HuNowPlaying(HuUi ui,boolean accent,float width,float height,Runnable collapse){
+  super(ui.activity);this.ui=ui;this.accent=accent;this.collapse=collapse;session=HuSession.get(ui.activity);
+  slop=ViewConfiguration.get(ui.activity).getScaledTouchSlop();
+  boolean wide=width>height*1.2f;
+  // The column's width decides the size of the controls: full ones need about 460 dp, compact
+  // ones 380, small ones 320.
+  float column=wide?(width-56)/1.7f-48:width-56;boolean compact=column<480 || height<480,small=column<380;
+  setOrientation(VERTICAL);setPaddingRelative(ui.dp(small?16:24),ui.dp(8),ui.dp(small?16:32),ui.dp(compact?12:24));setClickable(true);
+  background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{ui.bg,ui.bg});background.setCornerRadius(ui.dp(22));setBackground(background);
+  setOutlineProvider(ViewOutlineProvider.BACKGROUND);setClipToOutline(true);
   // Top bar: collapse, then the queue editor and Jam.
+  int bar=ui.dp(compact?64:76);
   LinearLayout top=new LinearLayout(ui.activity);top.setGravity(Gravity.CENTER_VERTICAL);
-  top.addView(HuControls.button(ui,"encore_icon_chevron_down_24",HuText.get("collapse"),ui.dp(76),v->collapse.run()));
+  top.addView(HuControls.button(ui,"encore_icon_chevron_down_24",HuText.get("collapse"),bar,v->collapse.run()));
   TextView label=ui.label(HuText.get("now_playing"),18,ui.secondary,true);label.setPaddingRelative(ui.dp(8),0,0,0);top.addView(label,new LayoutParams(0,-2,1));
-  top.addView(HuControls.button(ui,"encore_icon_group_session_24",HuText.get("start_jam"),ui.dp(76),v->HeadUnitJam.open(getContext())));
-  top.addView(HuControls.button(ui,"encore_icon_queue_24",HuText.get("queue"),ui.dp(76),v->getContext().startActivity(new Intent(getContext(),HeadUnitQueueActivity.class))));
+  top.addView(HuControls.button(ui,"encore_icon_group_session_24",HuText.get("start_jam"),bar,v->HeadUnitJam.open(getContext())));
+  top.addView(HuControls.button(ui,"encore_icon_queue_24",HuText.get("queue"),bar,v->getContext().startActivity(new Intent(getContext(),HeadUnitQueueActivity.class))));
   addView(top);
-  boolean wide=getResources().getConfiguration().screenWidthDp>getResources().getConfiguration().screenHeightDp*1.2f;
   LinearLayout body=new LinearLayout(ui.activity);body.setOrientation(wide?HORIZONTAL:VERTICAL);body.setGravity(Gravity.CENTER);
   addView(body,new LayoutParams(-1,0,1));
-  int size=Math.round(Math.min(getResources().getConfiguration().screenHeightDp*(wide?0.62f:0.4f),getResources().getConfiguration().screenWidthDp*(wide?0.38f:0.7f)));
-  cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(14)));cover.setClipToOutline(true);
-  LinearLayout column=new LinearLayout(ui.activity);column.setOrientation(VERTICAL);column.setGravity(Gravity.CENTER_VERTICAL);
-  if(wide){column.setPaddingRelative(0,0,ui.dp(48),0);body.addView(column,new LayoutParams(0,-1,1));body.addView(cover,new LayoutParams(ui.dp(size),ui.dp(size)));}
-  else{column.setPadding(0,ui.dp(24),0,0);body.addView(cover,new LayoutParams(ui.dp(size),ui.dp(size)));body.addView(column,new LayoutParams(-1,-2));}
+  // The cover is a square as large as its box allows.
+  FrameLayout box=new FrameLayout(ui.activity);
+  cover=new ImageView(ui.activity){protected void onMeasure(int w,int h){super.onMeasure(w,h);int s=Math.min(ui.dp(640),Math.min(getMeasuredWidth(),getMeasuredHeight()));setMeasuredDimension(s,s);}};
+  cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(14)));cover.setClipToOutline(true);
+  box.addView(cover,new FrameLayout.LayoutParams(-1,-1,Gravity.CENTER));
+  LinearLayout col=new LinearLayout(ui.activity);col.setOrientation(VERTICAL);col.setGravity(Gravity.CENTER_VERTICAL);
+  if(wide){col.setPaddingRelative(0,0,ui.dp(48),0);body.addView(col,new LayoutParams(0,-1,1));body.addView(box,new LayoutParams(0,-1,0.7f));}
+  else{LayoutParams b=new LayoutParams(-1,0,1);b.topMargin=ui.dp(compact?4:12);body.addView(box,b);col.setPadding(0,ui.dp(compact?12:24),0,0);body.addView(col,new LayoutParams(-1,-2));}
   // Title and artist with like at the end.
   LinearLayout heading=new LinearLayout(ui.activity);heading.setGravity(Gravity.CENTER_VERTICAL);
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);
-  title=HuControls.title(ui,34,2);artist=ui.label("",22,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
+  title=HuControls.title(ui,compact?26:34,2);artist=ui.label("",compact?18:22,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
   texts.addView(title);texts.addView(artist);heading.addView(texts,new LayoutParams(0,-2,1));
-  like=HuControls.button(ui,"encore_icon_heart_24","",ui.dp(76),v->session.send(session.like()));heading.addView(like);
-  column.addView(heading);
+  like=HuControls.button(ui,"encore_icon_heart_24","",bar,v->session.send(session.like()));heading.addView(like);
+  col.addView(heading);
   // Seek bar and times.
   seek=new SeekBar(ui.activity);seek.setMax(1000);
   android.content.res.ColorStateList ink=android.content.res.ColorStateList.valueOf(ui.text);
@@ -52,21 +65,60 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
    public void onProgressChanged(SeekBar s,int p,boolean user){if(user)elapsed.setText(HuControls.time(session.duration()*p/1000));}
    public void onStopTrackingTouch(SeekBar s){dragging=false;session.seek(session.duration()*s.getProgress()/1000);}
   });
-  seek.setLayoutDirection(LAYOUT_DIRECTION_LTR);LayoutParams seekParams=new LayoutParams(-1,ui.dp(48));seekParams.topMargin=ui.dp(24);column.addView(seek,seekParams);
+  seek.setLayoutDirection(LAYOUT_DIRECTION_LTR);LayoutParams seekParams=new LayoutParams(-1,ui.dp(48));seekParams.topMargin=ui.dp(compact?8:24);col.addView(seek,seekParams);
   LinearLayout times=new LinearLayout(ui.activity);elapsed=ui.label("0:00",16,ui.secondary,false);remaining=ui.label("0:00",16,ui.secondary,false);remaining.setGravity(Gravity.END);
-  times.setLayoutDirection(LAYOUT_DIRECTION_LTR);times.setPadding(ui.dp(16),0,ui.dp(16),0);times.addView(elapsed,new LayoutParams(0,-2,1));times.addView(remaining,new LayoutParams(0,-2,1));column.addView(times);
+  times.setLayoutDirection(LAYOUT_DIRECTION_LTR);times.setPadding(ui.dp(16),0,ui.dp(16),0);times.addView(elapsed,new LayoutParams(0,-2,1));times.addView(remaining,new LayoutParams(0,-2,1));col.addView(times);
   // Controls.
+  int side=ui.dp(small?56:compact?64:76),skip=ui.dp(small?60:compact?72:84),main=ui.dp(small?72:compact?80:96),gap=ui.dp(small?8:compact?12:20);
   LinearLayout controls=new LinearLayout(ui.activity);controls.setGravity(Gravity.CENTER);controls.setLayoutDirection(LAYOUT_DIRECTION_LTR);
-  shuffle=HuControls.button(ui,"encore_icon_shuffle_24",HuText.get("shuffle"),ui.dp(76),v->session.send(session.shuffle()));
-  play=HuControls.play(ui,ui.dp(96),v->session.playPause());
-  repeat=HuControls.button(ui,"encore_icon_repeat_24",HuText.get("repeat"),ui.dp(76),v->session.cycleRepeat());
-  controls.addView(shuffle);controls.addView(HuControls.button(ui,"encore_icon_skip_back_24",HuText.get("previous"),ui.dp(84),v->session.previous()));
-  ((LayoutParams)play.getLayoutParams()).setMargins(ui.dp(20),0,ui.dp(20),0);controls.addView(play);
-  controls.addView(HuControls.button(ui,"encore_icon_skip_forward_24",HuText.get("next"),ui.dp(84),v->session.next()));controls.addView(repeat);
-  LayoutParams controlsParams=new LayoutParams(-1,-2);controlsParams.topMargin=ui.dp(16);column.addView(controls,controlsParams);
+  shuffle=HuControls.button(ui,"encore_icon_shuffle_24",HuText.get("shuffle"),side,v->session.send(session.shuffle()));
+  play=HuControls.play(ui,main,v->session.playPause());
+  repeat=HuControls.button(ui,"encore_icon_repeat_24",HuText.get("repeat"),side,v->session.cycleRepeat());
+  controls.addView(shuffle);controls.addView(HuControls.button(ui,"encore_icon_skip_back_24",HuText.get("previous"),skip,v->session.previous()));
+  ((LayoutParams)play.getLayoutParams()).setMargins(gap,0,gap,0);controls.addView(play);
+  controls.addView(HuControls.button(ui,"encore_icon_skip_forward_24",HuText.get("next"),skip,v->session.next()));controls.addView(repeat);
+  // Very small windows keep previous, play and next only.
+  if(column<330){shuffle.setVisibility(GONE);repeat.setVisibility(GONE);}
+  LayoutParams controlsParams=new LayoutParams(-1,-2);controlsParams.topMargin=ui.dp(compact?4:16);col.addView(controls,controlsParams);
  }
  protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);}
  protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}
+
+ // A downward swipe anywhere outside the seek bar drags the player down; far or fast enough, it collapses.
+ public boolean onInterceptTouchEvent(MotionEvent e){
+  switch(e.getActionMasked()){
+   case MotionEvent.ACTION_DOWN:downX=e.getRawX();downY=e.getRawY();swiping=false;track(e,true);break;
+   case MotionEvent.ACTION_MOVE:track(e,false);if(begin(e))return true;break;
+   case MotionEvent.ACTION_UP:case MotionEvent.ACTION_CANCEL:release();break;
+  }
+  return false;
+ }
+ public boolean onTouchEvent(MotionEvent e){
+  switch(e.getActionMasked()){
+   case MotionEvent.ACTION_DOWN:downX=e.getRawX();downY=e.getRawY();swiping=false;track(e,true);super.onTouchEvent(e);return true;
+   case MotionEvent.ACTION_MOVE:track(e,false);if(swiping || begin(e))setTranslationY(Math.max(0,e.getRawY()-downY));return true;
+   case MotionEvent.ACTION_UP:case MotionEvent.ACTION_CANCEL:
+    track(e,false);boolean was=swiping;float speed=0;
+    if(velocity!=null){velocity.computeCurrentVelocity(1000);speed=velocity.getYVelocity();}
+    release();
+    if(was){if(e.getActionMasked()==MotionEvent.ACTION_UP && (getTranslationY()>getHeight()*0.25f || speed>ui.dp(1200)))collapse.run();else animate().translationY(0).setDuration(160).start();}
+    else super.onTouchEvent(e);
+    return true;
+  }
+  return super.onTouchEvent(e);
+ }
+ private boolean begin(MotionEvent e){
+  float dx=e.getRawX()-downX,dy=e.getRawY()-downY;
+  if(swiping || dy<=slop || dy<Math.abs(dx)*1.5f)return swiping;
+  swiping=true;downY=e.getRawY();animate().cancel();return true;
+ }
+ /** The velocity in screen coordinates: the view itself moves with the finger. */
+ private void track(MotionEvent e,boolean reset){
+  if(reset || velocity==null){if(velocity!=null)velocity.recycle();velocity=VelocityTracker.obtain();}
+  MotionEvent m=MotionEvent.obtain(e);m.setLocation(e.getRawX(),e.getRawY());velocity.addMovement(m);m.recycle();
+ }
+ private void release(){swiping=false;if(velocity!=null){velocity.recycle();velocity=null;}}
+
  public void changed(HuSession s){
   String t=s.title();title.setText(t==null?HuText.get("nothing_playing"):t);artist.setText(s.artist()==null?"":s.artist());
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());HuControls.custom(ui,shuffle,s.shuffle(),s.shuffled());

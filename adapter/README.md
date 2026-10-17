@@ -208,7 +208,7 @@ The Classic style is gone: the New style is the only interface style. `HeadUnitS
 
 ## Local test.12: our own player (first screens without BYD code)
 
-The interface is being rewritten over the Spotify backend's media session, screen by screen, without the BYD-derived code. First: `HuPlayerActivity` (player process, opened from Head unit settings → **New player (test)**) with our mini-player and player.
+The interface is being rewritten over the Spotify backend's media session, screen by screen, without the BYD-derived code. First: `HuPlayerActivity` (player process, opened from Head unit settings → **New interface (test)**) with our mini-player and player.
 
 - `HuSession`: one connection per process through the backend's own support-library `MediaBrowserCompat` / `MediaControllerCompat` (compile-time stubs in `stubs/`, including `session/`): metadata, playback state, repeat mode, the session's custom actions (like / unlike, shuffle / disable-shuffle) and transport controls; pausing counts as an explicit user pause.
 - `HuCovers`: covers from the backend's image provider (`content://com.spotify.music.mediaapi/…`), decoded off the main thread, cached, with the vivid colour from `CoverAccent`.
@@ -227,3 +227,12 @@ Checked on an Android 12 emulator with a signed-in account: the mini-player and 
 - A card plays its item through the backend's `play` browser action (as a media host does); playlist and album pages come next. Search is a placeholder.
 
 Checked on an Android 12 emulator with a signed-in account: landscape and portrait (1440×2560, as the car's rotated screen), forced right-to-left layout (rail and cover on the left, rows and pills from the right, controls left-to-right), day and night; no crash. A card changed the playing context; Spotify plays one stream per account, so with the same account playing in the car the emulator stayed paused.
+
+Fixes after the first look in the car:
+
+- The player covers the content card and the mini-player at full height and leaves the navigation in view; it is a rounded card like the others and collapses with a swipe down too (short swipes spring back; the seek bar keeps its own drags).
+- The cover takes only the room the texts and controls leave (a square as large as its box allows), and narrow or short windows get smaller controls (very small ones keep previous, play and next), so a split screen keeps the controls in view.
+- Splitting the screen resized the window without recreating the screen (the new size crossed none of the app's resource size buckets), so the layout stayed the full-screen one; the screen is now built again when its measured size moves away from the one it was built for.
+- Our screens (the interface, Head unit settings, the queue editor, accounts, support) get the app's rounded outer corners (28 dp black mask), as the main screen has.
+
+Checked on the emulator: full screen, the car's split window size (635×604 dp) with the player open while resizing in both directions, a very small window, Head unit settings; no crash.
