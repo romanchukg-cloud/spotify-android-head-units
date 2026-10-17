@@ -38,7 +38,20 @@ final class HuUi {
   }
   return bold?heavy:regular;
  }
- TextView label(String value,float sp,int color,boolean bold){TextView t=new TextView(activity);t.setText(value);t.setTextSize(sp);t.setTextColor(color);Typeface f=font(bold);t.setTypeface(f!=null?f:bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);return t;}
+ /**
+  * A text that starts at the interface's start edge (the right in right-to-left languages), also
+  * when it holds Latin names such as a track title; centred or end gravity keeps its alignment.
+  */
+ static final class Label extends TextView {
+  private final boolean ready;
+  Label(Context c){super(c);ready=true;setTextAlignment(TEXT_ALIGNMENT_VIEW_START);}
+  public void setGravity(int gravity){
+   super.setGravity(gravity);if(!ready)return;
+   int h=gravity&Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
+   setTextAlignment(h==0 || h==Gravity.START || h==Gravity.LEFT?TEXT_ALIGNMENT_VIEW_START:TEXT_ALIGNMENT_GRAVITY);
+  }
+ }
+ TextView label(String value,float sp,int color,boolean bold){TextView t=new Label(activity);t.setText(value);t.setTextSize(sp);t.setTextColor(color);Typeface f=font(bold);t.setTypeface(f!=null?f:bold?Typeface.DEFAULT_BOLD:Typeface.DEFAULT);return t;}
  /** A rounded card with an upper-case section caption. */
  LinearLayout card(String caption){
   LinearLayout c=new LinearLayout(activity);c.setOrientation(LinearLayout.VERTICAL);c.setBackground(round(card,dp(20)));c.setPadding(dp(20),dp(8),dp(20),dp(8));

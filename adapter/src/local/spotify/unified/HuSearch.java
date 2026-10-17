@@ -26,7 +26,7 @@ final class HuSearch {
   LinearLayout bar=new LinearLayout(ui.activity);bar.setGravity(Gravity.CENTER_VERTICAL);
   LinearLayout pill=new LinearLayout(ui.activity);pill.setGravity(Gravity.CENTER_VERTICAL);pill.setBackground(HuUi.round(ui.control,ui.dp(36)));pill.setPaddingRelative(ui.dp(22),0,ui.dp(6),0);
   ImageView icon=new ImageView(ui.activity);icon.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_search_24",ui.secondary));pill.addView(icon,new LinearLayout.LayoutParams(ui.dp(28),ui.dp(28)));
-  field=new EditText(ui.activity);field.setBackground(null);field.setSingleLine(true);field.setTextSize(20);field.setTextColor(ui.text);field.setHintTextColor(ui.secondary);field.setHint(HuText.get("search_hint"));
+  field=new EditText(ui.activity);field.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);field.setBackground(null);field.setSingleLine(true);field.setTextSize(20);field.setTextColor(ui.text);field.setHintTextColor(ui.secondary);field.setHint(HuText.get("search_hint"));
   Typeface f=ui.font(false);if(f!=null)field.setTypeface(f);
   field.setInputType(InputType.TYPE_CLASS_TEXT);field.setImeOptions(EditorInfo.IME_ACTION_SEARCH|EditorInfo.IME_FLAG_NO_EXTRACT_UI);field.setPaddingRelative(ui.dp(14),0,ui.dp(8),0);
   pill.addView(field,new LinearLayout.LayoutParams(0,ui.dp(72),1));
