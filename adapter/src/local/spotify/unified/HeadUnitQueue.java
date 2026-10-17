@@ -4,7 +4,7 @@ import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
-/** The edit button on the interface's queue page (patch_resources.py adds it hidden); it opens HeadUnitQueueActivity. */
+/** The edit and Jam buttons on the interface's queue page (patch_resources.py adds them hidden): HeadUnitQueueActivity and HeadUnitJam. */
 public final class HeadUnitQueue {
  private static final String UI="com.spotify.music.ui";
  private HeadUnitQueue(){}
@@ -21,6 +21,13 @@ public final class HeadUnitQueue {
    button.setContentDescription(HuText.get("edit_queue"));
    button.setOnClickListener(v->{try{v.getContext().startActivity(new Intent(v.getContext(),HeadUnitQueueActivity.class));}catch(RuntimeException e){android.util.Log.w("SpotifyHU","Queue editor unavailable",e);}});
    button.setVisibility(View.VISIBLE);
+   int jamId=c.getResources().getIdentifier("hu_queue_jam","id",UI),jamIconId=c.getResources().getIdentifier("hu_queue_jam_icon","id",UI);
+   View jam=jamId==0?null:root.findViewById(jamId);View jamIcon=jamIconId==0?null:root.findViewById(jamIconId);
+   int jamRes=c.getResources().getIdentifier("encore_icon_group_session_24","drawable",c.getPackageName());
+   if(jam!=null && jamIcon instanceof ImageView && jamRes!=0){
+    Drawable j=c.getDrawable(jamRes).mutate();j.setTint(dark?0xffffffff:0xff121212);((ImageView)jamIcon).setImageDrawable(j);
+    jam.setContentDescription(HuText.get("start_jam"));jam.setOnClickListener(v->HeadUnitJam.open(v.getContext()));jam.setVisibility(View.VISIBLE);
+   }
   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Queue edit button unavailable",e);}
  }
 }

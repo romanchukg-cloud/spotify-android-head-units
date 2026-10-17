@@ -96,3 +96,15 @@ for p in sorted(dst.glob('layout*/fragment_queue.xml'))+sorted(dst.glob('layout*
  end=s.rstrip().rfind('</');assert end>0,p
  p.write_text(s[:end]+button+s[end:])
 print('Queue editor: edit button on the queue page')
+# Jam: a button next to the queue edit button (HeadUnitQueue shows it).
+for p in sorted(dst.glob('layout*/fragment_queue.xml'))+sorted(dst.glob('layout*/fragment_queue_rhd.xml')):
+ s=p.read_text()
+ if 'hu_queue_jam' in s:continue
+ side='app:layout_constraintLeft_toRightOf="@id/hu_queue_edit"' if p.name.endswith('_rhd.xml') else 'app:layout_constraintRight_toLeftOf="@id/hu_queue_edit"'
+ button=('    <FrameLayout android:id="@+id/hu_queue_jam" android:visibility="gone" android:layout_width="@dimen/queue_back_button_width" android:layout_height="@dimen/queue_back_button_height" app:layout_constraintTop_toTopOf="parent" '+side+'>\n'
+  '        <FrameLayout android:layout_gravity="center" android:background="?queue_page_button_bg" android:layout_width="@dimen/common_btn_size" android:layout_height="@dimen/common_btn_size">\n'
+  '            <ImageView android:id="@+id/hu_queue_jam_icon" android:layout_gravity="center" android:layout_width="@dimen/common_btn_img_size" android:layout_height="@dimen/common_btn_img_size" />\n'
+  '        </FrameLayout>\n    </FrameLayout>\n')
+ end=s.rstrip().rfind('</');assert 'hu_queue_edit' in s,p
+ p.write_text(s[:end]+button+s[end:])
+print('Jam: button on the queue page')

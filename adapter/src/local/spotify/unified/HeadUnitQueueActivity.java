@@ -18,7 +18,7 @@ import java.util.concurrent.*;
  * The queue editor (player process): the backend's media-session queue with large rows. A row plays
  * that track; its minus button removes it (support-library command REMOVE_QUEUE_ITEM_AT, which the
  * backend turns into a new queue without the track). The header starts a song or artist radio
- * (spotify:station:…) from the current track and clears the tracks added to the queue.
+ * (spotify:station:…) from the current track, clears the tracks added to the queue and opens Jam.
  */
 public final class HeadUnitQueueActivity extends Activity {
  static final String REMOVE_AT="android.support.v4.media.session.command.REMOVE_QUEUE_ITEM_AT",INDEX="android.support.v4.media.session.command.ARGUMENT_INDEX",
@@ -39,7 +39,7 @@ public final class HeadUnitQueueActivity extends Activity {
   LinearLayout header=new LinearLayout(this);header.setGravity(Gravity.CENTER_VERTICAL);header.setMinimumHeight(ui.dp(84));
   header.addView(ui.back());TextView title=ui.label(HuText.get("queue"),34,ui.text,true);title.setPadding(ui.dp(8),0,0,0);header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
   songRadio=pill(HuText.get("song_radio"),v->radio(false));artistRadio=pill(HuText.get("artist_radio"),v->radio(true));clear=pill(HuText.get("clear_queue"),v->clearQueued());
-  header.addView(songRadio);header.addView(artistRadio);header.addView(clear);page.addView(header);
+  header.addView(pill(HuText.get("jam"),v->HeadUnitJam.open(this)));header.addView(songRadio);header.addView(artistRadio);header.addView(clear);page.addView(header);
   rows=new LinearLayout(this);rows.setOrientation(LinearLayout.VERTICAL);page.addView(rows);
   setContentView(scroll);
   browser=new MediaBrowser(this,new ComponentName(getPackageName(),SERVICE),new MediaBrowser.ConnectionCallback(){

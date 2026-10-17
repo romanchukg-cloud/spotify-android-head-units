@@ -187,3 +187,9 @@ Checked on an Android 12 emulator with a signed-in account and a test recogniser
 - **Radio:** **Song radio** and **Artist radio** play `spotify:station:track:…` / `spotify:station:artist:…` built from the current track's `MEDIA_URI` and `com.spotify.music.extra.ARTIST_URI`.
 
 Checked on an Android 12 emulator with a signed-in account: the cross and add-to-queue no longer crash and change the queue (the interface's list refreshes late; the editor shows the new queue), removing in the editor, Clear queue and song/artist radio work.
+
+## Local test.11: Jam
+
+Spotify's own settings page (`SettingsPageActivity`) already runs Jam (Start a Jam, QR code for up to 5 friends, End Jam). The queue page has a Jam button next to the edit button (`hu_queue_jam`, 14 layouts) and the queue editor a **Jam** pill; both open that page with an extra, and `HeadUnitJam.opened` (patch section `# Jam`, called from the page's `onCreate`) keeps the Jam section at the top while the page loads and after Start a Jam, until the user scrolls, so the QR code fits on the head unit's screen. The Jam browser actions of the backend stay unused (their remote flag `is_jam_custom_action_enabled` is off).
+
+Checked on an Android 12 emulator with a signed-in Premium account: Start a Jam shows the QR code fully on screen from both buttons; End Jam ends it.

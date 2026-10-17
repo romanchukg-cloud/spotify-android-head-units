@@ -232,3 +232,9 @@ s,n=re.subn(r'(\.method public y0\(Landroid/view/LayoutInflater;Landroid/view/Vi
 if n!=1:raise SystemExit('Queue editor: QueueFragment view hook not found')
 p.write_text(s)
 print('Queue editor: edit button and queue activity')
+
+# Jam: the queue page and the queue editor open Spotify's own settings page with an
+# extra; HeadUnitJam.opened scrolls it to the Jam section so the QR code fits.
+signin('com/spotify/automotive/settingspage/SettingsPageActivity.smali',[(r'(\.method public final onCreate\(Landroid/os/Bundle;\)V\n(?:(?!\.end method).)*?)(    return-void\n)',
+ lambda m:m[1]+'    invoke-static {p0}, Llocal/spotify/unified/HeadUnitJam;->opened(Landroid/app/Activity;)V\n\n'+m[2])])
+print('Jam: buttons on the queue page and in the queue editor, settings page scrolls to Jam')
