@@ -14,7 +14,8 @@ public class Probe extends Activity {
   Bundle hints=new Bundle();if(getIntent().getBooleanExtra("hint",true))hints.putString("androidx.car.app.mediaextensions.KEY_ROOT_HINT_MEDIA_HOST_VERSION","1.0.0");
   browser=new MediaBrowserCompat(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new MediaBrowserCompat.ConnectionCallback(){
    public void onConnected(){log("CONNECTED root="+browser.getRoot()+" extras="+dump(browser.getExtras()));
-    if("action".equals(getIntent().getStringExtra("mode")))action();else{nodes.add(new String[]{browser.getRoot(),"0"});next();}}
+    String mode=getIntent().getStringExtra("mode");
+    if("action".equals(mode))action();else if("search".equals(mode))search();else{nodes.add(new String[]{browser.getRoot(),"0"});next();}}
    public void onConnectionFailed(){log("REJECTED");finish();}
    public void onConnectionSuspended(){log("SUSPENDED");}
   },hints);browser.connect();
@@ -30,6 +31,19 @@ public class Probe extends Activity {
     browser.unsubscribe(parent);main.post(Probe.this::next);}
    public void onError(String parent){log("NODE ERROR "+parent);main.post(Probe.this::next);}
   });
+ }
+ /** Plays the best match for a spoken-style query through the backend's media session (PLAY_FROM_SEARCH). */
+ void search(){
+  final String query=getIntent().getStringExtra("query");
+  final android.media.browse.MediaBrowser framework=new android.media.browse.MediaBrowser(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new android.media.browse.MediaBrowser.ConnectionCallback(){},null);
+  framework.connect();
+  main.postDelayed(()->{
+   if(!framework.isConnected()){log("SEARCH not connected");return;}
+   android.media.session.MediaController c=new android.media.session.MediaController(this,framework.getSessionToken());
+   log("SEARCH play query="+query);c.getTransportControls().playFromSearch(query,new Bundle());
+   for(int s=3;s<=15;s+=4)main.postDelayed(()->{android.media.MediaMetadata m=c.getMetadata();android.media.session.PlaybackState st=c.getPlaybackState();
+    log("SEARCH state="+(st==null?"null":st.getState()+" error="+st.getErrorMessage())+" title="+(m==null?"null":m.getString(android.media.MediaMetadata.METADATA_KEY_TITLE)+" / "+m.getString(android.media.MediaMetadata.METADATA_KEY_ARTIST)));},s*1000L);
+  },3000);
  }
  void action(){
   final String action=getIntent().getStringExtra("action"),id=getIntent().getStringExtra("id");final int watch=getIntent().getIntExtra("watch",90);

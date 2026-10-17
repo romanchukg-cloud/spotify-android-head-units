@@ -173,3 +173,9 @@ Spotify Automotive 5.5.0 implements downloads: custom browser actions `download`
 - **Probe**: `tests/downloads` is an independent media-host client that lists the browse tree with each item's actions and sends an action to one item (logcat `HU_PROBE`).
 
 Checked on an Android 12 emulator with a signed-in Premium account: items carry the download actions; a one-track album and a playlist downloaded, appeared under Library → Downloads and played with the network off, also after a cold start; removal works. Not yet checked in a car.
+
+## Local test.11: Voice search
+
+A microphone button in the search field (`HeadUnitVoice`, `SearchFragment` view hook) opens the head unit's own speech recognition through `HeadUnitVoiceActivity` (player process). It appears only when an activity handles `android.speech.action.RECOGNIZE_SPEECH` (declared under `<queries>` for Android 11+ package visibility); the Spotify backend has no microphone access of its own. The prompt and recognition language follow the system language. The recognised text plays the best match through the backend's media session (`playFromSearch`, PLAY_FROM_SEARCH) and is searched in the field, so the results stay on screen.
+
+Checked on an Android 12 emulator with a signed-in account and a test recogniser (`tests/downloads`, `FakeRecognizer`): the button appears, the prompt is localised, "Imagine Dragons Believer" played Believer and showed its results; without a recogniser the button is hidden. `playFromSearch` alone also played "Bohemian Rhapsody" and the Cyrillic "Океан Ельзи". The Android 15 Play emulator has Google's recogniser; a BYD DiLink head unit has not been checked for one.
