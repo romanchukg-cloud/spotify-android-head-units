@@ -6,7 +6,7 @@ import android.widget.*;
 /**
  * Our mini-player: a rounded card with the controls first, then like, cover and title (the New
  * style order), tinted with the cover's colour and a thin progress line. Tapping the cover or the
- * title opens the player. The controls and the progress line stay left-to-right in right-to-left
+ * title, or a swipe up, opens the player. The controls and the progress line stay left-to-right in right-to-left
  * languages, as media controls do in Material.
  */
 final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
@@ -28,8 +28,20 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);texts.setPaddingRelative(ui.dp(16),0,0,0);
   title=HuControls.title(ui,21,1);artist=ui.label("",17,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
   texts.addView(title);texts.addView(artist);addView(texts,new LayoutParams(0,-2,1));
-  cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());
+  cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());this.expand=expand;slop=android.view.ViewConfiguration.get(ui.activity).getScaledTouchSlop();
   progress.setColor(ui.text);track.setColor(ui.text);track.setAlpha(46);
+ }
+ // A swipe up anywhere on the card opens the player, as a tap on the cover or title does.
+ private final Runnable expand;private final int slop;private float downX,downY;
+ public boolean onInterceptTouchEvent(MotionEvent e){
+  if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getRawX();downY=e.getRawY();return false;}
+  if(e.getActionMasked()==MotionEvent.ACTION_MOVE){float dx=e.getRawX()-downX,dy=downY-e.getRawY();if(dy>slop*2 && dy>Math.abs(dx)*1.5f){expand.run();return true;}}
+  return false;
+ }
+ public boolean onTouchEvent(MotionEvent e){
+  if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getRawX();downY=e.getRawY();return true;}
+  if(e.getActionMasked()==MotionEvent.ACTION_MOVE){float dx=e.getRawX()-downX,dy=downY-e.getRawY();if(dy>slop*2 && dy>Math.abs(dx)*1.5f){expand.run();return true;}}
+  return super.onTouchEvent(e);
  }
  protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);}
  protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}

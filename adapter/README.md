@@ -258,3 +258,13 @@ Checked on the emulator with the owner's account while the car was off: a playli
 - The mini-player's progress is a thin rounded bar inside the card over a faint track (a line along the very edge showed only as a short dark piece under the rounded corner).
 
 Checked on the emulator: typing (results while typing, keyboard open), submitting, voice with a test recogniser ("Imagine Dragons Believer": recogniser asked in en-US, Believer played, then paused), recent searches, an artist from the results and back, portrait and rotation in both directions with the query kept; no crash.
+
+## Local test.12: navigation
+
+- Each tab keeps its root page, so switching tabs keeps scroll positions and the search query; tapping the current tab at its root builds it afresh (and scrolls to the top). Pages opened from cards stack above it with their views: back is instant and returns to the same scroll position. After the screen is rebuilt (rotation, split screen) the stack keeps its targets and rebuilds their views when they are reached.
+- Pages slide in a little from the side they come from (mirrored in right-to-left languages).
+- System back: collapses the player, goes back through the pages, then from another tab's root to Home, then leaves.
+- A swipe up on the mini-player opens the player (a swipe down on the player closes it).
+- The instrument cluster gets nothing from our interface (owner's decision).
+
+Checked on the emulator: back from a playlist to a scrolled Home, Library and back to Home with its scroll, Home tapped again (refresh), back from Library to Home, swipe up and down; no crash.

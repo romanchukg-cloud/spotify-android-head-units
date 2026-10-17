@@ -20,14 +20,22 @@ public final class HuPlayerActivity extends Activity {
  private boolean expanded;private String page="home";private final Map<String,String> ids=new HashMap<>();
  private static final int VOICE=7;
  private HuSearch search;private String searchQuery,pendingVoice;
- private HuDetail.Target detail;private final ArrayDeque<HuDetail.Target> trail=new ArrayDeque<>();private float contentWidth,contentHeight;
+ /**
+  * Navigation: each tab keeps its root page (scroll positions and the search query survive
+  * switching tabs); pages opened from cards stack above it with their views, so back is instant.
+  * After the screen is rebuilt (rotation, split screen) the stack keeps only its targets and
+  * rebuilds those views when they are reached again.
+  */
+ private static final class Level {final HuDetail.Target target;final View view;Level(HuDetail.Target t,View v){target=t;view=v;}}
+ private HuDetail.Target detail;private final ArrayDeque<Level> levels=new ArrayDeque<>();private final Map<String,View> tabs=new HashMap<>();
+ private final ArrayList<HuDetail.Target> restored=new ArrayList<>();private float contentWidth,contentHeight;
  protected void attachBaseContext(Context base){super.attachBaseContext(HeadUnitSettings.scaled(base));}
  protected void onCreate(Bundle state){
   super.onCreate(state);ui=new HuUi(this);ui.window();session=HuSession.get(this);
   boolean accent;try{accent=HeadUnitSettings.call(this,"get",null).getBoolean("cover_accent",true);}catch(RuntimeException e){accent=true;}
   if(state!=null){
    page=state.getString("page",page);detail=HuDetail.Target.restore(state);searchQuery=state.getString("search");
-   ArrayList<Bundle> saved=state.getParcelableArrayList("trail");if(saved!=null)for(Bundle b:saved){HuDetail.Target t=HuDetail.Target.restore(b);if(t!=null)trail.addLast(t);}
+   ArrayList<Bundle> saved=state.getParcelableArrayList("trail");if(saved!=null)for(Bundle b:saved){HuDetail.Target t=HuDetail.Target.restore(b);if(t!=null)restored.add(t);}
   }
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
   int gap=ui.dp(6);android.content.res.Configuration cf=getResources().getConfiguration();boolean bar=cf.screenWidthDp<cf.screenHeightDp;
@@ -61,9 +69,14 @@ public final class HuPlayerActivity extends Activity {
   session.whenReady(()->session.children(session.root(),items->{
    String[][] prefixes={{"home","spotify:home"},{"recents","spotify:recently-played"},{"browse","spotify:browse"},{"library","spotify:library"}};
    for(String[] p:prefixes){MediaItem i=HuBrowse.find(items,p[1]);if(i!=null)ids.put(p[0],HuBrowse.id(i));}
-   if(pendingVoice!=null){page="search";detail=null;trail.clear();}
-   HuDetail.Target opened=detail;ArrayList<HuDetail.Target> path=new ArrayList<>(trail);show(page);
-   if(opened!=null){trail.addAll(path);detail=opened;showDetail();}
+   if(pendingVoice!=null){page="search";detail=null;restored.clear();}
+   HuDetail.Target opened=detail;show(page);
+   if(opened!=null){
+    View tab=content.getChildCount()>0?content.getChildAt(0):null;
+    for(HuDetail.Target t:restored)levels.addLast(new Level(t,null));levels.addLast(new Level(null,tab));
+    detail=opened;place(detailView(opened),0);
+   }
+   restored.clear();
   }));
  }
  /**
@@ -71,32 +84,47 @@ public final class HuPlayerActivity extends Activity {
   * window metrics of this activity's scaled context keep the size it was created with.)
   */
  private int[] windowSize(){View d=getWindow().getDecorView();return new int[]{d.getWidth(),d.getHeight()};}
- /** Shows a page of the rail. */
+ /** Shows a tab at its root page; the current tab, tapped at its root, is built afresh. */
  private void show(String key){
-  if(search!=null){searchQuery=search.query();search=null;}
-  page=key;detail=null;trail.clear();rail.select(key);content.removeAllViews();
+  boolean refresh=key.equals(page) && detail==null && levels.isEmpty();
+  page=key;detail=null;levels.clear();rail.select(key);
+  if(refresh){View old=tabs.remove(key);if(old!=null && "search".equals(key) && search!=null){searchQuery=search.query();search=null;}}
+  place(tab(key),0);
+  if("search".equals(key) && search!=null && pendingVoice!=null){search.spoken(pendingVoice);pendingVoice=null;}
+ }
+ private View tab(String key){
+  View v=tabs.get(key);if(v!=null)return v;
   HuPages.Open open=this::open;
-  View v;
   switch(key){
    case "home":v=HuPages.home(ui,ids.get("home"),open);break;
    case "recents":v=HuPages.grid(ui,HuText.get("recents"),ids.get("recents"),open,null);break;
    case "browse":v=HuPages.grid(ui,HuText.get("browse"),ids.get("browse"),open,null);break;
    case "library":v=HuPages.library(ui,ids.get("library"),open);break;
-   default:
-    search=new HuSearch(ui,searchQuery,open,this::listen);v=search.view;
-    if(pendingVoice!=null){search.spoken(pendingVoice);pendingVoice=null;}
+   default:search=new HuSearch(ui,searchQuery,open,this::listen);v=search.view;
   }
-  content.addView(v,new FrameLayout.LayoutParams(-1,-1));
+  tabs.put(key,v);return v;
  }
- /** A card: pages for browsable items (the current page is kept for back); playable ones play. */
+ /** A card: pages for browsable items (the current page stays below for back); playable ones play. */
  private void open(MediaItem item){
-  if(item.isBrowsable()){if(detail!=null)trail.push(detail);detail=HuDetail.Target.of(item);showDetail();}
-  else session.playItem(HuBrowse.id(item));
+  if(!item.isBrowsable()){session.playItem(HuBrowse.id(item));return;}
+  levels.push(new Level(detail,content.getChildCount()>0?content.getChildAt(0):null));
+  detail=HuDetail.Target.of(item);place(detailView(detail),1);
  }
- private void showDetail(){
-  content.removeAllViews();
-  View v=HuBrowse.kind(detail.id)!=null?HuDetail.page(ui,detail,contentWidth,contentHeight,this::back,this::open):HuPages.grid(ui,detail.title,detail.id,this::open,this::back);
+ private View detailView(HuDetail.Target t){
+  return HuBrowse.kind(t.id)!=null?HuDetail.page(ui,t,contentWidth,contentHeight,this::back,this::open):HuPages.grid(ui,t.title,t.id,this::open,this::back);
+ }
+ private void back(){
+  Level l=levels.poll();if(l==null){detail=null;place(tab(page),-1);return;}
+  detail=l.target;place(l.view!=null?l.view:l.target==null?tab(page):detailView(l.target),-1);
+ }
+ /** Puts a page in the content card, sliding in from the side it comes from (mirrored in right-to-left). */
+ private void place(View v,int direction){
+  content.removeAllViews();if(v.getParent() instanceof ViewGroup)((ViewGroup)v.getParent()).removeView(v);
   content.addView(v,new FrameLayout.LayoutParams(-1,-1));
+  v.animate().cancel();
+  if(direction==0){v.setAlpha(1);v.setTranslationX(0);return;}
+  float shift=ui.dp(36)*direction*(content.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);
+  v.setAlpha(0);v.setTranslationX(shift);v.animate().alpha(1).translationX(0).setDuration(180).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
  }
  /** The microphone: the head unit's speech recognition; the text comes back to the search page. */
  private void listen(){try{startActivityForResult(HeadUnitVoice.recognizer(),VOICE);}catch(ActivityNotFoundException e){android.util.Log.w("SpotifyHU","Voice search unavailable",e);}}
@@ -108,10 +136,9 @@ public final class HuPlayerActivity extends Activity {
   if(search!=null && detail==null && "search".equals(page))search.spoken(q);
   else{pendingVoice=q;if(!ids.isEmpty())show("search");}
  }
- private void back(){if(!trail.isEmpty()){detail=trail.pop();showDetail();}else show(page);}
  protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putString("page",page);if(detail!=null)detail.save(out);
   out.putString("search",search!=null?search.query():searchQuery);
-  ArrayList<Bundle> saved=new ArrayList<>();for(HuDetail.Target t:trail){Bundle b=new Bundle();t.save(b);saved.add(b);}out.putParcelableArrayList("trail",saved);
+  ArrayList<Bundle> saved=new ArrayList<>();for(Level l:levels)if(l.target!=null){Bundle b=new Bundle();l.target.save(b);saved.add(b);}out.putParcelableArrayList("trail",saved);
  }
  private void expand(){
   if(expanded)return;expanded=true;player.setVisibility(View.VISIBLE);
@@ -122,5 +149,6 @@ public final class HuPlayerActivity extends Activity {
   if(!expanded)return;expanded=false;
   player.animate().translationY(player.getHeight()).setDuration(200).withEndAction(()->player.setVisibility(View.GONE)).start();
  }
- public void onBackPressed(){if(expanded)collapse();else if(detail!=null)back();else super.onBackPressed();}
+ /** Back: collapses the player, then goes back through the pages, then to Home, then leaves. */
+ public void onBackPressed(){if(expanded)collapse();else if(detail!=null)back();else if(!"home".equals(page) && !ids.isEmpty())show("home");else super.onBackPressed();}
 }
