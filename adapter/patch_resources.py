@@ -83,3 +83,16 @@ for p in sorted(dst.glob('layout*/fragment_details_list.xml'))+sorted(dst.glob('
  if re.search(r'android:id="@id/btn_favorite"[^>]*android:layout_width="@dimen/common_btn_size"',s):raise SystemExit('Downloads: favourite button width not adapted in '+str(p))
  p.write_text(s)
 print('Downloads: favourite button holds the download button')
+# Queue editor: an edit button on the queue page (HeadUnitQueue sets its icon and shows it),
+# on the side opposite the close button.
+for p in sorted(dst.glob('layout*/fragment_queue.xml'))+sorted(dst.glob('layout*/fragment_queue_rhd.xml')):
+ s=p.read_text()
+ if 'hu_queue_edit' in s:continue
+ side='app:layout_constraintLeft_toLeftOf="parent"' if p.name.endswith('_rhd.xml') else 'app:layout_constraintRight_toRightOf="parent"'
+ button=('    <FrameLayout android:id="@+id/hu_queue_edit" android:visibility="gone" android:layout_width="@dimen/queue_back_button_width" android:layout_height="@dimen/queue_back_button_height" app:layout_constraintTop_toTopOf="parent" '+side+'>\n'
+  '        <FrameLayout android:layout_gravity="center" android:background="?queue_page_button_bg" android:layout_width="@dimen/common_btn_size" android:layout_height="@dimen/common_btn_size">\n'
+  '            <ImageView android:id="@+id/hu_queue_edit_icon" android:layout_gravity="center" android:layout_width="@dimen/common_btn_img_size" android:layout_height="@dimen/common_btn_img_size" />\n'
+  '        </FrameLayout>\n    </FrameLayout>\n')
+ end=s.rstrip().rfind('</');assert end>0,p
+ p.write_text(s[:end]+button+s[end:])
+print('Queue editor: edit button on the queue page')

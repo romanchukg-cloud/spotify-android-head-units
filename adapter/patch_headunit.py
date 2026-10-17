@@ -221,3 +221,14 @@ s,n=re.subn(r'(\.method public y0\(Landroid/view/LayoutInflater;Landroid/view/Vi
 if n!=1:raise SystemExit('Voice search: SearchFragment view hook not found')
 p.write_text(s)
 print('Voice search: microphone button, recogniser activity and visibility query')
+
+# Queue editor: QueueFragment shows the edit button (HeadUnitQueue) that opens
+# HeadUnitQueueActivity in the player process.
+p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+E.SubElement(app,'activity',{A+'name':'local.spotify.unified.HeadUnitQueueActivity',A+'process':':bydui',A+'exported':'false',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
+m.write(p,encoding='utf-8',xml_declaration=True)
+p=ui/'com/vivid/spotify/queue/QueueFragment.smali';s=p.read_text()
+s,n=re.subn(r'(\.method public y0\(Landroid/view/LayoutInflater;Landroid/view/ViewGroup;Landroid/os/Bundle;\)Landroid/view/View;\n(?:(?!\.end method).)*?invoke-virtual \{p1\}, Llocal/bydui/androidx/databinding/ViewDataBinding;->G\(\)Landroid/view/View;\n\n    move-result-object p1\n)(\n    return-object p1\n\.end method)',lambda m:m[1]+'    invoke-static {p1}, Llocal/spotify/unified/HeadUnitQueue;->screen(Landroid/view/View;)V\n'+m[2],s,count=1,flags=re.S)
+if n!=1:raise SystemExit('Queue editor: QueueFragment view hook not found')
+p.write_text(s)
+print('Queue editor: edit button and queue activity')

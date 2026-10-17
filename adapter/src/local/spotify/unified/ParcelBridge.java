@@ -3,21 +3,22 @@ import android.os.*;
 import java.util.ArrayList;
 /** Convert legacy media IPC payloads to the relocated UI's matching parcel types. */
 public final class ParcelBridge {
- /** Browser request callbacks must use the backend's class name on the wire.
-  * Both implementations preserve the same IResultReceiver Binder protocol. */
- public static void putBrowserParcelable(Bundle bundle,String key,Parcelable value) {
-  try {
-   Class<?> localReceiver=Class.forName("local.bydui.android.support.v4.os.ResultReceiver");
-   if(localReceiver.isInstance(value)) {
-    Class<?> receiver=Class.forName("android.support.v4.os.ResultReceiver");
-    Parcelable.Creator<?> creator=(Parcelable.Creator<?>)receiver.getField("CREATOR").get(null);
+ /** Parcelables the interface sends to the backend (a browser request's ResultReceiver, a queue
+  * command's MediaDescriptionCompat) must use the backend's class name on the wire: both classes
+  * exist in this APK, so the backend would otherwise create the relocated one and fail its cast
+  * (a queue command crashed the music process). The parcel formats are the same. */
+ public static void putBackendParcelable(Bundle bundle,String key,Parcelable value) {
+  if(value!=null && value.getClass().getName().startsWith("local.bydui.android.support.v4.")) {
+   try {
+    Class<?> target=Class.forName(value.getClass().getName().substring("local.bydui.".length()));
+    Parcelable.Creator<?> creator=(Parcelable.Creator<?>)target.getField("CREATOR").get(null);
     Parcel parcel=Parcel.obtain();
     try {
      value.writeToParcel(parcel,0);parcel.setDataPosition(0);
      value=(Parcelable)creator.createFromParcel(parcel);
     } finally {parcel.recycle();}
-   }
-  } catch(ReflectiveOperationException e){throw new IllegalStateException("Cannot translate browser callback",e);}
+   } catch(ReflectiveOperationException e){throw new IllegalStateException("Cannot translate parcel for the backend",e);}
+  }
   bundle.putParcelable(key,value);
  }
  private static Parcelable adapt(Parcelable value) {

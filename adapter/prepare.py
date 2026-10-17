@@ -38,10 +38,11 @@ for p in files:
  for method,ret in [('getParcelable','Landroid/os/Parcelable;'),('getParcelableArrayList','Ljava/util/ArrayList;'),('getParcelableArray','[Landroid/os/Parcelable;')]:
   pattern=r'invoke-virtual (\{[^}]+\}), Landroid/os/Bundle;->'+method+r'\(Ljava/lang/String;\)'+re.escape(ret)
   s=re.sub(pattern,lambda m:'invoke-static '+m[1]+', Llocal/spotify/unified/ParcelBridge;->'+method+'(Landroid/os/Bundle;Ljava/lang/String;)'+ret,s)
- # Search/custom-action requests carry a legacy ResultReceiver. Keeping its
- # relocated class name crashes the backend when it casts the incoming Bundle.
- if str(p.relative_to(ui/'smali'))=='android/support/v4/media/MediaBrowserCompat$k.smali':
-  s=re.sub(r'invoke-virtual (\{[^}]+\}), Landroid/os/Bundle;->putParcelable\(Ljava/lang/String;Landroid/os/Parcelable;\)V',r'invoke-static \1, Llocal/spotify/unified/ParcelBridge;->putBrowserParcelable(Landroid/os/Bundle;Ljava/lang/String;Landroid/os/Parcelable;)V',s)
+ # Search/custom-action requests carry a legacy ResultReceiver and queue commands a
+ # MediaDescriptionCompat; their relocated class names crash the backend's casts.
+ if str(p.relative_to(ui/'smali')) in ('android/support/v4/media/MediaBrowserCompat$k.smali','android/support/v4/media/session/MediaControllerCompat$MediaControllerImplApi21.smali'):
+  s,n=re.subn(r'invoke-virtual (\{[^}]+\}), Landroid/os/Bundle;->putParcelable\(Ljava/lang/String;Landroid/os/Parcelable;\)V',r'invoke-static \1, Llocal/spotify/unified/ParcelBridge;->putBackendParcelable(Landroid/os/Bundle;Ljava/lang/String;Landroid/os/Parcelable;)V',s)
+  assert n>0,p
  dest=base/'ui-smali'/('local/bydui/'+str(p.relative_to(ui/'smali')));dest.parent.mkdir(parents=True,exist_ok=True);dest.write_text(s)
 (base/'class-map.json').write_text(json.dumps(dm,indent=2));(base/'resource-map.json').write_text(json.dumps({hex(k):hex(v) for k,v in ids.items()},indent=2))
 A='{http://schemas.android.com/apk/res/android}';E.register_namespace('android',A[1:-1])

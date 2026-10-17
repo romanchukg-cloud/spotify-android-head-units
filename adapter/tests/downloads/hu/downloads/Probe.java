@@ -15,7 +15,7 @@ public class Probe extends Activity {
   browser=new MediaBrowserCompat(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new MediaBrowserCompat.ConnectionCallback(){
    public void onConnected(){log("CONNECTED root="+browser.getRoot()+" extras="+dump(browser.getExtras()));
     String mode=getIntent().getStringExtra("mode");
-    if("action".equals(mode))action();else if("search".equals(mode))search();else{nodes.add(new String[]{browser.getRoot(),"0"});next();}}
+    if("action".equals(mode))action();else if("search".equals(mode))search();else if("uri".equals(mode))uri();else if("meta".equals(mode))meta();else{nodes.add(new String[]{browser.getRoot(),"0"});next();}}
    public void onConnectionFailed(){log("REJECTED");finish();}
    public void onConnectionSuspended(){log("SUSPENDED");}
   },hints);browser.connect();
@@ -44,6 +44,30 @@ public class Probe extends Activity {
    for(int s=3;s<=15;s+=4)main.postDelayed(()->{android.media.MediaMetadata m=c.getMetadata();android.media.session.PlaybackState st=c.getPlaybackState();
     log("SEARCH state="+(st==null?"null":st.getState()+" error="+st.getErrorMessage())+" title="+(m==null?"null":m.getString(android.media.MediaMetadata.METADATA_KEY_TITLE)+" / "+m.getString(android.media.MediaMetadata.METADATA_KEY_ARTIST)));},s*1000L);
   },3000);
+ }
+ /** Plays a Spotify URI (for example a radio station) and logs the queue that follows. */
+ void uri(){
+  final String value=getIntent().getStringExtra("uri");
+  final android.media.browse.MediaBrowser framework=new android.media.browse.MediaBrowser(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new android.media.browse.MediaBrowser.ConnectionCallback(){},null);
+  framework.connect();
+  main.postDelayed(()->{
+   if(!framework.isConnected()){log("URI not connected");return;}
+   android.media.session.MediaController c=new android.media.session.MediaController(this,framework.getSessionToken());
+   log("URI play "+value);c.getTransportControls().playFromUri(android.net.Uri.parse(value),new Bundle());
+   main.postDelayed(()->{android.media.MediaMetadata m=c.getMetadata();android.media.session.PlaybackState st=c.getPlaybackState();
+    log("URI state="+(st==null?"null":st.getState()+" error="+st.getErrorMessage())+" title="+(m==null?"null":m.getString(android.media.MediaMetadata.METADATA_KEY_TITLE)+" / "+m.getString(android.media.MediaMetadata.METADATA_KEY_ARTIST))+" queueTitle="+c.getQueueTitle());
+    java.util.List<android.media.session.MediaSession.QueueItem> q=c.getQueue();log("URI queue size="+(q==null?0:q.size()));
+    if(q!=null)for(int i=0;i<Math.min(6,q.size());i++){android.media.MediaDescription d=q.get(i).getDescription();log("  Q id="+q.get(i).getQueueId()+" media="+d.getMediaId()+" title="+d.getTitle()+" sub="+d.getSubtitle()+" extras="+dump(d.getExtras()));}
+   },12000);
+  },3000);
+ }
+ /** Logs every key of the current track's metadata. */
+ void meta(){
+  final android.media.browse.MediaBrowser framework=new android.media.browse.MediaBrowser(this,new ComponentName("com.spotify.music","com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService"),new android.media.browse.MediaBrowser.ConnectionCallback(){},null);
+  framework.connect();
+  main.postDelayed(()->{android.media.session.MediaController c=new android.media.session.MediaController(this,framework.getSessionToken());android.media.MediaMetadata m=c.getMetadata();
+   if(m==null){log("META null");return;}for(String k:new TreeSet<>(m.keySet())){Object v=m.getString(k);if(v==null)v=m.getLong(k);log("META "+k+"="+v);}
+   log("META session extras="+dump(c.getExtras()));},3000);
  }
  void action(){
   final String action=getIntent().getStringExtra("action"),id=getIntent().getStringExtra("id");final int watch=getIntent().getIntExtra("watch",90);
