@@ -3,6 +3,7 @@ import android.content.*;import android.os.*;import java.util.List;
 /** Compile-time stub of the Spotify backend's own support-library browser; the real class ships in the backend DEX. */
 public class MediaBrowserCompat {
  public MediaBrowserCompat(Context c,ComponentName n,ConnectionCallback cb,Bundle b){}
+ public android.support.v4.media.session.MediaSessionCompat.Token getSessionToken(){return null;}
  public void connect(){}public void disconnect(){}public boolean isConnected(){return false;}public String getRoot(){return null;}public Bundle getExtras(){return null;}
  public void subscribe(String id,SubscriptionCallback cb){}public void unsubscribe(String id){}
  public void getItem(String id,ItemCallback cb){}

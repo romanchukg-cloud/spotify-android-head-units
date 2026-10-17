@@ -1,0 +1,95 @@
+package local.spotify.unified;
+import android.content.*;
+import android.os.*;
+import android.support.v4.media.MediaBrowserCompat;
+import android.support.v4.media.MediaMetadataCompat;
+import android.support.v4.media.session.MediaControllerCompat;
+import android.support.v4.media.session.PlaybackStateCompat;
+import java.util.ArrayList;
+import java.util.List;
+/**
+ * Our interface's connection to the Spotify backend's media session: one per process, through
+ * the backend's own support-library classes (stubs in adapter/stubs), so repeat and shuffle
+ * modes are available too. Listeners hear every change on the main thread.
+ */
+final class HuSession {
+ interface Listener {void changed(HuSession session);}
+ static final int STATE_PLAYING=3,STATE_BUFFERING=6,REPEAT_NONE=0,REPEAT_ONE=1,REPEAT_ALL=2;
+ private static final String SERVICE="com.spotify.automotive.mediabrowserservice.AutomotiveMediaBrowserService";
+ private static HuSession instance;
+ static HuSession get(Context c){if(instance==null)instance=new HuSession(c.getApplicationContext());return instance;}
+
+ private final Context app;private final Handler main=new Handler(Looper.getMainLooper());
+ private final List<Listener> listeners=new ArrayList<>();
+ private MediaBrowserCompat browser;private MediaControllerCompat controller;
+ private MediaMetadataCompat metadata;private PlaybackStateCompat state;private int repeat;
+ private final MediaControllerCompat.Callback callback=new MediaControllerCompat.Callback(){
+  public void onPlaybackStateChanged(PlaybackStateCompat s){state=s;notifyListeners();}
+  public void onMetadataChanged(MediaMetadataCompat m){metadata=m;notifyListeners();}
+  public void onRepeatModeChanged(int mode){repeat=mode;notifyListeners();}
+  public void onShuffleModeChanged(int mode){notifyListeners();}
+  public void onSessionDestroyed(){disconnect();main.postDelayed(HuSession.this::connect,2000);}
+ };
+ private HuSession(Context app){this.app=app;}
+
+ void add(Listener l){if(!listeners.contains(l))listeners.add(l);connect();l.changed(this);}
+ void remove(Listener l){listeners.remove(l);}
+ private void notifyListeners(){for(Listener l:new ArrayList<>(listeners))l.changed(this);}
+ private void connect(){
+  if(browser!=null)return;
+  browser=new MediaBrowserCompat(app,new ComponentName(app.getPackageName(),SERVICE),new MediaBrowserCompat.ConnectionCallback(){
+   public void onConnected(){
+    try{
+     controller=new MediaControllerCompat(app,browser.getSessionToken());controller.registerCallback(callback,main);
+     metadata=controller.getMetadata();state=controller.getPlaybackState();repeat=controller.getRepeatMode();
+    }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Player session unavailable",e);}
+    notifyListeners();
+   }
+   public void onConnectionFailed(){disconnect();main.postDelayed(HuSession.this::connect,3000);}
+   public void onConnectionSuspended(){disconnect();main.postDelayed(HuSession.this::connect,2000);}
+  },null);
+  browser.connect();
+ }
+ private void disconnect(){
+  if(controller!=null)try{controller.unregisterCallback(callback);}catch(RuntimeException ignored){}
+  if(browser!=null)try{browser.disconnect();}catch(RuntimeException ignored){}
+  controller=null;browser=null;
+ }
+
+ boolean ready(){return controller!=null;}
+ String text(String key){if(metadata==null)return null;CharSequence t=metadata.getText(key);return t==null?metadata.getString(key):t.toString();}
+ String title(){return text("android.media.metadata.TITLE");}
+ String artist(){return text("android.media.metadata.ARTIST");}
+ String art(){return metadata==null?null:metadata.getString("android.media.metadata.ALBUM_ART_URI");}
+ String trackUri(){return metadata==null?null:metadata.getString("android.media.metadata.MEDIA_URI");}
+ String artistUri(){return metadata==null?null:metadata.getString("com.spotify.music.extra.ARTIST_URI");}
+ long duration(){return metadata==null?0:Math.max(0,metadata.getLong("android.media.metadata.DURATION"));}
+ boolean playing(){return state!=null && (state.getState()==STATE_PLAYING || state.getState()==STATE_BUFFERING);}
+ /** The position now, from the last reported position, its time and the playback speed. */
+ long position(){
+  if(state==null)return 0;long p=state.getPosition();
+  if(state.getState()==STATE_PLAYING)p+=(long)((SystemClock.elapsedRealtime()-state.getLastPositionUpdateTime())*state.getPlaybackSpeed());
+  long d=duration();return Math.max(0,d>0?Math.min(p,d):p);
+ }
+ int repeat(){return repeat;}
+ /** A session custom action by its ids (for example "like" / "unlike"), or null. */
+ PlaybackStateCompat.CustomAction custom(String... ids){
+  if(state==null || state.getCustomActions()==null)return null;
+  for(PlaybackStateCompat.CustomAction a:state.getCustomActions())for(String id:ids)if(id.equals(a.getAction()))return a;
+  return null;
+ }
+ /** Liked: the session offers "unlike" for a track in Liked Songs. */
+ PlaybackStateCompat.CustomAction like(){return custom("like","unlike");}
+ boolean liked(){PlaybackStateCompat.CustomAction a=like();return a!=null && "unlike".equals(a.getAction());}
+ /** Shuffle is on when the session offers "disable-shuffle". */
+ PlaybackStateCompat.CustomAction shuffle(){return custom("shuffle","disable-shuffle");}
+ boolean shuffled(){PlaybackStateCompat.CustomAction a=shuffle();return a!=null && "disable-shuffle".equals(a.getAction());}
+
+ private MediaControllerCompat.TransportControls controls(){return controller==null?null:controller.getTransportControls();}
+ void playPause(){MediaControllerCompat.TransportControls t=controls();if(t==null)return;if(playing()){HeadUnitRuntime.explicitPause(app);t.pause();}else t.play();}
+ void next(){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.skipToNext();}
+ void previous(){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.skipToPrevious();}
+ void seek(long position){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.seekTo(position);}
+ void send(PlaybackStateCompat.CustomAction a){MediaControllerCompat.TransportControls t=controls();if(t!=null && a!=null)t.sendCustomAction(a.getAction(),a.getExtras()==null?new Bundle():a.getExtras());}
+ void cycleRepeat(){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.setRepeatMode(repeat==REPEAT_NONE?REPEAT_ALL:repeat==REPEAT_ALL?REPEAT_ONE:REPEAT_NONE);}
+}

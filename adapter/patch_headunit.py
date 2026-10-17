@@ -239,3 +239,10 @@ signin('com/spotify/automotive/settingspage/SettingsPageActivity.smali',[(r'(\.m
  lambda m:m[1]+'    invoke-static {p0}, Llocal/spotify/unified/HeadUnitJam;->opened(Landroid/app/Activity;)V\n\n'+m[2])])
 print('Jam: buttons on the queue page and in the queue editor, settings page scrolls to Jam')
 
+
+# Our own interface (no BYD code), first screen: HuPlayerActivity with our mini-player and
+# player, opened from Head unit settings while the BYD-derived interface stays the player.
+p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+E.SubElement(app,'activity',{A+'name':'local.spotify.unified.HuPlayerActivity',A+'process':':bydui',A+'exported':'false',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
+m.write(p,encoding='utf-8',xml_declaration=True)
+print('Own interface: player preview activity')

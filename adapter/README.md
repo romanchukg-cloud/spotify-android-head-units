@@ -205,3 +205,15 @@ Checked on an Android 12 emulator with a signed-in account: "End of track" pause
 ## Local test.12: one style
 
 The Classic style is gone: the New style is the only interface style. `HeadUnitStyle.apply` always sets the "car" UI-mode type (the generated resources stay as they are), Head unit settings has no style switch, a stored `ui_style` is ignored, and `HuUi.adopt`, `HeadUnitShell`, `CoverAccent` and the like-action alias no longer check a style. Checked on an Android 12 emulator: an older build switched to Classic opens in the New style after the update, without a crash.
+
+## Local test.12: our own player (first screens without BYD code)
+
+The interface is being rewritten over the Spotify backend's media session, screen by screen, without the BYD-derived code. First: `HuPlayerActivity` (player process, opened from Head unit settings → **New player (test)**) with our mini-player and player.
+
+- `HuSession`: one connection per process through the backend's own support-library `MediaBrowserCompat` / `MediaControllerCompat` (compile-time stubs in `stubs/`, including `session/`): metadata, playback state, repeat mode, the session's custom actions (like / unlike, shuffle / disable-shuffle) and transport controls; pausing counts as an explicit user pause.
+- `HuCovers`: covers from the backend's image provider (`content://com.spotify.music.mediaapi/…`), decoded off the main thread, cached, with the vivid colour from `CoverAccent`.
+- `HuMiniPlayer`: controls first, then like, cover and title (the New style order), tinted with the cover's colour, a progress line; the cover or title opens the player.
+- `HuNowPlaying`: large cover, title, artist, like, seek bar with elapsed and remaining time, shuffle / previous / play-pause / next / repeat (none → all → one), a gradient from the cover's colour; the top bar collapses it and opens Jam and the queue editor. Wide screens put the cover beside the controls.
+- Icons are Spotify's Encore drawables from the backend; like and shuffle use the session's own action icons.
+
+Checked on an Android 12 emulator with a signed-in account: the mini-player and player show the current track and cover, play/pause, seek, repeat and shuffle change the backend's state, the cover colour tints both by day and night, and the open player survives a day/night switch; no crash.

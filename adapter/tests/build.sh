@@ -8,7 +8,7 @@ mkdir -p out/testclasses out/stubs out/clientclasses out/testdex out/clientdex
 javac -source 8 -target 8 -cp "$JAR:../classes" -d out/testclasses src/hu/tests/*.java
 "$BT/d8" --min-api 28 --lib "$JAR" --classpath ../classes --output out/testdex out/testclasses/hu/tests/*.class
 "$BT/aapt2" link -I "$JAR" --manifest AndroidManifest.xml -o out/test-unsigned.apk
-javac -source 8 -target 8 -cp "$JAR" -d out/stubs ../stubs/android/support/v4/media/*.java
+javac -source 8 -target 8 -cp "$JAR" -d out/stubs ../stubs/android/support/v4/media/*.java ../stubs/android/support/v4/media/session/*.java
 javac -source 8 -target 8 -cp "$JAR:out/stubs" -d out/clientclasses client/hu/browser/*.java
 "$BT/d8" --min-api 28 --lib "$JAR" --classpath out/stubs --output out/clientdex out/clientclasses/hu/browser/*.class
 "$BT/aapt2" link -I "$JAR" --manifest ClientManifest.xml -o out/client-unsigned.apk

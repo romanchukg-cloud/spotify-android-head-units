@@ -62,7 +62,7 @@ public final class HeadUnitSettingsActivity extends Activity {
   cards.addView(appearance,first);cards.addView(playback,second);
   LinearLayout.LayoutParams cardsParams=new LinearLayout.LayoutParams(-1,-2);cardsParams.leftMargin=ui.dp(12);list.addView(cards,cardsParams);
   LinearLayout tiles=new LinearLayout(this);tiles.setBaselineAligned(false);tiles.setOrientation(wide?LinearLayout.HORIZONTAL:LinearLayout.VERTICAL);
-  TextView[] items={ui.tile(ProfileText.get("profiles"),v->openAccounts()),ui.tile(UpdateText.get("updates"),v->UpdateDialog.show(this)),ui.tile(DiagnosticText.get("title"),v->startActivity(new Intent(this,DiagnosticActivity.class))),ui.tile(HuText.get("spotify"),v->openSpotify())};
+  TextView[] items={ui.tile(ProfileText.get("profiles"),v->openAccounts()),ui.tile(UpdateText.get("updates"),v->UpdateDialog.show(this)),ui.tile(DiagnosticText.get("title"),v->startActivity(new Intent(this,DiagnosticActivity.class))),ui.tile(HuText.get("spotify"),v->openSpotify()),ui.tile(HuText.get("player_preview"),v->startActivity(new Intent(this,HuPlayerActivity.class)))};
   for(int i=0;i<items.length;i++){LinearLayout.LayoutParams p=wide?new LinearLayout.LayoutParams(0,-1,1):new LinearLayout.LayoutParams(-1,-2);if(i>0){if(wide)p.leftMargin=ui.dp(16);else p.topMargin=ui.dp(12);}tiles.addView(items[i],p);}
   LinearLayout.LayoutParams tilesParams=new LinearLayout.LayoutParams(-1,-2);tilesParams.topMargin=ui.dp(16);tilesParams.leftMargin=ui.dp(12);list.addView(tiles,tilesParams);
   LinearLayout foot=list;int before=foot.getChildCount();footer(b,ui.secondary);for(int i=before;i<foot.getChildCount();i++)foot.getChildAt(i).setPadding(ui.dp(12),foot.getChildAt(i).getPaddingTop(),0,0);

@@ -10,7 +10,7 @@ SDK_ROOT=${ANDROID_SDK_ROOT:-${ANDROID_HOME:-$HOME/Library/Android/sdk}}
 BT="$SDK_ROOT/build-tools/${BUILD_TOOLS_VERSION:-35.0.0}"
 JAR="$SDK_ROOT/platforms/android-35/android.jar"
 rm -rf out && mkdir -p out/stubs out/classes out/dex
-javac -source 8 -target 8 -cp "$JAR" -d out/stubs ../../stubs/android/support/v4/media/*.java
+javac -source 8 -target 8 -cp "$JAR" -d out/stubs ../../stubs/android/support/v4/media/*.java ../../stubs/android/support/v4/media/session/*.java
 javac -source 8 -target 8 -cp "$JAR:out/stubs" -d out/classes hu/downloads/*.java
 "$BT/d8" --min-api 28 --lib "$JAR" --classpath out/stubs --output out/dex out/classes/hu/downloads/*.class
 "$BT/aapt2" link -I "$JAR" --manifest AndroidManifest.xml -o out/unsigned.apk
