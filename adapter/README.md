@@ -213,7 +213,17 @@ The interface is being rewritten over the Spotify backend's media session, scree
 - `HuSession`: one connection per process through the backend's own support-library `MediaBrowserCompat` / `MediaControllerCompat` (compile-time stubs in `stubs/`, including `session/`): metadata, playback state, repeat mode, the session's custom actions (like / unlike, shuffle / disable-shuffle) and transport controls; pausing counts as an explicit user pause.
 - `HuCovers`: covers from the backend's image provider (`content://com.spotify.music.mediaapi/…`), decoded off the main thread, cached, with the vivid colour from `CoverAccent`.
 - `HuMiniPlayer`: controls first, then like, cover and title (the New style order), tinted with the cover's colour, a progress line; the cover or title opens the player.
-- `HuNowPlaying`: large cover, title, artist, like, seek bar with elapsed and remaining time, shuffle / previous / play-pause / next / repeat (none → all → one), a gradient from the cover's colour; the top bar collapses it and opens Jam and the queue editor. Wide screens put the cover beside the controls.
+- `HuNowPlaying`: large cover, title, artist, like, seek bar with elapsed and remaining time, shuffle / previous / play-pause / next / repeat (none → all → one), a gradient from the cover's colour; the top bar collapses it and opens Jam and the queue editor. Wide screens put the controls on the driver's side and the cover at the far end (right; left in right-to-left languages, by mirroring); portrait screens put the cover above them. The seek bar, times and playback controls stay left-to-right in right-to-left languages, as Material does for media controls (the mini-player too).
 - Icons are Spotify's Encore drawables from the backend; like and shuffle use the session's own action icons.
 
 Checked on an Android 12 emulator with a signed-in account: the mini-player and player show the current track and cover, play/pause, seek, repeat and shuffle change the backend's state, the cover colour tints both by day and night, and the open player survives a day/night switch; no crash.
+
+## Local test.12: our own Home and Library
+
+`HuPlayerActivity` is now the shell of our interface: navigation, a content card with our mini-player as its footer, and the player sliding up over everything.
+
+- `HuRail`: Home, Recents, Browse, Library, Search and settings (Encore icons). A rail at the side on landscape screens; on portrait screens a bar along the bottom, under the mini-player, within reach.
+- `HuPages` / `HuBrowse`: pages from the backend's browse tree (root `spotify:navigation`). Home shows the backend's groups (`android.media.browse.CONTENT_STYLE_GROUP_TITLE_HINT`: "Good evening", "Made For …", stations, recently played) as rows of cover cards; Recents and Browse are grids; Library has its sections (Playlists, Podcasts, Albums, Artists, Downloads) as filter pills above a grid. Artists have round covers. Horizontal rows start at their start edge in right-to-left layouts too (HorizontalScrollView only does that on its first layout).
+- A card plays its item through the backend's `play` browser action (as a media host does); playlist and album pages come next. Search is a placeholder.
+
+Checked on an Android 12 emulator with a signed-in account: landscape and portrait (1440×2560, as the car's rotated screen), forced right-to-left layout (rail and cover on the left, rows and pills from the right, controls left-to-right), day and night; no crash. A card changed the playing context; Spotify plays one stream per account, so with the same account playing in the car the emulator stayed paused.

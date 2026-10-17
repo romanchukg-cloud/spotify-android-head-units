@@ -20,7 +20,7 @@ final class HuSession {
  static HuSession get(Context c){if(instance==null)instance=new HuSession(c.getApplicationContext());return instance;}
 
  private final Context app;private final Handler main=new Handler(Looper.getMainLooper());
- private final List<Listener> listeners=new ArrayList<>();
+ private final List<Listener> listeners=new ArrayList<>();private final List<Runnable> waiting=new ArrayList<>();
  private MediaBrowserCompat browser;private MediaControllerCompat controller;
  private MediaMetadataCompat metadata;private PlaybackStateCompat state;private int repeat;
  private final MediaControllerCompat.Callback callback=new MediaControllerCompat.Callback(){
@@ -43,6 +43,7 @@ final class HuSession {
      controller=new MediaControllerCompat(app,browser.getSessionToken());controller.registerCallback(callback,main);
      metadata=controller.getMetadata();state=controller.getPlaybackState();repeat=controller.getRepeatMode();
     }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Player session unavailable",e);}
+    List<Runnable> tasks=new ArrayList<>(waiting);waiting.clear();for(Runnable r:tasks)r.run();
     notifyListeners();
    }
    public void onConnectionFailed(){disconnect();main.postDelayed(HuSession.this::connect,3000);}
@@ -57,6 +58,27 @@ final class HuSession {
  }
 
  boolean ready(){return controller!=null;}
+ /** Runs the task once connected (main thread). */
+ void whenReady(Runnable task){if(ready())task.run();else{waiting.add(task);connect();}}
+ /** The browse tree's root (spotify:navigation). */
+ String root(){return browser==null?null:browser.getRoot();}
+ /** Loads the children of a browse node once; done gets an empty list on errors. */
+ void children(String parent,java.util.function.Consumer<List<MediaBrowserCompat.MediaItem>> done){
+  whenReady(()->{
+   if(browser==null || parent==null){done.accept(new ArrayList<>());return;}
+   browser.subscribe(parent,new MediaBrowserCompat.SubscriptionCallback(){
+    public void onChildrenLoaded(String id,List<MediaBrowserCompat.MediaItem> items){if(browser!=null)browser.unsubscribe(id);done.accept(items==null?new ArrayList<>():items);}
+    public void onError(String id){if(browser!=null)browser.unsubscribe(id);done.accept(new ArrayList<>());}
+   });
+  });
+ }
+ /** Plays a browse item through the backend's "play" browser action, as a media host does. */
+ void play(String mediaId){
+  whenReady(()->{
+   if(browser==null || mediaId==null)return;Bundle b=new Bundle();b.putString("androidx.media.utils.extras.KEY_CUSTOM_BROWSER_ACTION_MEDIA_ITEM_ID",mediaId);
+   browser.sendCustomAction("play",b,null);
+  });
+ }
  String text(String key){if(metadata==null)return null;CharSequence t=metadata.getText(key);return t==null?metadata.getString(key):t.toString();}
  String title(){return text("android.media.metadata.TITLE");}
  String artist(){return text("android.media.metadata.ARTIST");}

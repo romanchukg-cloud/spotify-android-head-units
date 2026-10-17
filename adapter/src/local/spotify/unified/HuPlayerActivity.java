@@ -1,40 +1,63 @@
 package local.spotify.unified;
 import android.app.Activity;
-import android.content.Context;
+import android.content.*;
 import android.os.Bundle;
+import android.support.v4.media.MediaBrowserCompat.MediaItem;
 import android.view.*;
 import android.widget.*;
+import java.util.*;
 /**
- * The first screen of our own interface (no BYD code): content area, our mini-player as its
- * footer and our player, which slides up over everything. Home, Library and Search follow; until
- * then the content area explains that and the BYD-derived interface stays the player.
+ * Our own interface (no BYD code): the navigation rail, the content card (Home, Recents, Browse,
+ * Library; Search next) with our mini-player as its footer, and our player sliding up over
+ * everything. On portrait screens the navigation is a bar along the bottom, under the
+ * mini-player, within reach. Opened from Head unit settings while the BYD-derived interface stays the player.
  */
 public final class HuPlayerActivity extends Activity {
- private HuUi ui;private HuNowPlaying player;private boolean expanded;
+ private HuUi ui;private HuSession session;private HuRail rail;private FrameLayout content;private HuNowPlaying player;
+ private boolean expanded;private String page="home";private final Map<String,String> ids=new HashMap<>();
  protected void attachBaseContext(Context base){super.attachBaseContext(HeadUnitSettings.scaled(base));}
  protected void onCreate(Bundle state){
-  super.onCreate(state);ui=new HuUi(this);ui.window();
+  super.onCreate(state);ui=new HuUi(this);ui.window();session=HuSession.get(this);
   boolean accent;try{accent=HeadUnitSettings.call(this,"get",null).getBoolean("cover_accent",true);}catch(RuntimeException e){accent=true;}
+  if(state!=null)page=state.getString("page",page);
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
-  int gap=ui.dp(6);
-  LinearLayout page=new LinearLayout(this);page.setOrientation(LinearLayout.VERTICAL);page.setPadding(gap,gap,gap,gap);root.addView(page);
-  // Content card (Home, Library and Search come here next).
-  LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);content.setGravity(Gravity.CENTER);
-  content.setBackground(HuUi.round(ui.card,ui.dp(22)));content.setPadding(ui.dp(32),ui.dp(16),ui.dp(32),ui.dp(16));
-  LinearLayout header=new LinearLayout(this);header.setGravity(Gravity.CENTER_VERTICAL);header.addView(ui.back());
-  TextView title=ui.label(HuText.get("player_preview"),30,ui.text,true);title.setPadding(ui.dp(8),0,0,0);header.addView(title,new LinearLayout.LayoutParams(0,-2,1));
-  content.addView(header,new LinearLayout.LayoutParams(-1,-2));
-  TextView hint=ui.label(HuText.get("player_preview_hint"),20,ui.secondary,false);hint.setGravity(Gravity.CENTER);
-  content.addView(hint,new LinearLayout.LayoutParams(-1,0,1));
-  page.addView(content,new LinearLayout.LayoutParams(-1,0,1));
+  int gap=ui.dp(6);android.content.res.Configuration cf=getResources().getConfiguration();boolean bar=cf.screenWidthDp<cf.screenHeightDp;
+  LinearLayout shell=new LinearLayout(this);shell.setPadding(gap,gap,gap,gap);root.addView(shell);
+  rail=new HuRail(ui,bar,this::show,()->startActivity(new Intent(this,HeadUnitSettingsActivity.class)));
+  LinearLayout column=new LinearLayout(this);column.setOrientation(LinearLayout.VERTICAL);
+  if(bar)shell.addView(column,new LinearLayout.LayoutParams(-1,-1));
+  else{shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));LinearLayout.LayoutParams columnParams=new LinearLayout.LayoutParams(0,-1,1);columnParams.setMarginStart(gap);shell.addView(column,columnParams);}
+  content=new FrameLayout(this);content.setBackground(HuUi.round(ui.card,ui.dp(22)));content.setClipToOutline(true);content.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
+  column.addView(content,new LinearLayout.LayoutParams(-1,0,1));
   HuMiniPlayer mini=new HuMiniPlayer(ui,accent,this::expand);
-  LinearLayout.LayoutParams miniParams=new LinearLayout.LayoutParams(-1,-2);miniParams.topMargin=gap;page.addView(mini,miniParams);
+  LinearLayout.LayoutParams miniParams=new LinearLayout.LayoutParams(-1,-2);miniParams.topMargin=gap;column.addView(mini,miniParams);
+  if(bar){LinearLayout.LayoutParams railParams=new LinearLayout.LayoutParams(-1,ui.dp(104));railParams.topMargin=gap;column.addView(rail,railParams);}
   player=new HuNowPlaying(ui,accent,this::collapse);player.setVisibility(View.GONE);root.addView(player,new FrameLayout.LayoutParams(-1,-1));
   setContentView(root);
   // Day/night and other configuration changes recreate the screen; the open player stays open.
   if(state!=null && state.getBoolean("expanded")){expanded=true;player.setVisibility(View.VISIBLE);}
+  content.addView(HuPages.message(ui,HuText.get("loading")));rail.select(page);
+  session.whenReady(()->session.children(session.root(),items->{
+   String[][] prefixes={{"home","spotify:home"},{"recents","spotify:recently-played"},{"browse","spotify:browse"},{"library","spotify:library"}};
+   for(String[] p:prefixes){MediaItem i=HuBrowse.find(items,p[1]);if(i!=null)ids.put(p[0],HuBrowse.id(i));}
+   show(page);
+  }));
  }
- protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);}
+ /** Shows a page of the rail. */
+ private void show(String key){
+  page=key;rail.select(key);content.removeAllViews();
+  HuPages.Open open=item->session.play(HuBrowse.id(item));
+  View v;
+  switch(key){
+   case "home":v=HuPages.home(ui,ids.get("home"),open);break;
+   case "recents":v=HuPages.grid(ui,HuText.get("recents"),ids.get("recents"),open);break;
+   case "browse":v=HuPages.grid(ui,HuText.get("browse"),ids.get("browse"),open);break;
+   case "library":v=HuPages.library(ui,ids.get("library"),open);break;
+   default:v=HuPages.message(ui,HuText.get("search_next"));
+  }
+  content.addView(v,new FrameLayout.LayoutParams(-1,-1));
+ }
+ protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putString("page",page);}
  private void expand(){
   if(expanded)return;expanded=true;player.setVisibility(View.VISIBLE);
   player.setTranslationY(player.getHeight()>0?player.getHeight():getResources().getDisplayMetrics().heightPixels);

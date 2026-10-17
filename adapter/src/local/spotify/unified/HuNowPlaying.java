@@ -6,8 +6,10 @@ import android.widget.*;
 /**
  * Our player: a large cover, title, artist and like, a seek bar with times and the controls
  * (shuffle, previous, play/pause, next, repeat), on a gradient from the cover's colour. Wide
- * screens put the cover beside the controls, narrow ones above them. The top bar collapses the
- * player and opens the queue editor and Jam.
+ * screens put the controls on the driver's side and the cover at the far end (right, or left in
+ * right-to-left languages, by layout mirroring); narrow screens put the cover above them. The seek
+ * bar, times and controls stay left-to-right in right-to-left languages, as media controls do in
+ * Material. The top bar collapses the player and opens the queue editor and Jam.
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final boolean accent;
@@ -16,12 +18,12 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final Runnable tick=new Runnable(){public void run(){progress();if(isAttachedToWindow() && session.playing())postDelayed(this,500);}};
  HuNowPlaying(HuUi ui,boolean accent,Runnable collapse){
   super(ui.activity);this.ui=ui;this.accent=accent;session=HuSession.get(ui.activity);
-  setOrientation(VERTICAL);setPadding(ui.dp(24),ui.dp(8),ui.dp(32),ui.dp(24));setClickable(true);
+  setOrientation(VERTICAL);setPaddingRelative(ui.dp(24),ui.dp(8),ui.dp(32),ui.dp(24));setClickable(true);
   background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{ui.bg,ui.bg});setBackground(background);
   // Top bar: collapse, then the queue editor and Jam.
   LinearLayout top=new LinearLayout(ui.activity);top.setGravity(Gravity.CENTER_VERTICAL);
   top.addView(HuControls.button(ui,"encore_icon_chevron_down_24",HuText.get("collapse"),ui.dp(76),v->collapse.run()));
-  TextView label=ui.label(HuText.get("now_playing"),18,ui.secondary,true);label.setPadding(ui.dp(8),0,0,0);top.addView(label,new LayoutParams(0,-2,1));
+  TextView label=ui.label(HuText.get("now_playing"),18,ui.secondary,true);label.setPaddingRelative(ui.dp(8),0,0,0);top.addView(label,new LayoutParams(0,-2,1));
   top.addView(HuControls.button(ui,"encore_icon_group_session_24",HuText.get("start_jam"),ui.dp(76),v->HeadUnitJam.open(getContext())));
   top.addView(HuControls.button(ui,"encore_icon_queue_24",HuText.get("queue"),ui.dp(76),v->getContext().startActivity(new Intent(getContext(),HeadUnitQueueActivity.class))));
   addView(top);
@@ -30,10 +32,9 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   addView(body,new LayoutParams(-1,0,1));
   int size=Math.round(Math.min(getResources().getConfiguration().screenHeightDp*(wide?0.62f:0.4f),getResources().getConfiguration().screenWidthDp*(wide?0.38f:0.7f)));
   cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(14)));cover.setClipToOutline(true);
-  body.addView(cover,new LayoutParams(ui.dp(size),ui.dp(size)));
   LinearLayout column=new LinearLayout(ui.activity);column.setOrientation(VERTICAL);column.setGravity(Gravity.CENTER_VERTICAL);
-  if(wide)column.setPadding(ui.dp(48),0,0,0);else column.setPadding(0,ui.dp(24),0,0);
-  body.addView(column,wide?new LayoutParams(0,-1,1):new LayoutParams(-1,-2));
+  if(wide){column.setPaddingRelative(0,0,ui.dp(48),0);body.addView(column,new LayoutParams(0,-1,1));body.addView(cover,new LayoutParams(ui.dp(size),ui.dp(size)));}
+  else{column.setPadding(0,ui.dp(24),0,0);body.addView(cover,new LayoutParams(ui.dp(size),ui.dp(size)));body.addView(column,new LayoutParams(-1,-2));}
   // Title and artist with like at the end.
   LinearLayout heading=new LinearLayout(ui.activity);heading.setGravity(Gravity.CENTER_VERTICAL);
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);
@@ -51,11 +52,11 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
    public void onProgressChanged(SeekBar s,int p,boolean user){if(user)elapsed.setText(HuControls.time(session.duration()*p/1000));}
    public void onStopTrackingTouch(SeekBar s){dragging=false;session.seek(session.duration()*s.getProgress()/1000);}
   });
-  LayoutParams seekParams=new LayoutParams(-1,ui.dp(48));seekParams.topMargin=ui.dp(24);column.addView(seek,seekParams);
+  seek.setLayoutDirection(LAYOUT_DIRECTION_LTR);LayoutParams seekParams=new LayoutParams(-1,ui.dp(48));seekParams.topMargin=ui.dp(24);column.addView(seek,seekParams);
   LinearLayout times=new LinearLayout(ui.activity);elapsed=ui.label("0:00",16,ui.secondary,false);remaining=ui.label("0:00",16,ui.secondary,false);remaining.setGravity(Gravity.END);
-  times.setPadding(ui.dp(16),0,ui.dp(16),0);times.addView(elapsed,new LayoutParams(0,-2,1));times.addView(remaining,new LayoutParams(0,-2,1));column.addView(times);
+  times.setLayoutDirection(LAYOUT_DIRECTION_LTR);times.setPadding(ui.dp(16),0,ui.dp(16),0);times.addView(elapsed,new LayoutParams(0,-2,1));times.addView(remaining,new LayoutParams(0,-2,1));column.addView(times);
   // Controls.
-  LinearLayout controls=new LinearLayout(ui.activity);controls.setGravity(Gravity.CENTER);
+  LinearLayout controls=new LinearLayout(ui.activity);controls.setGravity(Gravity.CENTER);controls.setLayoutDirection(LAYOUT_DIRECTION_LTR);
   shuffle=HuControls.button(ui,"encore_icon_shuffle_24",HuText.get("shuffle"),ui.dp(76),v->session.send(session.shuffle()));
   play=HuControls.play(ui,ui.dp(96),v->session.playPause());
   repeat=HuControls.button(ui,"encore_icon_repeat_24",HuText.get("repeat"),ui.dp(76),v->session.cycleRepeat());
