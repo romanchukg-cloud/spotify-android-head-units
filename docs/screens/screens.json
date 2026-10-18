@@ -1,17 +1,17 @@
 [
   {
-    "file": "car-home-day.jpg",
+    "file": "car-home-night.jpg",
     "width": 1600,
     "height": 900
   },
   {
-    "file": "car-library-day.jpg",
+    "file": "car-playlist-day.jpg",
     "width": 1600,
     "height": 900
   },
   {
-    "file": "car-library-night.jpg",
-    "width": 1600,
-    "height": 900
+    "file": "car-player-split-night.jpg",
+    "width": 900,
+    "height": 890
   }
 ]

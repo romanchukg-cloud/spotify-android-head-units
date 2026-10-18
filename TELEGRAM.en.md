@@ -1,23 +1,24 @@
-🎵 Spotify for Android Head Units — test.11
+🎵 Spotify for Android Head Units — test.12
 
-Downloads, voice search, radio and Jam!
+A new interface of its own, made for the car!
 
-• Offline downloads (experimental): a download button on playlist and album pages. Downloaded music plays without a connection, even right after the car starts, and Library → Downloads lists it. Needs Spotify Premium.
-• Voice search: a microphone in the search field, if your head unit has speech recognition (Google's or another). Say an artist or a song and it plays.
-• Queue editor: a pencil on the queue page opens a big queue screen. Tap a track to play it, remove tracks, or clear what you added.
-• Song radio and Artist radio: start a Spotify station from the track that is playing.
-• Jam: a Jam button on the queue page shows a QR code. Up to 5 passengers scan it to listen along and add songs.
-• Fix: removing a track from the queue or adding one no longer crashes Spotify.
+• New interface: Home, Library, Search and pages for playlists, albums, artists and podcasts, with big buttons. Navigation at the side, or at the bottom on portrait screens.
+• Blurred cover art: the player, the mini-player and page headers sit on their cover. Swipe the mini-player up to open the player, down to close it.
+• Queue and sleep timer: the queue opens over the player — play or remove tracks, song or artist radio, Jam. The moon button pauses the music after 15–60 minutes or at the end of the track.
+• Download progress: a green arrow marks downloaded songs, and a playlist shows "Downloaded 25 of 150" while it downloads.
+• Split screen and portrait: the interface fits half the screen next to navigation; the keyboard no longer squeezes it.
 
-How to update: on test.9 or test.10, Spotify offers test.11 inside the app, or open Head unit settings → Updates → Check. On older builds, install it once by hand as an update over your current build (don't uninstall).
+⚠️ This app is free. If someone sold it to you, you were misled — ask for your money back. Download it only from the official page below. It is unofficial, not made by Spotify or BYD.
+
+How to update: on test.9, test.10 or test.11, Spotify offers test.12 inside the app, or open Head unit settings → Updates → Check. On older builds, install it once by hand as an update over your current build (don't uninstall).
 
 📥 Download page:
 https://romanchukg-cloud.github.io/spotify-android-head-units/
 
 Direct APK:
-https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.11/Spotify-5.5.0-HeadUnit-test.11.apk
+https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.12/Spotify-5.5.0-HeadUnit-test.12.apk
 
 Release notes:
-https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.11
+https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.12
 
-Android 9+. Experimental test release, checked on Android 9, 12 and 13 emulators; not yet in a car. Spotify keeps downloads off for its car app, and this build turns them on, so Spotify may change how they work. The microphone appears only if the head unit has speech recognition.
+Android 9+. Experimental test release, checked on Android 9 and 13 emulators and, as pre-release builds, in a BYD car. The search microphone appears only if the head unit has speech recognition (BYD DiLink has none — use the voice button on the steering wheel).

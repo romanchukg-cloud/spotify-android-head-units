@@ -2,17 +2,17 @@
 
 [English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-An experimental Spotify Automotive player for Android head units. The BYD-derived interface and music service are combined in one APK, with one icon and the standard Spotify sign-in flow.
+An experimental Spotify Automotive player for Android head units, with an interface of its own made for the car: one APK, one icon and the standard Spotify sign-in. Free — never pay for it.
 
-[Download test.11 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.11/Spotify-5.5.0-HeadUnit-test.11.apk) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
+[Download test.12 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.12/Spotify-5.5.0-HeadUnit-test.12.apk) · [🌐 Spotify for Android Head Units](https://romanchukg-cloud.github.io/spotify-android-head-units/)
 
-![Home in the New style in a BYD car, day theme](docs/screens/car-home-day.jpg)
+![Home at night in a BYD car](docs/screens/car-home-night.jpg)
 
 ## What has been tested
 
-Headunit-test.11 adds offline downloads (experimental, Spotify Premium), voice search when the head unit has a speech recogniser, a queue editor with song and artist radio, and Jam with a QR code for passengers. It also fixes a crash of the music process when a track was removed from or added to the queue. Because the interface changed, it was made with the full reference build. The release audit reports 45 PASS / 0 FAIL, 152 updater and 39 sign-in checks pass, and the signing certificate equals test.10. On Android 9 and 13 emulators test.11 installs as an update over test.10 and runs its update check without a crash. On an Android 12 emulator with a signed-in Premium account, downloads played offline (also after a cold start), voice search worked with a test recogniser, and queue editing, radio and Jam worked.
+Headunit-test.12 replaces the BYD-derived interface with one of its own: Home, Library, Search, pages for playlists, albums, artists and podcasts, a full-screen player and the queue on blurred cover art, download progress, a sleep timer and a notice that the app is free. It was made with the full reference build. The release audit reports 46 PASS / 0 FAIL, 152 updater and 39 sign-in checks pass, and the signing certificate equals test.11. On Android 9 and 13 emulators test.12 installs as an update over test.11 and runs its update check without a crash. Pre-release builds ran in a BYD car (DiLink 5, Android 12): landscape, portrait and split screen with navigation, QR sign-in, steering-wheel buttons and Spotify Connect.
 
-**Experimental headunit-test.11.** Test.11 has not been checked in a car yet, and whether BYD DiLink has a speech recogniser for the microphone button is unknown. Spotify keeps downloads off for its Automotive client; this build turns the client's support on, so Spotify may change how downloads behave. The New style in Arabic (right-to-left), right-hand-drive layouts, DiLink 5.1 / Android 13 and other head units remain unverified.
+**Experimental headunit-test.12.** The exact release file has not been installed in a car yet. Right-hand-drive layouts, DiLink 5.1 / Android 13 and other head units remain unverified; Arabic was checked on an emulator only. Spotify keeps downloads off for its Automotive client; this build turns the client's support on, so Spotify may change how downloads behave.
 
 Android 9+ (API 28). BYD rhythm is verified on DiLink 5 / Android 12; DiLink 5.1 / Android 13 and other firmware are not yet verified. AAOS and GENERIC profiles are implemented; real head units from other manufacturers and AAOS remain unverified.
 
@@ -29,22 +29,22 @@ Open Head unit settings → Support. Send diagnostics lets you preview approved 
 5. To add another driver: Head unit settings → Accounts → Add account · QR. Switching stops playback and restarts the player.
 6. Check music playback and controls. Remove the old separate BYD interface only after the new APK passes these checks.
 
-Android 9+ · 55.6 MiB · unofficial adaptation
+Android 9+ · 55.7 MiB · unofficial adaptation
 
 ## Verify the file
 
-`Spotify-5.5.0-HeadUnit-test.11.apk` · 58 251 193 bytes
+`Spotify-5.5.0-HeadUnit-test.12.apk` · 58 378 169 bytes
 
 SHA-256 of the current test build:
 
 ```text
-6e1cf2566026f08859861fc63ab1a6a53eba8c84d1329c29985708e4e7030fe7
+00f82a80d9a40d9d3138c3fde1d4c3c88edf270c380c54a70fa01032ab6982a1
 ```
 
-Unofficial experimental project. Spotify and BYD are trademarks of their respective owners.
+Unofficial experimental project. This app is free — if you paid for it, ask for your money back. Spotify and BYD are trademarks of their respective owners.
 
 ## Source code and validation
 
-Our Java integration code, patch/build scripts, audit and emulator test sources are available in the repository. The proprietary Spotify backend and BYD interface are local build inputs.
+Our Java code — the interface, the integration, patch and build scripts, audits and emulator tests — is in the repository. The proprietary Spotify backend is a local build input. The APK still contains parts of the BYD (Vivid) player app (its media service for the car's voice assistant, resources and a typeface); they are to be removed.
 
-[Java / build](adapter/) · [What has been tested](reports/headunit-test.11.md)
+[Java / build](adapter/) · [What has been tested](reports/headunit-test.12.md)

@@ -1,0 +1,1 @@
+A new interface of its own: Home, Library, Search and pages for playlists, albums, artists and podcasts, a full-screen player and the queue, on blurred cover art. Download progress with marks on downloaded songs, a sleep timer, and a notice that this app is free. Works in split screen and portrait. Sign-in and settings are kept. Experimental prerelease.

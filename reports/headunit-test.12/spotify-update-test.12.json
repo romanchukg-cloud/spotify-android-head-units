@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 12,
+  "version": "test.12",
+  "version_code": 95489,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.12/Spotify-5.5.0-HeadUnit-test.12.apk",
+  "sha256": "00f82a80d9a40d9d3138c3fde1d4c3c88edf270c380c54a70fa01032ab6982a1",
+  "size": 58378169,
+  "notes": "A new interface of its own: Home, Library, Search and pages for playlists, albums, artists and podcasts, a full-screen player and the queue, on blurred cover art. Download progress with marks on downloaded songs, a sleep timer, and a notice that this app is free. Works in split screen and portrait. Sign-in and settings are kept. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.12",
+  "min_sdk": 28
+}

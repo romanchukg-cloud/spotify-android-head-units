@@ -2,17 +2,17 @@
 
 [English](README.md) · [Українська](README.uk.md) · [Русский](README.ru.md) · [العربية](README.ar.md) · [简体中文](README.zh-Hans.md)
 
-适用于 Android 车机的 Spotify Automotive 实验版播放器。将基于比亚迪的界面与音乐服务整合到一个 APK 中，使用一个图标和 Spotify 标准登录流程。
+适用于 Android 车机的实验性 Spotify Automotive 播放器，拥有为汽车设计的自有界面：一个 APK、一个图标和标准的 Spotify 登录。免费——切勿付费。
 
-[下载 test.11 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.11/Spotify-5.5.0-HeadUnit-test.11.apk) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
+[下载 test.12 APK](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.12/Spotify-5.5.0-HeadUnit-test.12.apk) · [🌐 适用于 Android 车机的 Spotify](https://romanchukg-cloud.github.io/spotify-android-head-units/zh-Hans/)
 
-![BYD 车内的新版样式主页（日间主题）](docs/screens/car-home-day.jpg)
+![BYD 汽车中夜间的首页](docs/screens/car-home-night.jpg)
 
 ## 已完成的测试
 
-Headunit-test.11 新增离线下载（实验功能，需 Spotify Premium）、车机支持语音识别时的语音搜索、带歌曲和艺人电台的播放队列编辑器，以及为乘客提供二维码的 Jam。同时修复了从队列移除或向队列添加曲目时音乐进程崩溃的问题。由于界面有变化，本版本使用完整的参考构建流程构建。发布审计结果 45 PASS / 0 FAIL，152 项更新检查和 39 项登录检查通过，签名证书与 test.10 相同。在 Android 9 和 13 模拟器上，test.11 可作为 test.10 的更新安装并检查更新，无崩溃。在登录 Premium 账号的 Android 12 模拟器上，下载内容可离线播放（包括冷启动后），语音搜索在测试识别器下正常，队列编辑、电台和 Jam 均正常。
+Headunit-test.12 用自有界面取代了基于 BYD 的界面：首页、音乐库、搜索，歌单、专辑、艺人和播客页面，以模糊封面为背景的全屏播放器和播放队列，下载进度、睡眠定时，以及应用免费的提示。使用完整参考构建制作。发布审核 46 PASS / 0 FAIL，152 项更新器检查和 39 项登录检查通过，签名证书与 test.11 相同。在 Android 9 和 13 模拟器上，test.12 可作为更新安装在 test.11 之上，并在检查更新时不崩溃。预发布版本已在 BYD 汽车（DiLink 5，Android 12）中运行：横屏、竖屏以及与导航分屏、二维码登录、方向盘按键和 Spotify Connect。
 
-**headunit-test.11 实验版本。** test.11 尚未在车内检查，也不确定 BYD DiLink 是否提供可供麦克风按钮使用的语音识别。Spotify 对其车载客户端关闭了下载功能；本版本开启了客户端已有的支持，因此 Spotify 可能改变下载的行为。新版样式的阿拉伯语（从右到左）、右舵布局、DiLink 5.1 / Android 13 及其他车机仍未验证。
+**实验版 headunit-test.12。** 发布文件本身尚未安装到汽车中。右舵布局、DiLink 5.1 / Android 13 及其他车机尚未验证；阿拉伯语仅在模拟器上检查过。Spotify 为其 Automotive 客户端关闭了下载；此版本开启了客户端已有的支持，因此 Spotify 可能会改变下载的工作方式。
 
 Android 9+（API 28）。比亚迪律动已在 DiLink 5 / Android 12 上验证；DiLink 5.1 / Android 13 和其他固件尚未验证。已实现 AAOS 和 GENERIC 配置；其他品牌真实车机及 AAOS 尚未验证。
 
@@ -29,22 +29,22 @@ Open Head unit settings → Support. Send diagnostics lets you preview approved 
 5. 添加其他驾驶员：主机设置 → 账号 → 添加账号 · QR。切换时会停止音乐并重启播放器。
 6. 检查音乐播放和控制功能。确认新 APK 工作正常后，再卸载原来独立的比亚迪界面应用。
 
-Android 9+ · 55.6 MiB · 非官方适配
+Android 9+ · 55.7 MiB · 非官方适配
 
 ## 文件校验
 
-`Spotify-5.5.0-HeadUnit-test.11.apk` · 58 251 193 bytes
+`Spotify-5.5.0-HeadUnit-test.12.apk` · 58 378 169 bytes
 
 当前测试版本的 SHA-256：
 
 ```text
-6e1cf2566026f08859861fc63ab1a6a53eba8c84d1329c29985708e4e7030fe7
+00f82a80d9a40d9d3138c3fde1d4c3c88edf270c380c54a70fa01032ab6982a1
 ```
 
-非官方实验项目。Spotify 和 BYD 商标归各自所有者所有。
+非官方实验项目。此应用免费——如果您为此付费，请要求退款。Spotify 和 BYD 是其各自所有者的商标。
 
 ## 源代码与验证
 
-仓库提供我们的 Java 集成代码、补丁与构建脚本、审计工具及模拟器测试源码。闭源 Spotify 后端和 BYD 界面作为本地构建输入。
+我们的 Java 代码——界面、集成、补丁和构建脚本、审核及模拟器测试——均在仓库中。专有的 Spotify 后端是本地构建输入。APK 仍包含 BYD（Vivid）播放器的部分内容：用于汽车语音助手的媒体服务、资源和一种字体；之后会移除。
 
-[Java / build](adapter/) · [已完成的测试](reports/headunit-test.11.md)
+[Java / build](adapter/) · [已完成的测试](reports/headunit-test.12.md)

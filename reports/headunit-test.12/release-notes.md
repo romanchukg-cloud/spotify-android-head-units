@@ -1,0 +1,20 @@
+Test.12 brings an interface of its own, made for the car, and a notice that this app is free.
+
+- **Our own interface:** Spotify now opens in an interface written for this app instead of the BYD-derived one: Home, Recents, Browse, Library (Playlists, Podcasts, Albums, Artists, Downloads) and Search, with large cards and rows. Navigation is a rail at the side, or a bar along the bottom in portrait. Tabs keep their place and back returns to where you were.
+- **Pages for playlists, albums, artists and podcasts:** the cover, title, number of songs and length on the blurred cover, with Shuffle, Play and Download. Tap a track to play it; the playing one is highlighted. Artists show their top tracks and albums; podcasts and audiobooks show how much of each episode is played.
+- **Player:** the full-screen player and the mini-player sit on their blurred cover. The controls are on the driver's side and the cover at the far end (mirrored in Arabic). Swipe the mini-player up to open the player and swipe down to close it. It fits a split screen.
+- **Queue and sleep timer:** the queue opens over the player: tap a track to play it, remove tracks, start song or artist radio, open Jam or clear what you added. The moon button sets a sleep timer: 15, 30, 45 minutes, an hour or the end of the track.
+- **Download progress:** a green arrow marks downloaded songs; while a playlist downloads, the page shows "Downloaded 25 of 150" with a bar.
+- **Search:** results appear while you type, grouped like Spotify's (top results, songs, albums, artists, playlists, podcasts, audiobooks), with recent searches. A microphone appears when the head unit has a speech recogniser; BYD DiLink has none, so use the voice button on the steering wheel.
+- **This app is free:** once per version, on the sign-in screens and in Head unit settings → About this app: the app is free; if someone sold it to you, you were misled — ask for your money back; download it only from the official page (with a QR code). It is unofficial, not made by Spotify or BYD.
+- **Also:** the keyboard lies over the interface in landscape instead of squeezing it; the Spotify QR sign-in screen fits short screens; the Classic style is gone (the New style is the only one); rounded corners on every screen.
+
+**Updating:** test.9, test.10 and test.11 offer test.12 in the app (or Head unit settings → Updates → Check). From older builds, install it once by hand as an update without uninstalling. Package and signing certificate match test.11. Android 9+ (API 28).
+
+Built with the full reference build (`adapter/build.sh`). See [adapter/README.md](https://github.com/romanchukg-cloud/spotify-android-head-units/blob/main/adapter/README.md) (sections "Local test.12").
+
+Validation: the release audit passes 46/46 (with a new check that the launcher opens our interface), 152 updater and 39 sign-in checks pass, the compatibility audit reports no failures. On Android 9 and 13 emulators test.12 installs as an update over the published test.11, starts and runs its update check without a crash. Pre-release builds of test.12 ran in a BYD car (DiLink 5, Android 12): the interface, split screen with Google Maps, portrait, signing out and back in with the QR code, steering-wheel buttons, Spotify Connect from a laptop and download marks.
+
+**Experimental prerelease.** Not verified: right-hand-drive layouts, DiLink 5.1 / Android 13 and other head units; Arabic only on an emulator. The APK still contains parts of the BYD (Vivid) player app (its media service for the car's voice assistant, resources and a typeface); they are to be removed.
+
+Українською: test.12 — власний інтерфейс для авто (Головна, Бібліотека, Пошук, сторінки плейлістів, альбомів, виконавців і подкастів, плеєр і черга на розмитій обкладинці), прогрес завантажень і позначки завантажених пісень, таймер сну, робота в розділеному екрані й вертикально, і повідомлення, що застосунок безкоштовний: якщо вам його продали — вимагайте гроші назад і завантажуйте лише з офіційної сторінки. З test.9–test.11 оновлення прийде в застосунку.
