@@ -32,9 +32,11 @@ public final class HuPlayerActivity extends Activity {
  private HuDetail.Target detail;private final ArrayDeque<Level> levels=new ArrayDeque<>();private final Map<String,View> tabs=new HashMap<>();
  private final ArrayList<HuDetail.Target> restored=new ArrayList<>();private float contentWidth,contentHeight;
  protected void attachBaseContext(Context base){super.attachBaseContext(HeadUnitSettings.scaled(base));}
+ private String side=HeadUnitDriver.AUTO;
  protected void onCreate(Bundle state){
   super.onCreate(state);local.spotify.close.TaskGuardService.opened(this);ui=new HuUi(this);ui.window();session=HuSession.get(this);
-  boolean accent;try{accent=HeadUnitSettings.call(this,"get",null).getBoolean("cover_accent",true);}catch(RuntimeException e){accent=true;}
+  boolean accent;try{Bundle settings=HeadUnitSettings.call(this,"get",null);accent=settings.getBoolean("cover_accent",true);side=settings.getString("drive_side",HeadUnitDriver.AUTO);}catch(RuntimeException e){accent=true;}
+  ui.rhd=HeadUnitDriver.right(this,side);
   if(state!=null){
    page=state.getString("page",page);detail=HuDetail.Target.restore(state);searchQuery=state.getString("search");
    ArrayList<Bundle> saved=state.getParcelableArrayList("trail");if(saved!=null)for(Bundle b:saved){HuDetail.Target t=HuDetail.Target.restore(b);if(t!=null)restored.add(t);}
@@ -47,7 +49,12 @@ public final class HuPlayerActivity extends Activity {
   // them at full height and leaves the navigation in view.
   FrameLayout stage=new FrameLayout(this);
   if(bar){shell.addView(stage,new LinearLayout.LayoutParams(-1,0,1));LinearLayout.LayoutParams railParams=new LinearLayout.LayoutParams(-1,ui.dp(104));railParams.topMargin=gap;shell.addView(rail,railParams);}
-  else{shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));LinearLayout.LayoutParams stageParams=new LinearLayout.LayoutParams(0,-1,1);stageParams.setMarginStart(gap);shell.addView(stage,stageParams);}
+  else{
+   // The navigation rail is on the driver's side: the start, or the end with right-hand drive.
+   LinearLayout.LayoutParams stageParams=new LinearLayout.LayoutParams(0,-1,1);
+   if(ui.rhd){stageParams.setMarginEnd(gap);shell.addView(stage,stageParams);shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));}
+   else{shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));stageParams.setMarginStart(gap);shell.addView(stage,stageParams);}
+  }
   LinearLayout column=new LinearLayout(this);column.setOrientation(LinearLayout.VERTICAL);stage.addView(column,new FrameLayout.LayoutParams(-1,-1));
   content=new FrameLayout(this);content.setBackground(HuUi.round(ui.card,ui.dp(22)));content.setClipToOutline(true);content.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
   column.addView(content,new LinearLayout.LayoutParams(-1,0,1));
@@ -216,7 +223,11 @@ public final class HuPlayerActivity extends Activity {
  protected void onResume(){
   super.onResume();
   local.spotify.close.TaskGuardService.opened(this);
-  try{if(HeadUnitSettings.stale(this)){recreate();return;}}catch(RuntimeException ignored){}
+  try{
+   if(HeadUnitSettings.stale(this)){recreate();return;}
+   // A changed driving side moves the controls.
+   if(!side.equals(HeadUnitSettings.call(this,"get",null).getString("drive_side",HeadUnitDriver.AUTO))){recreate();return;}
+  }catch(RuntimeException ignored){}
  }
  /** Back: closes the queue, collapses the player, then goes back through the pages, then to Home, then leaves. */
  public void onBackPressed(){if(queueOpen)closeQueue();else if(expanded)collapse();else if(detail!=null)back();else if(!"home".equals(page) && !ids.isEmpty())show("home");else super.onBackPressed();}

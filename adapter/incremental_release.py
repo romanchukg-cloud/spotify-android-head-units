@@ -235,6 +235,7 @@ def main():
 
     build_config.generate()
     sources = sorted(str(p) for p in (ADAPTER / 'src/local/spotify').glob('*/*.java'))
+    sources += sorted(str(p) for p in (ADAPTER / 'src/com').rglob('*.java'))
     sources += sorted(str(p) for p in (ADAPTER / 'generated/local/spotify/unified').glob('*.java'))
     classes, stubs = a.work / 'classes', a.work / 'stubs'
     # The backend's own support-library media classes: compile-time only, never in the helper DEX.

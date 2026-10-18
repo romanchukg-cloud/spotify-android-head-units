@@ -329,3 +329,11 @@ The APK no longer contains any part of the BYD (Vivid) player app: our interface
 
 A sideways swipe on the mini-player or the player switches tracks (`HuSkipSwipe`): to the left the next track, to the right the previous one, in every language (the controls stay left-to-right). The cover (and in the mini-player the title) follows the finger; far (96 dp) or fast enough it slides out and back in from the other side, otherwise it springs back. Vertical swipes keep their roles (up on the mini-player opens the player, down on the player closes it), and the seek bar keeps its own drags.
 
+
+## Test.13: right-hand drive (owner's request)
+
+Head unit settings → Appearance → **Steering wheel**: Auto, Left or Right (`drive_side`); the hint says what the car reports. With right-hand drive the driver's controls move to the right: the navigation rail to the right edge, the player's cover to the left with the title and controls on the right (as the BYD player app's `_rhd` layouts did), the mini-player mirrored (controls on the right, the title next to the cover), the search microphone after the field. Portrait screens keep the bottom bar. A changed setting rebuilds the main screen when it is shown again.
+
+`HeadUnitDriver` decides "Auto", once per process: on BYD it asks the car service as the BYD player app did through BYD's DiCar library: a query of `content://com.byd.car.server.provider.CarServiceProvider/sync_binder` for `com.byd.car.carinfo.ICarInfoService` returns its binder in a `com.byd.spi.ipc.cursor.BinderCursor$BinderParcelable` (one strong binder; our class of that name reads it), and transaction 1 (`getDriverSeat`) returns the seat (`VehicleAreaSeat`: 1 front left, 4 front right). The manifest declares the provider under `<queries>`. On Android Automotive it asks `CarOccupantZoneManager.getDriverSeat` through the optional `android.car` library (`uses-library`, not required). Other head units report nothing and stay left unless set by hand. Builds up to test.12 never used right-hand drive: `prepare.py` replaced the BYD app's driver-seat check with `false`, since DiCar was not initialised.
+
+Checked on the Android 12 emulator (no car: seat 0, "The car does not report it"): Right moves the rail, the mini-player and the player as described, Auto brings them back; no crash. Not yet checked in a car (the BYD call, its permission).

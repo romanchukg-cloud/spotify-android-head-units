@@ -6,7 +6,8 @@ import android.widget.*;
  * Our player: a large cover, title, artist and like, a seek bar with times and the controls
  * (shuffle, previous, play/pause, next, repeat), on the blurred cover (with "Colour from cover
  * art"; plain otherwise). Wide windows put the controls on the driver's side and the cover at the
- * far end (right, or left in right-to-left languages, by layout mirroring); narrow ones put the
+ * far end (right, or left in right-to-left languages, by layout mirroring; the other way round with
+ * right-hand drive); narrow ones put the
  * cover above them. The cover takes only the room the texts and controls leave, so a split screen
  * keeps the controls in view; small windows get smaller controls. The seek bar, times and controls
  * stay left-to-right in right-to-left languages, as media controls do in Material. The top bar
@@ -48,7 +49,8 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   // The cover slides out of its box when a swipe switches tracks.
   box.setClipChildren(false);body.setClipChildren(false);skip=new HuSkipSwipe(ui,session,cover);
   LinearLayout col=new LinearLayout(ui.activity);col.setOrientation(VERTICAL);col.setGravity(Gravity.CENTER_VERTICAL);
-  if(wide){col.setPaddingRelative(0,0,ui.dp(48),0);body.addView(col,new LayoutParams(0,-1,1));body.addView(box,new LayoutParams(0,-1,0.7f));}
+  if(wide && ui.rhd){col.setPaddingRelative(ui.dp(48),0,0,0);body.addView(box,new LayoutParams(0,-1,0.7f));body.addView(col,new LayoutParams(0,-1,1));}
+  else if(wide){col.setPaddingRelative(0,0,ui.dp(48),0);body.addView(col,new LayoutParams(0,-1,1));body.addView(box,new LayoutParams(0,-1,0.7f));}
   else{LayoutParams b=new LayoutParams(-1,0,1);b.topMargin=ui.dp(compact?4:12);body.addView(box,b);col.setPadding(0,ui.dp(compact?12:24),0,0);body.addView(col,new LayoutParams(-1,-2));}
   // Title and artist with like at the end.
   LinearLayout heading=new LinearLayout(ui.activity);heading.setGravity(Gravity.CENTER_VERTICAL);

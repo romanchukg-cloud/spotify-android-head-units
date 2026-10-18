@@ -160,3 +160,12 @@ alias=E.SubElement(app,'activity-alias',{A+'name':'local.bydui.com.vivid.spotify
 f=E.SubElement(alias,'intent-filter');E.SubElement(f,'action',{A+'name':'android.intent.action.MAIN'});E.SubElement(f,'category',{A+'name':'android.intent.category.LAUNCHER'})
 m.write(p,encoding='utf-8',xml_declaration=True)
 print('Own interface: main screen (launcher alias local.bydui.com.vivid.spotify.MainActivity -> HuPlayerActivity)')
+
+# Driving side: HeadUnitDriver asks the car which seat is the driver's. BYD's car service answers
+# through its provider (visible to the app only when declared under <queries>); Android Automotive
+# through the android.car library, which other devices lack (not required).
+p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+q=E.SubElement(root,'queries');E.SubElement(q,'provider',{A+'authorities':'com.byd.car.server.provider.CarServiceProvider'})
+E.SubElement(app,'uses-library',{A+'name':'android.car',A+'required':'false'})
+m.write(p,encoding='utf-8',xml_declaration=True)
+print('Driving side: car service visibility and the optional android.car library')

@@ -9,6 +9,8 @@ import android.widget.*;
 /** Building blocks of the app's own screens: the interface, settings, accounts and support. */
 final class HuUi {
  final Activity activity;final boolean dark;
+ /** Right-hand drive (HeadUnitDriver): the driver's controls move to the right, the cover to the left. */
+ boolean rhd;
  final int bg,card,text,secondary,divider,accent,control,selected,selectedInk;
  HuUi(Activity a){
   activity=a;dark=(a.getResources().getConfiguration().uiMode&Configuration.UI_MODE_NIGHT_MASK)==Configuration.UI_MODE_NIGHT_YES;

@@ -31,12 +31,14 @@ final class HuSearch {
   field.setInputType(InputType.TYPE_CLASS_TEXT);field.setImeOptions(EditorInfo.IME_ACTION_SEARCH|EditorInfo.IME_FLAG_NO_EXTRACT_UI);field.setPaddingRelative(ui.dp(14),0,ui.dp(8),0);
   pill.addView(field,new LinearLayout.LayoutParams(0,ui.dp(72),1));
   clear=HuControls.button(ui,"encore_icon_x_24",HuText.get("clear"),ui.dp(60),v->field.setText(""));clear.setVisibility(View.INVISIBLE);pill.addView(clear);
-  // The microphone comes first, nearest the driver's hand (on the right in right-to-left languages).
+  // The microphone is nearest the driver's hand: first (on the right in right-to-left languages),
+  // or last with right-hand drive.
+  bar.addView(pill,new LinearLayout.LayoutParams(0,ui.dp(72),1));
   if(voice!=null && HeadUnitVoice.available(ui.activity)){
    ImageView mic=HuControls.button(ui,"encore_icon_mic_24",HuText.get("voice"),ui.dp(72),v->{hideKeyboard();voice.run();});
-   mic.setBackground(ui.pressable(ui.control,ui.dp(36)));((LinearLayout.LayoutParams)mic.getLayoutParams()).setMarginEnd(ui.dp(10));bar.addView(mic);
+   mic.setBackground(ui.pressable(ui.control,ui.dp(36)));LinearLayout.LayoutParams m=(LinearLayout.LayoutParams)mic.getLayoutParams();
+   if(ui.rhd){m.setMarginStart(ui.dp(10));bar.addView(mic);}else{m.setMarginEnd(ui.dp(10));bar.addView(mic,0);}
   }
-  bar.addView(pill,new LinearLayout.LayoutParams(0,ui.dp(72),1));
   page.addView(bar);
   // Below: results, recent searches or a message.
   FrameLayout body=new FrameLayout(ui.activity);LinearLayout.LayoutParams bodyParams=new LinearLayout.LayoutParams(-1,0,1);bodyParams.topMargin=ui.dp(8);page.addView(body,bodyParams);

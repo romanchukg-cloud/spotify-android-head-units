@@ -33,6 +33,8 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());this.expand=expand;slop=android.view.ViewConfiguration.get(ui.activity).getScaledTouchSlop();
   skip=new HuSkipSwipe(ui,session,cover,texts);
   progress.setColor(ui.text);track.setColor(ui.text);track.setAlpha(46);
+  // Right-hand drive mirrors the card: the controls on the right, the title next to the cover.
+  if(ui.rhd)setLayoutDirection(ui.activity.getResources().getConfiguration().getLayoutDirection()==LAYOUT_DIRECTION_RTL?LAYOUT_DIRECTION_LTR:LAYOUT_DIRECTION_RTL);
  }
  // A swipe up anywhere on the card opens the player, as a tap on the cover or title does.
  private final Runnable expand;private final int slop;private float downX,downY;private final HuSkipSwipe skip;

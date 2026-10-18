@@ -49,6 +49,9 @@ methods=lambda s: re.findall(r'\.method[^\n]*\n.*?\.end method',s,re.S)
 # Builds up to test.12 carried the BYD (Vivid) player app's interface as relocated classes.
 byd=[k for k in files if k.startswith(('Llocal/bydui/','Lcom/vivid/'))];vehicle=[k for k,v in files.items() if 'Landroid/hardware/bydauto/' in v]
 check('No BYD-derived interface or vehicle API',not byd and not vehicle,f'{len(byd)} BYD-derived classes, {len(vehicle)} using the vehicle API')
+driver=files.get('Llocal/spotify/unified/HeadUnitDriver;','')
+queries=[n.get(A+'authorities') for q in m.findall('queries') for n in q.findall('provider')]
+check('Driving side / BYD car service only on BYD','HeadUnitProfile;->isByd()Z' in driver and 'com.byd.car.carinfo.ICarInfoService' in driver and 'com.byd.car.server.provider.CarServiceProvider' in queries and 'Lcom/byd/spi/ipc/cursor/BinderCursor$BinderParcelable;' in files)
 controllers=files.get('Lle/d;','')
 check('External controller policy hook','HeadUnitControllers;->allow(' in controllers and 'HeadUnitControllers;->matches(' in controllers and 'HeadUnitControllers;->result(' in controllers)
 gate=files.get('Llocal/spotify/close/PlaybackGate;','');death=files.get('Llocal/spotify/close/PlaybackGate$1;','')

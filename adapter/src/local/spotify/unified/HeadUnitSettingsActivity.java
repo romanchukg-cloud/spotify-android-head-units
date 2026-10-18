@@ -11,7 +11,7 @@ public final class HeadUnitSettingsActivity extends Activity {
  private ScrollView scroll;private LinearLayout list;private TextView status;private boolean destroyed;
  public void onCreate(Bundle state){super.onCreate(state);
   scroll=new ScrollView(this);list=new LinearLayout(this);list.setOrientation(1);scroll.addView(list);setContentView(scroll);
-  worker.execute(()->{try{Bundle b=HeadUnitSettings.call(this,"get",null);main.post(()->{if(!destroyed)render(b);});}catch(RuntimeException e){main.post(()->{if(!destroyed)failed();});}});
+  worker.execute(()->{try{Bundle b=HeadUnitSettings.call(this,"get",null);b.putInt("driver_seat",HeadUnitDriver.detected(this));main.post(()->{if(!destroyed)render(b);});}catch(RuntimeException e){main.post(()->{if(!destroyed)failed();});}});
  }
  private int dp(int v){return Math.round(v*getResources().getDisplayMetrics().density);}
  private void render(Bundle b){modern(b);}
@@ -48,6 +48,14 @@ public final class HeadUnitSettingsActivity extends Activity {
   stepper.addView(value);
   stepper.addView(ui.circle("+",HuText.get("scale")+" +",v->{if(scale[0]<130){scale[0]+=5;value.setText(scale[0]+"%");Bundle change=new Bundle();change.putInt("scale",scale[0]);save(change);}}));
   appearance.addView(ui.row(HuText.get("scale"),null,stepper));
+  ui.divider(appearance);
+  // The steering wheel: as the car says, or set by hand; the hint says what the car reports.
+  String[] sides={HeadUnitDriver.AUTO,HeadUnitDriver.LEFT,HeadUnitDriver.RIGHT};int[] side={Math.max(0,java.util.Arrays.asList(sides).indexOf(b.getString("drive_side",HeadUnitDriver.AUTO)))};
+  int seat=b.getInt("driver_seat");
+  FrameLayout picker=new FrameLayout(this);Runnable[] draw={null};
+  draw[0]=()->{picker.removeAllViews();picker.addView(ui.segmented(new String[]{HuText.get("drive_auto"),HuText.get("drive_left"),HuText.get("drive_right")},side[0],i->{if(i==side[0])return;side[0]=i;draw[0].run();Bundle change=new Bundle();change.putString("drive_side",sides[i]);save(change);}));};
+  draw[0].run();
+  appearance.addView(ui.row(HuText.get("drive_side"),HuText.get(seat==HeadUnitDriver.SEAT_RIGHT?"drive_found_right":seat==HeadUnitDriver.SEAT_LEFT?"drive_found_left":"drive_unknown"),picker));
   LinearLayout playback=ui.card(HuText.get("channel"));
   String[] keys={"resume","play_open","external"};
   for(int i=0;i<keys.length;i++){
