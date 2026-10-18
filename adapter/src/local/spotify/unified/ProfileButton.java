@@ -40,7 +40,7 @@ public final class ProfileButton {
     // As tall as the help button it sits beside: its text size and no vertical padding, so the label is not cut.
     if(help instanceof TextView)entry.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,((TextView)help).getTextSize());
     entry.setMinHeight(0);entry.setMinimumHeight(0);entry.setPadding(dp(a,16),0,dp(a,16),0);
-    fitQr(a);
+    fitQr(a);HuFree.loginScreen(a,(FrameLayout)content);
     content.addView(entry,p);
     Runnable place=()->{
      if(a.isDestroyed())return;

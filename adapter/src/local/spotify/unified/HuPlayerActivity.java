@@ -75,6 +75,7 @@ public final class HuPlayerActivity extends Activity {
   content.addView(HuPages.message(ui,HuText.get("loading")));rail.select(page);
   loadRoot();
   session.add(signInWatch);
+  HuFree.maybeShow(this);
  }
  protected void onDestroy(){session.remove(signInWatch);main.removeCallbacksAndMessages(null);super.onDestroy();}
  private final android.os.Handler main=new android.os.Handler(android.os.Looper.getMainLooper());
@@ -107,6 +108,9 @@ public final class HuPlayerActivity extends Activity {
   String message=session.errorMessage();TextView t=ui.label(message!=null && !message.isEmpty()?message:HuText.get("sign_in_hint"),24,ui.text,true);t.setGravity(Gravity.CENTER);t.setPadding(0,ui.dp(24),0,ui.dp(28));p.addView(t);
   String label=session.signInLabel();TextView b=ui.label(label!=null && !label.isEmpty()?label:HuText.get("sign_in"),20,0xff000000,true);b.setGravity(Gravity.CENTER);b.setMinHeight(ui.dp(72));b.setPadding(ui.dp(48),0,ui.dp(48),0);
   b.setBackground(ui.pressable(0xff1ed760,ui.dp(36)));b.setOnClickListener(v->launchSignIn());p.addView(b,new LinearLayout.LayoutParams(-2,ui.dp(72)));
+  // People have sold this app: a new user meets the free-app line here first.
+  LinearLayout.LayoutParams fp=new LinearLayout.LayoutParams(-2,-2);fp.topMargin=ui.dp(32);
+  p.addView(HuFree.line(this,getResources().getDisplayMetrics().density,ui.text,ui.secondary,16),fp);
   return p;
  }
  /** Opens the backend's sign-in screen as the BYD-derived screen did (its pending intent). */
