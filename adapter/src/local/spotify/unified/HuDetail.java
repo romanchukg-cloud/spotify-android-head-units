@@ -39,7 +39,10 @@ final class HuDetail {
   int size=ui.dp(Math.max(120,wide?Math.min(260,Math.min(height-330,width*0.36f-32)):Math.min(220,width*0.5f)));
   ImageView cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,round?size/2f:ui.dp(12)));cover.setClipToOutline(true);
   LinearLayout.LayoutParams coverParams=new LinearLayout.LayoutParams(size,size);coverParams.gravity=Gravity.CENTER_HORIZONTAL;coverParams.topMargin=ui.dp(4);header.addView(cover,coverParams);
-  HuCovers.into(cover,t.icon,size);
+  // The header panel (Backdrop) shows the cover blurred; the cover and its colour arrive together.
+  Integer[] tone={null};android.graphics.Bitmap[] art={null};Runnable[] paint={()->{}};
+  java.util.function.Consumer<String> showCover=uri->{cover.setTag(uri);HuCovers.load(ui.activity,uri,size,(b,c)->{if(!Objects.equals(uri,cover.getTag()))return;cover.setImageBitmap(b);art[0]=b;tone[0]=c;paint[0].run();});};
+  if(t.icon!=null)showCover.accept(t.icon);
   // Shows are podcasts and audiobooks alike in the backend, so they get no type label.
   TextView type=ui.label(kind==null || "show".equals(kind)?"":HuText.get(kind),16,ui.secondary,true);type.setPaddingRelative(ui.dp(8),0,0,0);top.addView(type);
   // Cover, texts and buttons are centred in the header; back and the page type stay at the top start.
@@ -68,8 +71,15 @@ final class HuDetail {
   View page;
   if(wide){
    LinearLayout row=new LinearLayout(ui.activity);ScrollView side=new ScrollView(ui.activity);side.addView(header);
-   row.addView(side,new LinearLayout.LayoutParams(0,-1,0.36f));row.addView(list,new LinearLayout.LayoutParams(0,-1,0.64f));page=row;
-  }else{list.addHeaderView(header,null,false);page=list;}
+   // A cover from the cache has arrived already: the panel paints it at once.
+   Backdrop panel=new Backdrop(ui,side);paint[0]=()->panel.paint(art[0],tone[0]);paint[0].run();
+   LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(0,-1,0.36f);int gap=ui.dp(8);lp.topMargin=gap;lp.bottomMargin=gap;lp.setMarginStart(gap);
+   row.addView(panel,lp);row.addView(list,new LinearLayout.LayoutParams(0,-1,0.64f));page=row;
+  }else{
+   Backdrop panel=new Backdrop(ui,header);paint[0]=()->panel.paint(art[0],tone[0]);paint[0].run();
+   FrameLayout holder=new FrameLayout(ui.activity);int gap=ui.dp(8);holder.setPadding(0,gap,0,gap);holder.addView(panel,new FrameLayout.LayoutParams(-1,-2));
+   list.addHeaderView(holder,null,false);page=list;
+  }
 
   // Play: this page's context, or pause when it is what plays. Shuffle play turns shuffle on first.
   Runnable playState=()->{boolean on=here(session,t) && session.playing();
@@ -112,9 +122,31 @@ final class HuDetail {
    meta.setText(items.isEmpty()?HuText.get("empty"):"artist".equals(kind) || "show".equals(kind) || tracks.isEmpty() || items.size()>=200?"":HuText.songs(tracks.size())+" · "+length(total));
    meta.setVisibility(meta.getText().length()==0?View.GONE:View.VISIBLE);
    // Some items (shows) come without a cover of their own: the first child's stands in.
-   if(t.icon==null)for(MediaItem i:items)if(HuBrowse.icon(i)!=null){HuCovers.into(cover,HuBrowse.icon(i),size);break;}
+   if(t.icon==null)for(MediaItem i:items)if(HuBrowse.icon(i)!=null){showCover.accept(HuBrowse.icon(i));break;}
   });
   return page;
+ }
+ /**
+  * The header's panel, so it stands apart from the track list: the page's cover, blurred and
+  * dimmed (lightened by day), in a rounded panel 8 dp inside the content card (14 dp corners,
+  * concentric with the card's 22 dp). Before Android 12 (no blur) it is a panel in the cover's
+  * colour; without a cover, a slightly lighter grey.
+  */
+ private static final class Backdrop extends FrameLayout {
+  private final HuUi ui;private final ImageView blur;private final View scrim;
+  Backdrop(HuUi ui,View content){
+   super(ui.activity);this.ui=ui;
+   setBackground(HuUi.round(ui.dark?0xff262626:0xfff1f1f1,ui.dp(14)));setOutlineProvider(ViewOutlineProvider.BACKGROUND);setClipToOutline(true);
+   blur=new ImageView(ui.activity);blur.setScaleType(ImageView.ScaleType.CENTER_CROP);blur.setVisibility(GONE);addView(blur,new LayoutParams(-1,-1));
+   scrim=new View(ui.activity);scrim.setBackgroundColor(ui.dark?0x99000000:0x99ffffff);scrim.setVisibility(GONE);addView(scrim,new LayoutParams(-1,-1));
+   addView(content,new LayoutParams(-1,content instanceof ScrollView?-1:-2));
+  }
+  void paint(android.graphics.Bitmap art,Integer color){
+   if(art!=null && android.os.Build.VERSION.SDK_INT>=31){
+    blur.setImageBitmap(art);blur.setRenderEffect(android.graphics.RenderEffect.createBlurEffect(ui.dp(40),ui.dp(40),android.graphics.Shader.TileMode.CLAMP));
+    blur.setVisibility(VISIBLE);scrim.setVisibility(VISIBLE);
+   }else if(color!=null)((android.graphics.drawable.GradientDrawable)getBackground()).setColor(CoverAccent.tone(color,ui.dark,ui.dark?0.45f:1f));
+  }
  }
  private static boolean here(HuSession s,Target t){String c=s.contextUri();return c!=null && c.equals(HuBrowse.uri(t.id));}
  /** Plays the page: its own play action, or (artists) its first track, a random one when shuffling. */
