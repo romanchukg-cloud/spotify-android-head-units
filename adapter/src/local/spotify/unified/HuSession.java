@@ -23,10 +23,12 @@ final class HuSession {
  private final List<Listener> listeners=new ArrayList<>();private final List<Runnable> waiting=new ArrayList<>();
  private MediaBrowserCompat browser;private MediaControllerCompat controller;
  private MediaMetadataCompat metadata;private PlaybackStateCompat state;private int repeat;
+ private List<android.support.v4.media.session.MediaSessionCompat.QueueItem> queue;
  private final MediaControllerCompat.Callback callback=new MediaControllerCompat.Callback(){
   public void onPlaybackStateChanged(PlaybackStateCompat s){state=s;notifyListeners();}
   public void onMetadataChanged(MediaMetadataCompat m){metadata=m;notifyListeners();}
   public void onRepeatModeChanged(int mode){repeat=mode;notifyListeners();}
+  public void onQueueChanged(List<android.support.v4.media.session.MediaSessionCompat.QueueItem> q){queue=q;notifyListeners();}
   public void onShuffleModeChanged(int mode){notifyListeners();}
   public void onSessionDestroyed(){disconnect();main.postDelayed(HuSession.this::connect,2000);}
  };
@@ -41,7 +43,7 @@ final class HuSession {
    public void onConnected(){
     try{
      controller=new MediaControllerCompat(app,browser.getSessionToken());controller.registerCallback(callback,main);
-     metadata=controller.getMetadata();state=controller.getPlaybackState();repeat=controller.getRepeatMode();
+     metadata=controller.getMetadata();state=controller.getPlaybackState();repeat=controller.getRepeatMode();queue=controller.getQueue();
     }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Player session unavailable",e);}
     List<Runnable> tasks=new ArrayList<>(waiting);waiting.clear();for(Runnable r:tasks)r.run();
     for(String parent:new ArrayList<>(pending.keySet()))load(parent,1);
@@ -152,6 +154,18 @@ final class HuSession {
   long d=duration();return Math.max(0,d>0?Math.min(p,d):p);
  }
  int repeat(){return repeat;}
+ /** The backend's queue: the current track, then the queued tracks and the rest of the context. */
+ List<android.support.v4.media.session.MediaSessionCompat.QueueItem> queue(){return queue==null?new ArrayList<>():queue;}
+ long activeQueueItem(){return state==null?-1:state.getActiveQueueItemId();}
+ void skipTo(long queueId){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.skipToQueueItem(queueId);}
+ /** Removes a queue entry (the support-library command the backend turns into a new queue). */
+ void removeAt(int index){
+  if(controller==null)return;Bundle b=new Bundle();b.putInt("android.support.v4.media.session.command.ARGUMENT_INDEX",index);
+  controller.sendCommand("android.support.v4.media.session.command.REMOVE_QUEUE_ITEM_AT",b,null);
+ }
+ /** Plays a Spotify URI (song or artist radio: spotify:station:…). */
+ void playUri(String uri){MediaControllerCompat.TransportControls t=controls();if(t!=null && uri!=null)t.playFromUri(android.net.Uri.parse(uri),new Bundle());}
+ String albumUri(){return metadata==null?null:metadata.getString("com.spotify.music.extra.ALBUM_URI");}
  /**
   * Signed out: the backend's error state carries the sign-in screen (QR sign-in) as its resolution
   * intent, which is returned here; null while signed in. Any error with a resolution counts, as in

@@ -6,16 +6,17 @@ public class MediaControllerCompat {
  public MediaMetadataCompat getMetadata(){return null;}public PlaybackStateCompat getPlaybackState(){return null;}
  public int getRepeatMode(){return 0;}public int getShuffleMode(){return 0;}
  public TransportControls getTransportControls(){return null;}
+ public List<MediaSessionCompat.QueueItem> getQueue(){return null;}public void sendCommand(String command,Bundle params,ResultReceiver cb){}
  public void registerCallback(Callback cb,Handler h){}public void unregisterCallback(Callback cb){}
  public static abstract class TransportControls {
   public abstract void play();public abstract void pause();public abstract void skipToNext();public abstract void skipToPrevious();
   public abstract void seekTo(long position);public abstract void setRepeatMode(int mode);public abstract void setShuffleMode(int mode);
   public abstract void skipToQueueItem(long id);public abstract void sendCustomAction(String action,Bundle extras);
-  public abstract void playFromMediaId(String mediaId,Bundle extras);public abstract void playFromSearch(String query,Bundle extras);
+  public abstract void playFromMediaId(String mediaId,Bundle extras);public abstract void playFromSearch(String query,Bundle extras);public abstract void playFromUri(android.net.Uri uri,Bundle extras);
  }
  public static abstract class Callback {
   public void onSessionReady(){}public void onSessionDestroyed(){}
   public void onPlaybackStateChanged(PlaybackStateCompat state){}public void onMetadataChanged(MediaMetadataCompat metadata){}
-  public void onQueueChanged(List<?> queue){}public void onRepeatModeChanged(int mode){}public void onShuffleModeChanged(int mode){}
+  public void onQueueChanged(List<MediaSessionCompat.QueueItem> queue){}public void onRepeatModeChanged(int mode){}public void onShuffleModeChanged(int mode){}
  }
 }

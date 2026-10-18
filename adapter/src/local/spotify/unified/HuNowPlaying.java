@@ -1,5 +1,4 @@
 package local.spotify.unified;
-import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.view.*;
 import android.widget.*;
@@ -11,16 +10,16 @@ import android.widget.*;
  * takes only the room the texts and controls leave, so a split screen keeps the controls in view;
  * small windows get smaller controls. The seek bar, times and controls stay left-to-right in
  * right-to-left languages, as media controls do in Material. The top bar collapses the player and
- * opens the queue editor and Jam; a swipe down collapses it too.
+ * opens the sleep timer, Jam and the queue; a swipe down collapses it too.
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final boolean accent;private final Runnable collapse;
- private final ImageView cover,play,like,shuffle,repeat;private final TextView title,artist,elapsed,remaining;private final SeekBar seek;
+ private final ImageView cover,play,like,shuffle,repeat,sleep;private final TextView title,artist,elapsed,remaining;private final SeekBar seek;
  private final GradientDrawable background;private String art;private boolean dragging;
  private final int slop;private float downX,downY;private boolean swiping;private VelocityTracker velocity;
  private final Runnable tick=new Runnable(){public void run(){progress();if(isAttachedToWindow() && session.playing())postDelayed(this,500);}};
  /** width and height: the room the player gets, in dp. */
- HuNowPlaying(HuUi ui,boolean accent,float width,float height,Runnable collapse){
+ HuNowPlaying(HuUi ui,boolean accent,float width,float height,Runnable collapse,Runnable queue){
   super(ui.activity);this.ui=ui;this.accent=accent;this.collapse=collapse;session=HuSession.get(ui.activity);
   slop=ViewConfiguration.get(ui.activity).getScaledTouchSlop();
   boolean wide=width>height*1.2f;
@@ -30,13 +29,14 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   setOrientation(VERTICAL);setPaddingRelative(ui.dp(small?16:24),ui.dp(8),ui.dp(small?16:32),ui.dp(compact?12:24));setClickable(true);
   background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{ui.bg,ui.bg});background.setCornerRadius(ui.dp(22));setBackground(background);
   setOutlineProvider(ViewOutlineProvider.BACKGROUND);setClipToOutline(true);
-  // Top bar: collapse, then the queue editor and Jam.
+  // Top bar: collapse, then the sleep timer, Jam and the queue.
   int bar=ui.dp(compact?64:76);
   LinearLayout top=new LinearLayout(ui.activity);top.setGravity(Gravity.CENTER_VERTICAL);
   top.addView(HuControls.button(ui,"encore_icon_chevron_down_24",HuText.get("collapse"),bar,v->collapse.run()));
   TextView label=ui.label(HuText.get("now_playing"),18,ui.secondary,true);label.setPaddingRelative(ui.dp(8),0,0,0);top.addView(label,new LayoutParams(0,-2,1));
+  sleep=HuControls.button(ui,"encore_icon_moon_24",HuText.get("sleep_timer"),bar,v->HuSleep.menu(ui,session,this::sleepState));top.addView(sleep);
   top.addView(HuControls.button(ui,"encore_icon_group_session_24",HuText.get("start_jam"),bar,v->HeadUnitJam.open(getContext())));
-  top.addView(HuControls.button(ui,"encore_icon_queue_24",HuText.get("queue"),bar,v->getContext().startActivity(new Intent(getContext(),HeadUnitQueueActivity.class))));
+  top.addView(HuControls.button(ui,"encore_icon_queue_24",HuText.get("queue"),bar,v->queue.run()));
   addView(top);
   LinearLayout body=new LinearLayout(ui.activity);body.setOrientation(wide?HORIZONTAL:VERTICAL);body.setGravity(Gravity.CENTER);
   addView(body,new LayoutParams(-1,0,1));
@@ -81,7 +81,9 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   if(column<330){shuffle.setVisibility(GONE);repeat.setVisibility(GONE);}
   LayoutParams controlsParams=new LayoutParams(-1,-2);controlsParams.topMargin=ui.dp(compact?4:16);col.addView(controls,controlsParams);
  }
- protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);}
+ protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);sleepState();}
+ /** The moon is green while the sleep timer runs. */
+ private void sleepState(){boolean on=HuSleep.left(getContext())>0;sleep.setImageDrawable(HuControls.icon(getContext(),on?"encore_icon_moon_active_24":"encore_icon_moon_24",on?ui.accent:ui.text));}
  protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}
 
  // A downward swipe anywhere outside the seek bar drags the player down; far or fast enough, it collapses.

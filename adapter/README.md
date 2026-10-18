@@ -285,3 +285,10 @@ Arabic (the emulator's system language set to Arabic (Egypt)): the navigation on
 
 
 QR sign-in on short screens (about 600 dp tall: 1024×600 displays, the car's split screen): Spotify's sign-in card kept 48 dp outer margins and cut the QR code at its bottom edge (it could only be scrolled into view). The card now gets 12 dp margins when the code does not fit and, if it still does not, loses the Spotify logo above the tabs (ProfileButton.fitQr; the scroll area only grows). The Accounts button beside "Need help?" takes that button's text size and no vertical padding, so its label is no longer cut. Signed out after a cold start, our sign-in panel did not appear: the error code reaches the interface process only once the session's extra binder is connected, so any error state with a resolution intent now shows the panel. Checked on the Android 13 emulator (1024×600): the whole QR code shown, the panel after a reboot.
+
+## Local test.12: the queue in our interface
+
+- `HuQueue`: the queue is a card over the player (from its queue button), sliding in from the end side; back closes it. It shows the backend's queue through the session (`MediaControllerCompat.getQueue`) in its groups (Now playing, Next in queue, Next from …); a row plays that track, its minus button removes it (`REMOVE_QUEUE_ITEM_AT`), and the actions above start a song or artist radio, set the sleep timer, open Jam and clear the queued tracks — what the queue editor (`HeadUnitQueueActivity`, still in the APK) did.
+- The player's top bar gets a moon for the sleep timer (`HuSleep`, the same menu as in the queue; green while the timer runs).
+
+Checked on the emulator without starting playback (the owner's account may be playing in the car): the queue with its groups, the sleep timer from the moon (15 and 30 min, the label in the queue, Off), back. Radio, skipping to a track and removing were not pressed.

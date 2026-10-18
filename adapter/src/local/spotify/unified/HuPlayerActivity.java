@@ -19,7 +19,7 @@ import java.util.*;
 public final class HuPlayerActivity extends Activity {
  private HuUi ui;private HuSession session;private HuRail rail;private FrameLayout content;private HuNowPlaying player;
  private static String resized;private int[] laid;
- private boolean expanded;private String page="home";private final Map<String,String> ids=new HashMap<>();
+ private boolean expanded,queueOpen;private HuQueue queue;private String page="home";private final Map<String,String> ids=new HashMap<>();
  private static final int VOICE=7;
  private HuSearch search;private String searchQuery,pendingVoice;
  /**
@@ -54,7 +54,8 @@ public final class HuPlayerActivity extends Activity {
   HuMiniPlayer mini=new HuMiniPlayer(ui,accent,this::expand);
   LinearLayout.LayoutParams miniParams=new LinearLayout.LayoutParams(-1,-2);miniParams.topMargin=gap;column.addView(mini,miniParams);
   float stageWidth=cf.screenWidthDp-12-(bar?0:126),stageHeight=cf.screenHeightDp-12-(bar?110:0);contentWidth=stageWidth;contentHeight=stageHeight-110;
-  player=new HuNowPlaying(ui,accent,stageWidth,stageHeight,this::collapse);player.setVisibility(View.GONE);stage.addView(player,new FrameLayout.LayoutParams(-1,-1));
+  player=new HuNowPlaying(ui,accent,stageWidth,stageHeight,this::collapse,this::openQueue);player.setVisibility(View.GONE);stage.addView(player,new FrameLayout.LayoutParams(-1,-1));
+  queue=new HuQueue(ui,this::closeQueue);queue.setVisibility(View.GONE);stage.addView(queue,new FrameLayout.LayoutParams(-1,-1));
   setContentView(root);
   // Splitting the screen resizes the window without recreating the screen when the new size
   // crosses none of the app's resource size buckets; our layout depends on the size, so it is
@@ -67,6 +68,7 @@ public final class HuPlayerActivity extends Activity {
   });
   // Day/night and other configuration changes recreate the screen; the open player stays open.
   if(state!=null && state.getBoolean("expanded")){expanded=true;player.setVisibility(View.VISIBLE);}
+  if(state!=null && state.getBoolean("queue")){queueOpen=true;queue.setVisibility(View.VISIBLE);}
   content.addView(HuPages.message(ui,HuText.get("loading")));rail.select(page);
   loadRoot();
   session.add(signInWatch);
@@ -177,7 +179,7 @@ public final class HuPlayerActivity extends Activity {
   if(search!=null && detail==null && "search".equals(page))search.spoken(q);
   else{pendingVoice=q;if(!ids.isEmpty())show("search");}
  }
- protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putString("page",page);if(detail!=null)detail.save(out);
+ protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putBoolean("queue",queueOpen);out.putString("page",page);if(detail!=null)detail.save(out);
   out.putString("search",search!=null?search.query():searchQuery);
   ArrayList<Bundle> saved=new ArrayList<>();for(Level l:levels)if(l.target!=null){Bundle b=new Bundle();l.target.save(b);saved.add(b);}out.putParcelableArrayList("trail",saved);
  }
@@ -185,6 +187,17 @@ public final class HuPlayerActivity extends Activity {
   if(expanded)return;expanded=true;player.setVisibility(View.VISIBLE);
   player.setTranslationY(player.getHeight()>0?player.getHeight():getResources().getDisplayMetrics().heightPixels);
   player.animate().translationY(0).setDuration(220).start();
+ }
+ /** The queue: a card over the player, sliding in from the end side; back closes it. */
+ private void openQueue(){
+  if(queueOpen)return;queueOpen=true;queue.opened();queue.setVisibility(View.VISIBLE);queue.setAlpha(0);
+  float shift=ui.dp(48)*(queue.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);queue.setTranslationX(shift);
+  queue.animate().alpha(1).translationX(0).setDuration(200).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+ }
+ private void closeQueue(){
+  if(!queueOpen)return;queueOpen=false;
+  float shift=ui.dp(48)*(queue.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);
+  queue.animate().alpha(0).translationX(shift).setDuration(160).withEndAction(()->{if(!queueOpen)queue.setVisibility(View.GONE);}).start();
  }
  private void collapse(){
   if(!expanded)return;expanded=false;
@@ -198,6 +211,6 @@ public final class HuPlayerActivity extends Activity {
   local.spotify.close.TaskGuardService.opened(this);
   try{if(HeadUnitSettings.stale(this)){recreate();return;}}catch(RuntimeException ignored){}
  }
- /** Back: collapses the player, then goes back through the pages, then to Home, then leaves. */
- public void onBackPressed(){if(expanded)collapse();else if(detail!=null)back();else if(!"home".equals(page) && !ids.isEmpty())show("home");else super.onBackPressed();}
+ /** Back: closes the queue, collapses the player, then goes back through the pages, then to Home, then leaves. */
+ public void onBackPressed(){if(queueOpen)closeQueue();else if(expanded)collapse();else if(detail!=null)back();else if(!"home".equals(page) && !ids.isEmpty())show("home");else super.onBackPressed();}
 }
