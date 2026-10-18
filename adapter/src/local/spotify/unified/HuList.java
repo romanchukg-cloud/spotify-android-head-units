@@ -7,7 +7,7 @@ import java.util.*;
  * The list of a page or of search results: the backend's items in their groups (group titles as
  * headings), browsable items as a row of cards and tracks or episodes as rows (number or cover,
  * explicit mark, artists, length; the playing one in the accent colour; a tap plays it in its
- * context). kind: playlist, album, artist, show or search, for how rows are numbered.
+ * context; episodes show how much is played). kind: playlist, album, artist, show or search, for how rows are numbered.
  */
 final class HuList {
  private static final class Entry {
@@ -61,9 +61,19 @@ final class HuList {
   adapter.notifyDataSetChanged();return total;
  }
 
+ /** A thin progress bar: how much of an episode is played (left to right, also in right-to-left languages). */
+ private static final class Progress extends View {
+  private final android.graphics.Paint track=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG),fill=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);private float fraction;
+  Progress(HuUi ui){super(ui.activity);track.setColor(ui.secondary);track.setAlpha(70);fill.setColor(ui.text);}
+  void set(float f){fraction=f;invalidate();}
+  protected void onDraw(android.graphics.Canvas c){
+   float h=getHeight(),w=getWidth();c.drawRoundRect(0,0,w,h,h/2,h/2,track);
+   if(fraction>0)c.drawRoundRect(0,0,Math.max(h,w*fraction),h,h/2,h/2,fill);
+  }
+ }
  /** A track row: number or cover, title (accent while it plays), explicit mark, artists, length. */
  private static final class Row extends LinearLayout {
-  private final HuUi ui;private final TextView number,title,badge,subtitle,duration;private final ImageView cover;
+  private final HuUi ui;private final TextView number,title,badge,subtitle,duration;private final ImageView cover,played;private final Progress progress;
   Row(HuUi ui){
    super(ui.activity);this.ui=ui;setGravity(Gravity.CENTER_VERTICAL);setMinimumHeight(ui.dp(76));setPaddingRelative(ui.dp(8),ui.dp(8),ui.dp(16),ui.dp(8));
    setBackground(ui.pressable(0x00000000,ui.dp(14)));
@@ -76,7 +86,10 @@ final class HuList {
    badge=ui.label("E",11,ui.bg,true);badge.setGravity(Gravity.CENTER);badge.setBackground(HuUi.round(ui.secondary,ui.dp(3)));badge.setPadding(ui.dp(5),0,ui.dp(5),0);badge.setContentDescription(HuText.get("explicit"));
    LayoutParams b=new LayoutParams(-2,-2);b.setMarginEnd(ui.dp(6));line.addView(badge,b);
    subtitle=ui.label("",15,ui.secondary,false);subtitle.setSingleLine(true);subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END);line.addView(subtitle,new LayoutParams(0,-2,1));
-   texts.addView(title);texts.addView(line);addView(texts,new LayoutParams(0,-2,1));
+   progress=new Progress(ui);LayoutParams pp=new LayoutParams(ui.dp(160),ui.dp(4));pp.topMargin=ui.dp(8);
+   texts.addView(title);texts.addView(line);texts.addView(progress,pp);addView(texts,new LayoutParams(0,-2,1));
+   played=new ImageView(ui.activity);played.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_check_alt_fill_24",ui.accent));played.setContentDescription(HuText.get("played"));
+   LayoutParams pl=new LayoutParams(ui.dp(28),ui.dp(28));pl.setMarginEnd(ui.dp(12));addView(played,pl);
    duration=ui.label("",15,ui.secondary,false);addView(duration);
   }
   void bind(MediaItem item,int position,String kind,String playing,View.OnClickListener click){
@@ -89,6 +102,7 @@ final class HuList {
    title.setText(HuBrowse.title(item));title.setTextColor(current?ui.accent:ui.text);
    badge.setVisibility(HuBrowse.explicit(item)?VISIBLE:GONE);subtitle.setText(HuBrowse.subtitle(item));
    long d=HuBrowse.duration(item);duration.setText(d>0 && !show?HuControls.time(d):"");title.setMaxLines(show?2:1);title.setSingleLine(!show);
+   int status=HuBrowse.played(item);progress.set(status==1?HuBrowse.progress(item):0);progress.setVisibility(status==1?VISIBLE:GONE);played.setVisibility(status==2?VISIBLE:GONE);
    setContentDescription(HuBrowse.title(item));setOnClickListener(click);
   }
  }

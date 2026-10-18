@@ -292,3 +292,5 @@ QR sign-in on short screens (about 600 dp tall: 1024×600 displays, the car's sp
 - The player's top bar gets a moon for the sleep timer (`HuSleep`, the same menu as in the queue; green while the timer runs).
 
 Checked on the emulator without starting playback (the owner's account may be playing in the car): the queue with its groups, the sleep timer from the moon (15 and 30 min, the label in the queue, Off), back. Radio, skipping to a track and removing were not pressed.
+
+Podcast episodes and audiobook chapters show how much is played: the backend gives each its completion status (`android.media.extra.PLAYBACK_STATUS`: 0 not played, 1 partly played, 2 played) and share (`androidx.media.MediaItem.Extras.COMPLETION_PERCENTAGE`), and already writes "15 mins left" into the subtitle. Partly played rows get a thin progress bar, played ones a check mark. Checked with a partly played episode (2 %); no played one was at hand.

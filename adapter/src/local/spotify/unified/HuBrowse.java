@@ -21,6 +21,9 @@ final class HuBrowse {
  private static Bundle extras(MediaItem i){MediaDescriptionCompat d=i.getDescription();return d==null?null:d.getExtras();}
  static long duration(MediaItem i){Bundle e=extras(i);return e==null?0:Math.max(0,e.getLong("android.media.metadata.DURATION"));}
  static boolean explicit(MediaItem i){Bundle e=extras(i);return e!=null && e.getLong("android.media.IS_EXPLICIT")==1;}
+ /** Podcast episodes and audiobook chapters: 0 not played, 1 partly played, 2 played (AAOS completion status). */
+ static int played(MediaItem i){Bundle e=extras(i);return e==null?0:e.getInt("android.media.extra.PLAYBACK_STATUS",0);}
+ static float progress(MediaItem i){Bundle e=extras(i);return e==null?0:(float)Math.max(0,Math.min(1,e.getDouble("androidx.media.MediaItem.Extras.COMPLETION_PERCENTAGE",0)));}
  static int number(MediaItem i){Bundle e=extras(i);return e==null?0:(int)e.getLong("android.media.metadata.TRACK_NUMBER");}
  /** The item's browser actions (play, download, downloading, downloaded). */
  static java.util.ArrayList<String> actions(MediaItem i){Bundle e=extras(i);java.util.ArrayList<String> a=e==null?null:e.getStringArrayList("androidx.media.utils.extras.CUSTOM_BROWSER_ACTION_ID_LIST");return a==null?new java.util.ArrayList<>():a;}
