@@ -6,7 +6,7 @@ import android.graphics.*;
 import android.graphics.drawable.*;
 import android.view.*;
 import android.widget.*;
-/** Building blocks for the New style of the adapter's own screens (settings, accounts, support). */
+/** Building blocks of the app's own screens: the interface, settings, accounts and support. */
 final class HuUi {
  final Activity activity;final boolean dark;
  final int bg,card,text,secondary,divider,accent,control,selected,selectedInk;
@@ -16,7 +16,27 @@ final class HuUi {
   divider=dark?0x12ffffff:0x14000000;accent=dark?0xff1ed760:0xff0f7a36;control=dark?0xff2e2e2e:0xffebebeb;selected=dark?0xffffffff:0xff121212;selectedInk=dark?0xff121212:0xffffffff;
  }
  int dp(float v){return Math.round(v*activity.getResources().getDisplayMetrics().density);}
- void window(){Window w=activity.getWindow();w.setStatusBarColor(bg);w.setNavigationBarColor(bg);HeadUnitShell.lightBars(w,dark);corners(activity);}
+ void window(){Window w=activity.getWindow();w.setStatusBarColor(bg);w.setNavigationBarColor(bg);lightBars(w,dark);corners(activity);}
+ /** Dark bar icons by day (status bar and navigation bar follow the window's light-bar request). */
+ @SuppressWarnings("deprecation")
+ static void lightBars(Window w,boolean dark){
+  View d=w.getDecorView();int light=View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR|View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+  int flags=d.getSystemUiVisibility(),wanted=dark?flags&~light:flags|light;
+  if(flags!=wanted)d.setSystemUiVisibility(wanted);
+  if(android.os.Build.VERSION.SDK_INT>=30){WindowInsetsController c=w.getInsetsController();
+   int mask=WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS|WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+   if(c!=null && (c.getSystemBarsAppearance()&mask)!=(dark?0:mask))c.setSystemBarsAppearance(dark?0:mask,mask);}
+ }
+ /** Paints the area outside a rounded rectangle black (the app's outer corners), black like BYD's bars. */
+ static final class CornerMask extends Drawable {
+  private final float radius;private final Paint paint=new Paint(Paint.ANTI_ALIAS_FLAG);private final Path path=new Path();
+  CornerMask(float radius){this.radius=radius;paint.setColor(0xff000000);}
+  protected void onBoundsChange(Rect b){path.reset();path.setFillType(Path.FillType.EVEN_ODD);path.addRect(b.left,b.top,b.right,b.bottom,Path.Direction.CW);path.addRoundRect(b.left,b.top,b.right,b.bottom,radius,radius,Path.Direction.CW);}
+  public void draw(Canvas c){c.drawPath(path,paint);}
+  public void setAlpha(int a){paint.setAlpha(a);}
+  public void setColorFilter(ColorFilter f){paint.setColorFilter(f);}
+  public int getOpacity(){return PixelFormat.TRANSLUCENT;}
+ }
  private static final java.util.WeakHashMap<Activity,Boolean> cornered=new java.util.WeakHashMap<>();
  /**
   * The app's rounded outer corners (card radius 22 dp + gap 6 dp), as on the main screen: a black
@@ -24,7 +44,7 @@ final class HuUi {
   */
  static void corners(Activity a){
   if(cornered.containsKey(a))return;View root=a.findViewById(android.R.id.content);if(root==null)return;cornered.put(a,Boolean.TRUE);
-  HeadUnitShell.CornerMask mask=new HeadUnitShell.CornerMask(28*a.getResources().getDisplayMetrics().density);root.getOverlay().add(mask);
+  CornerMask mask=new CornerMask(28*a.getResources().getDisplayMetrics().density);root.getOverlay().add(mask);
   root.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(mask.getBounds().width()!=v.getWidth() || mask.getBounds().height()!=v.getHeight())mask.setBounds(0,0,v.getWidth(),v.getHeight());});
  }
  /**
@@ -80,11 +100,13 @@ final class HuUi {
  static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
  Drawable pressable(int color,float radius){return new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0x33ffffff:0x22000000),round(color,radius),round(0xff000000,radius));}
  private static Typeface regular,heavy;
- /** Figtree from the interface resources (font/hu_figtree_family), or null to keep the system font. */
+ /** Figtree (SIL OFL 1.1, assets/hu_fonts) at weights 400 and 700, or null to keep the system font. */
  Typeface font(boolean bold){
   if(regular==null){
-   int id=activity.getResources().getIdentifier("hu_figtree_family","font","com.spotify.music.ui");
-   if(id!=0)try{Typeface f=activity.getResources().getFont(id);regular=Typeface.create(f,400,false);heavy=Typeface.create(f,700,false);}catch(RuntimeException e){android.util.Log.w("SpotifyHU","Figtree unavailable",e);}
+   try{
+    regular=new Typeface.Builder(activity.getAssets(),"hu_fonts/Figtree-wght.ttf").setFontVariationSettings("'wght' 400").build();
+    heavy=new Typeface.Builder(activity.getAssets(),"hu_fonts/Figtree-wght.ttf").setFontVariationSettings("'wght' 700").build();
+   }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Figtree unavailable",e);}
   }
   return bold?heavy:regular;
  }
@@ -165,8 +187,8 @@ final class HuUi {
  static boolean wide(Context c){return c.getResources().getConfiguration().screenWidthDp>=900;}
  private static final java.util.WeakHashMap<View,Boolean> adopted=new java.util.WeakHashMap<>();
  /**
-  * New style for the adapter's simpler screens (support, diagnostics notice, accounts): restyles
-  * their standard widgets and the Classic hard-coded colours, also for views added later.
+  * The interface's look for the adapter's simpler screens (support, diagnostics notice, accounts):
+  * restyles their standard widgets and hard-coded colours, also for views added later.
   */
  static void adopt(Activity a){
   HuUi ui=new HuUi(a);ui.window();View root=a.findViewById(android.R.id.content);if(root==null)return;

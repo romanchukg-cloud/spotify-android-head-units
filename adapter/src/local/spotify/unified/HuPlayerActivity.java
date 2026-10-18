@@ -11,9 +11,9 @@ import java.util.*;
  * Library, Search; playlist, album, artist and category pages opened from their cards) with
  * our mini-player as its footer, and our player sliding up over them at full height, leaving the
  * navigation in view. On portrait screens the navigation is a bar along the bottom, under the
- * mini-player, within reach. This is the app's main screen: the launcher entry keeps the
- * BYD-derived activity's name as an alias of it (launcher icons, the notification, profile
- * switching and the BYD media service open it by that name). Signed out, the content shows the
+ * mini-player, within reach. This is the app's main screen: the launcher entry keeps the name of
+ * the BYD-derived activity of builds up to test.12 as an alias of it (launcher icons, pinned
+ * shortcuts, the notification and profile switching open it by that name). Signed out, the content shows the
  * backend's sign-in request and opens its sign-in screen.
  */
 public final class HuPlayerActivity extends Activity {
@@ -42,7 +42,7 @@ public final class HuPlayerActivity extends Activity {
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
   int gap=ui.dp(6);android.content.res.Configuration cf=getResources().getConfiguration();boolean bar=cf.screenWidthDp<cf.screenHeightDp;
   LinearLayout shell=new LinearLayout(this);shell.setOrientation(bar?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);shell.setPadding(gap,gap,gap,gap);root.addView(shell);
-  rail=new HuRail(ui,bar,this::show,()->startActivity(new Intent(this,HeadUnitSettingsActivity.class)));
+  rail=new HuRail(ui,bar,this::show,()->HeadUnitSettings.open(this));
   // The stage holds the content card with the mini-player and, over both, the player: it covers
   // them at full height and leaves the navigation in view.
   FrameLayout stage=new FrameLayout(this);
@@ -113,7 +113,7 @@ public final class HuPlayerActivity extends Activity {
   p.addView(HuFree.line(this,getResources().getDisplayMetrics().density,ui.text,ui.secondary,16),fp);
   return p;
  }
- /** Opens the backend's sign-in screen as the BYD-derived screen did (its pending intent). */
+ /** Opens the backend's sign-in screen through the pending intent of its sign-in request. */
  private boolean launchSignIn(){
   android.app.PendingIntent pi=session.signIn();if(pi==null)return false;
   try{

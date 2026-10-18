@@ -1,32 +1,32 @@
 # Head-unit adapter source
 
-This directory contains the project's Java integration code, resource/manifest patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source or the decompiled BYD interface; those are local build inputs. Published test.7 adds Support and structured diagnostics. Published test.8 keeps the Spotify sign-in stable on head units. Published test.9 adds in-app updates. Build identity and output filename are generated from `build-info.json`.
+This directory contains the project's Java integration code (our interface included), the manifest and smali patch generators, packaging code and emulator test sources. `../tools/apk_audit.py` audits the **finished APK**. It does not contain Spotify's proprietary SDK source; that is a local build input. Published test.7 adds Support and structured diagnostics. Published test.8 keeps the Spotify sign-in stable on head units. Published test.9 adds in-app updates. Build identity and output filename are generated from `build-info.json`.
 
-The APK contains the original Spotify Automotive 5.5.0 backend, our helper DEX, and the relocated BYD-derived interface. `ParcelBridge` translates media parcelables across the two class namespaces. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior. The backend resource IDs stay at package `0x7f`; UI IDs use `0x7e`.
+Since test.13 the APK contains the original Spotify Automotive 5.5.0 backend (its payloads and resource table byte for byte, with a patched `classes.dex` and manifest), our helper DEX (`classes2.dex`: the interface `Hu*`, settings, accounts, support, updates) and the Figtree typeface (`assets/hu_fonts`, SIL OFL 1.1). Builds up to test.12 also carried the relocated interface of the BYD (Vivid) player app as `classes3.dex` and a second resource package; see "test.13: no BYD code" below. `HeadUnitProfile`, preferences/provider, playback receiver/service and settings activity implement the head-unit adaptation. `PlaybackGate` and `TaskGuardService` implement explicit task-removal behavior.
 
 ## Build prerequisites
 
-- JDK 17+ (verified with JDK 21), Python 3, apktool **2.11.1** and its JAR.
-- Android platform 35 and build-tools 35.0.0. Minimum supported Android API remains **28**. All three DEX files use version 039.
-- Two **prepared adaptation input APKs**, not arbitrary Spotify releases. They are not fetched or uploaded by these scripts:
+- JDK 17+ (verified with JDK 21), Python 3, apktool **2.11.1**.
+- Android platform 35 and build-tools 35.0.0. Minimum supported Android API remains **28**. Both DEX files use version 039.
+- The **prepared Spotify Automotive input APK**, not an arbitrary Spotify release. It is not fetched or uploaded by these scripts:
 
 | Input | SHA-256 |
 | --- | --- |
 | `SpotifySDK-5.5.0-BYD-test.apk` | `6527109d69dbbee4c9bef177879dbb9cebedc806dd6b07cb0e89a223125247d2` |
-| `Spotify-BYD-for-5.5-test.apk` | `087a78a67501543bceac2700cbe3e2c3b9ea6e84037fd898fe8941b1f7b72ace` |
+
+  (The name is that of the prepared container. Builds up to test.12 also needed `Spotify-BYD-for-5.5-test.apk`, the BYD player app.)
 
 - A local signing keystore. Keys are never committed. A developer build with a different key cannot update the published APK or preserve its app data through an in-place update. The published test.5 uses the same package and certificate as public test.2.
 
 From the repository root:
 
 ```sh
-python3 adapter/bootstrap.py --sdk-apk /path/SpotifySDK-5.5.0-BYD-test.apk --ui-apk /path/Spotify-BYD-for-5.5-test.apk
+python3 adapter/bootstrap.py --sdk-apk /path/SpotifySDK-5.5.0-BYD-test.apk
 export ANDROID_SDK_ROOT=/path/to/Android/sdk
-export APKTOOL_JAR=/path/to/apktool_2.11.1.jar
 export HU_KEYSTORE=/path/to/your.keystore
 export HU_KEYSTORE_PASS=pass:your_password
 ./adapter/build.sh
-python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.8.apk --min-api 28
+python3 tools/apk_audit.py adapter/Spotify-5.5.0-HeadUnit-test.13.apk --min-api 28
 ```
 
 The optional variables `ANDROID_HOME` and `BUILD_TOOLS_VERSION` select the SDK and tools; local defaults match Android Studio on macOS. `adapter/tests/build.sh` builds test APKs signed with `HU_KEYSTORE` (the test keystore password defaults to `android`; set `HU_KEYSTORE_PASS` for another key). Only run instrumentation on disposable emulators: its checks change head-unit preferences and playback state.
@@ -35,7 +35,7 @@ The fresh input-to-APK build was verified before publication. ZIP timestamps and
 
 ## Releasing without the input APKs
 
-`incremental_release.py` builds the next test release from the previous published APK: it re-applies the smali patch section added since that release (`--since`, a `# …` heading in `patch_headunit.py`) to the published backend DEX, recompiles the helper DEX from `src/`, adds the section's `MANIFEST_ADDITIONS` (permissions and receivers) to the binary manifest and sets the `build-info.json` versionCode. A section without smali changes keeps the backend DEX byte-identical. Resources, the UI DEX and native libraries stay byte-identical, and the script refuses a base APK whose SHA-256 differs from its `reports/<release>/release.json`.
+`incremental_release.py` builds the next test release from the previous published APK: it re-applies the smali patch section added since that release (`--since`, a `# …` heading in `patch_headunit.py`) to the published backend DEX, recompiles the helper DEX from `src/`, adds the section's `MANIFEST_ADDITIONS` (permissions and receivers) to the binary manifest and sets the `build-info.json` versionCode. A section without smali changes keeps the backend DEX byte-identical. Resources, native libraries (and up to test.12 the UI DEX) stay byte-identical, and the script refuses a base APK whose SHA-256 differs from its `reports/<release>/release.json`.
 
 The **Release** GitHub Actions workflow (`.github/workflows/release.yml`, run manually) does this, signs with the `HU_KEYSTORE_B64` repository secret (base64 of the release keystore; optional `HU_KEYSTORE_PASS`, `HU_KEY_ALIAS`, `HU_KEY_PASS` default to the debug-keystore values), requires the certificate of the base release, runs the sign-in and updater tests and both APK audits, updates the published base APK in place on Android 9 and 13 emulators (`tests/updates/emulator.sh`), uploads the APK and the update-feed record as an artifact and, with `publish`, creates the prerelease from `reports/<label>/release-notes.md`. `build.sh` with the prepared inputs remains the reference build.
 
@@ -314,3 +314,18 @@ People have sold this app as an official product. `HuFree` says the app is free,
 ## After test.12: changed copies say so
 
 Removing the free-of-charge notice means changing the APK and signing it with another key (only the owner has the release key). `HuFree.genuine` compares the installed package's signing certificate (and its history) with the release certificate (`UpdateFeed.SIGNER`); a copy signed otherwise shows "This copy has been changed" in red every time the main screen opens — not a free app from the official page, ask for your money back, no updates (Android refuses our updates over another key), may not be safe — and the sign-in lines say the same. The terms are logged once and kept in the code (`HuFree.NOTICE`), and written in [NOTICE.md](../NOTICE.md) and [AGENTS.md](../AGENTS.md) (a note for AI assistants asked to remove them). Checked on an Android 13 emulator with a trial build that expected another certificate (the warning every launch, the red lines) and with the real build (no warning).
+
+## Test.13: no BYD code
+
+The APK no longer contains any part of the BYD (Vivid) player app: our interface (`HuPlayerActivity` and the `Hu*` screens) replaced it in test.12, and now its code, resources and manifest entries are gone too.
+
+- **Build:** `prepare.py` takes only the stable backend: its manifest with our factory, two permissions (`POST_NOTIFICATIONS`, the close-control provider's `LOCAL_CLOSE_CONTROL`) and `TaskGuardService`; the backend's `public.xml` without the placeholder resources of the BYD manifest references. `patch_headunit.py` lost the sections that patched the BYD-derived screens (vendor guards and broadcast logging, `MainActivity` settings and resources, the like-action alias, the download, voice and queue view hooks). `package.py` writes the SDK container's resource table unchanged, the rebuilt `classes.dex` and manifest, the helper DEX and `assets/hu_fonts` (Figtree and its OFL licence, loaded by `HuUi.font` with weights 400 and 700). `verify.py` checks that every other payload is the container's own and that there is no `classes3.dex` and no `ui/` entry. Removed: `restyle.py`, `patch_resources.py`, `merge_resources.py`, `Assemble.java`, and the classes that served the BYD-derived screens (`ParcelBridge`, `ResourceNames`, `HeadUnitShell`, `HeadUnitQueue`, `HeadUnitQueueActivity`, `HeadUnitVoiceActivity`; `CoverAccent`, `HeadUnitVoice`, `HeadUnitDownloads`, `HeadUnitStyle` keep only what our interface uses). `bootstrap.py` needs only the SDK input.
+- **Manifest:** no longer declared: the BYD media service for the car's voice assistant (`…service.MediaManagerService`; DiLink never bound it), `PermissionActivity`, the queue editor and voice activities, the BYD-derived app's lifecycle provider and Glide / Vivid metadata, `READ_` / `WRITE_EXTERNAL_STORAGE` and `requestLegacyExternalStorage`. The launcher alias `local.bydui.com.vivid.spotify.MainActivity` stays (launcher icons, shortcuts, the notification and profile switching use the name). The car's own integrations in our code stay: steering-wheel keys through the media session, the ambient music rhythm (`BydMusicRhythm`, BYD only).
+- **Audit:** `tools/apk_audit.py` checks that no class is relocated BYD code or uses the BYD vehicle API, that the typeface is in the assets and there is one resource package, and that `HuText` has every text in five languages (the old checks of the BYD-derived screens and its strings are gone).
+- **Size:** 48.3 MB instead of 58.4 MB.
+- A full `build.sh` is required: the manifest loses components.
+
+## Test.13: swipe to switch tracks (owner's request)
+
+A sideways swipe on the mini-player or the player switches tracks (`HuSkipSwipe`): to the left the next track, to the right the previous one, in every language (the controls stay left-to-right). The cover (and in the mini-player the title) follows the finger; far (96 dp) or fast enough it slides out and back in from the other side, otherwise it springs back. Vertical swipes keep their roles (up on the mini-player opens the player, down on the player closes it), and the seek bar keeps its own drags.
+

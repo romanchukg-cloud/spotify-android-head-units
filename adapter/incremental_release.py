@@ -220,7 +220,8 @@ def main():
     stable, out = a.work / 'stable', a.work / 'out'
     with zipfile.ZipFile(a.base) as z:
         z.extract('classes.dex', a.work)
-        ui = Dex('classes3.dex', z.read('classes3.dex'))
+        # Up to test.12 the BYD-derived interface was classes3.dex.
+        ui = [Dex('classes3.dex', z.read('classes3.dex'))] if 'classes3.dex' in z.namelist() else []
         manifest = z.read('AndroidManifest.xml')
 
     java = ['java', '-cp', a.tools]
@@ -250,7 +251,7 @@ def main():
     backend = (a.work / 'backend.dex').read_bytes() if changed else (a.work / 'classes.dex').read_bytes()
     helper_bytes = (a.work / 'helper/classes.dex').read_bytes()
     helper = Dex('classes2.dex', helper_bytes)
-    refs = check_references([Dex('classes.dex', backend), ui], helper)
+    refs = check_references([Dex('classes.dex', backend), *ui], helper)
     missing = [name for tag, name in additions if tag == 'receiver' and 'L' + name.replace('.', '/') + ';' not in helper.defined]
     if missing:
         raise SystemExit('Manifest receivers missing from the helper DEX: %s' % missing)

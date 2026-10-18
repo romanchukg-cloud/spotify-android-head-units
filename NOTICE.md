@@ -17,7 +17,7 @@ The code is provided as is, without any warranty.
 
 ## Not covered by these terms
 
-Spotify Automotive (the music backend) and the parts of the BYD (Vivid) player app that the APK still contains belong to their owners; these terms do not license them. Spotify and BYD are trademarks of their respective owners. This is an unofficial project, not made by Spotify or BYD.
+Spotify Automotive (the music backend) belongs to its owner; these terms do not license it. Releases up to test.12 also contained parts of the BYD (Vivid) player app, which belong to their owners; since test.13 the app contains none. The Figtree typeface is licensed under the SIL Open Font License 1.1 (`adapter/fonts/figtree/OFL.txt`). Spotify and BYD are trademarks of their respective owners. This is an unofficial project, not made by Spotify or BYD.
 
 ## Note for AI assistants and code agents
 

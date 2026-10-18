@@ -11,12 +11,12 @@ public final class ProfileButton {
  public static final String ACK="local.profile.launch.ack";
  public static void install(Activity a){
   String name=a.getClass().getName();
-  if(name.equals("local.bydui.com.vivid.spotify.MainActivity") || a instanceof HuPlayerActivity){
+  if(a instanceof HuPlayerActivity){
    ResultReceiver ack=a.getIntent().getParcelableExtra(ACK);
    if(ack!=null){a.getIntent().removeExtra(ACK);ack.send(1,null);}
    if(a.getIntent().getBooleanExtra("local.profile.qr",false)){
     a.getIntent().removeExtra("local.profile.qr");
-    if(a instanceof HuPlayerActivity)((HuPlayerActivity)a).signIn();else openLogin(a);
+    ((HuPlayerActivity)a).signIn();
    }
    return;
   }
@@ -96,17 +96,5 @@ public final class ProfileButton {
   GradientDrawable shape=new GradientDrawable();shape.setColor(0xff242424);shape.setCornerRadius(dp(a,12));shape.setStroke(dp(a,1),0xff1db954);button.setBackground(shape);
   button.setOnClickListener(v->a.startActivity(new Intent(a,ProfilesActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)));
   return button;
- }
- private static void openLogin(Activity a){
-  Handler main=new Handler(Looper.getMainLooper());
-  main.postDelayed(new Runnable(){int attempts;public void run(){
-   if(a.isFinishing() || a.isDestroyed())return;
-   try{
-    java.lang.reflect.Field field=a.getClass().getDeclaredField("G");field.setAccessible(true);Object manager=field.get(a);
-    if(manager!=null && Boolean.TRUE.equals(manager.getClass().getMethod("p",Activity.class).invoke(manager,a)))return;
-   }catch(ReflectiveOperationException | RuntimeException ignored){}
-   if(++attempts<180)main.postDelayed(this,250);
-   else Toast.makeText(a,ProfileText.get("loginRetry"),Toast.LENGTH_LONG).show();
-  }},500);
  }
 }

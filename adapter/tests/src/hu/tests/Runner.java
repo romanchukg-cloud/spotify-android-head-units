@@ -22,7 +22,7 @@ public class Runner extends Instrumentation {
   else if(mode.equals("external")){Bundle b=new Bundle();b.putBoolean("external",Boolean.parseBoolean(args.getString("value","true")));HeadUnitSettings.call(c,"set",b);}
   else if(mode.equals("checks")){
    ok(HeadUnitProfile.get(c)==HeadUnitProfile.Kind.GENERIC,"ordinary tablet is GENERIC");
-   ok(c.getPackageManager().getComponentEnabledSetting(new ComponentName(c,"local.bydui.com.vivid.spotify.service.MediaManagerService"))==2,"BYD service disabled");
+   boolean byd;try{c.getPackageManager().getServiceInfo(new ComponentName(c,"local.bydui.com.vivid.spotify.service.MediaManagerService"),0);byd=true;}catch(android.content.pm.PackageManager.NameNotFoundException e){byd=false;}ok(!byd,"no BYD media service");
    HeadUnitPreferences.store().edit().clear().commit();HeadUnitPreferences.write(new Bundle());
    ok(HeadUnitPreferences.stopOnClose()&&HeadUnitPreferences.external()&&HeadUnitPreferences.resume()&&!HeadUnitPreferences.playOnOpen(),"GENERIC defaults; closing always stops; open autoplay opt-in");
    Bundle b=new Bundle();b.putBoolean("stop_close",false);HeadUnitSettings.call(c,"set",b);PlaybackGate.change(c,false);

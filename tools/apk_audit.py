@@ -44,21 +44,11 @@ for folder in root.glob('smali*'):
  for f in folder.rglob('*.smali'):
   text=f.read_text();match=re.search(r'^\.class[^\n]* (L[^;]+;)',text,re.M)
   if match:files[match[1]]=text
-check('Helper / relocated UI present',all(k in files for k in ('Llocal/spotify/unified/HeadUnitProfile;','Llocal/spotify/unified/HeadUnitSettingsActivity;','Llocal/bydui/com/vivid/spotify/MainActivity;')))
+check('Helper present',all(k in files for k in ('Llocal/spotify/unified/HeadUnitProfile;','Llocal/spotify/unified/HeadUnitSettingsActivity;','Llocal/spotify/unified/HuPlayerActivity;')))
 methods=lambda s: re.findall(r'\.method[^\n]*\n.*?\.end method',s,re.S)
-vendor=files.get('Llocal/bydui/com/vivid/spotify/byd/b;','');vendor_calls=0;unsafe=[];listener_types=set()
-for method in methods(vendor):
- if 'Landroid/hardware/bydauto/' in method or re.search(r' (s|u)\(\)V\n',method):
-  vendor_calls+=1;code=re.sub(r'^\s*\.(?:line|prologue|epilogue|local|end local|restart local)[^\n]*$', '',method.split('    .locals',1)[-1],flags=re.M);pos=code.find('Llocal/spotify/unified/HeadUnitProfile;->isByd()Z')
-  if pos<0 or not re.search(r'if-nez v0, (:\w+)\s+(?:const/4 v0, 0x0\s+)?return(?:-void| v0)\s+\1',code):unsafe.append(method.splitlines()[0])
-  listener_types.update(re.findall(r'new-instance \w+, (Llocal/bydui/com/vivid/spotify/byd/b\$[^;]+;)',method))
-for clazz,text in files.items():
- if 'Landroid/hardware/bydauto/' not in text or clazz.endswith('/byd/b;'):continue
- if clazz not in listener_types:unsafe.append(clazz)
- for caller,body in files.items():
-  for method in methods(body):
-   if 'new-instance' in method and clazz in method and 'HeadUnitProfile;->isByd()Z' not in method:unsafe.append(caller+' '+method.splitlines()[0])
-check('Vendor (BYD) coupling',vendor_calls>0 and not unsafe,f'{vendor_calls} entry-guarded methods; {len(listener_types)} listeners only constructed behind profile guard'+('; '+str(unsafe) if unsafe else ''))
+# Builds up to test.12 carried the BYD (Vivid) player app's interface as relocated classes.
+byd=[k for k in files if k.startswith(('Llocal/bydui/','Lcom/vivid/'))];vehicle=[k for k,v in files.items() if 'Landroid/hardware/bydauto/' in v]
+check('No BYD-derived interface or vehicle API',not byd and not vehicle,f'{len(byd)} BYD-derived classes, {len(vehicle)} using the vehicle API')
 controllers=files.get('Lle/d;','')
 check('External controller policy hook','HeadUnitControllers;->allow(' in controllers and 'HeadUnitControllers;->matches(' in controllers and 'HeadUnitControllers;->result(' in controllers)
 gate=files.get('Llocal/spotify/close/PlaybackGate;','');death=files.get('Llocal/spotify/close/PlaybackGate$1;','')
@@ -105,28 +95,17 @@ factory=''.join(v for k,v in files.items() if k.startswith('Llocal/spotify/unifi
 policy=files.get('Llocal/spotify/unified/AutoResumePolicy;','')
 check('Acknowledged resume / bounded readiness retries','Auto resume confirmed PLAYING' in runtime and 'AutoResumePolicy;->shouldPlay(' in ''.join(v for k,v in files.items() if k.startswith('Llocal/spotify/unified/HeadUnitPlaybackService')) and 'expired(JJ)Z' in policy)
 check('Opt-in player launch / profile handoff guard','play_open' in files.get('Llocal/spotify/unified/HeadUnitPreferences;','') and 'ui_open' in factory and 'local.profile.qr' in factory and 'getTaskId()I' in factory)
-main=files.get('Llocal/bydui/com/vivid/spotify/MainActivity;','')
+main=''.join(v for k,v in files.items() if k.startswith(('Llocal/spotify/unified/HuPlayerActivity','Llocal/spotify/unified/HuRail')))
 check('Settings entry / density context','HeadUnitSettings;->open(' in main and 'HeadUnitSettings;->scaled(' in main)
-# UI package resource IDs are retained as a second package by this APK.
-res=root/'res'
 with zipfile.ZipFile(apk) as z:
  names=z.namelist()
- check('Landscape / portrait resources',all(any(n.startswith('ui/res/'+q+'/') for n in names) for q in ('layout-land','layout-w600dp-land','layout-w840dp-land','layout-w600dp-h900dp-port')) and (res/'values-h400dp-land').is_dir())
+ check('Interface typeface / one resource package',all(n in names for n in ('assets/hu_fonts/Figtree-wght.ttf','assets/hu_fonts/OFL.txt')) and 'classes3.dex' not in names and not any(n.startswith('ui/') for n in names))
  versions={n:int(z.read(n)[4:7]) for n in names if re.fullmatch(r'classes\d*\.dex',n)}
  check('DEX version compatible with Android 9',all(v<=39 for v in versions.values()),str(versions))
-# Audit app-owned strings from decoded combined resources, accounting for apktool package prefixes.
-def strings(locale):
- found={}
- for f in res.glob('values'+('-'+locale if locale else '')+'/*.xml'):
-  for n in ET.parse(f).getroot().findall('string'):found[n.get('name')]=''.join(n.itertext())
- return found
-owned=['added_to_queue', 'added_to_your_episodes', 'added_to_your_library', 'added_to_your_liked_songs', 'app_name', 'back', 'byd_error', 'clear_all', 'collect_episode_title', 'collect_song_title', 'dialog_cancel', 'dialog_content', 'dialog_go_to_set', 'dialog_title', 'multi_episode_count', 'multi_song_count', 'play_what_you_love', 'recent_searches', 'removed_from_your_episodes', 'removed_from_your_library', 'removed_from_your_liked_songs', 'retry', 'safety_subtitle', 'safety_title', 'search', 'search_for_something', 'search_menu_title', 'slogan', 'something_wrong', 'speed', 'unknown_song', 'widget_slogan', 'wifi_notification', 'your_library']
-base=strings('');ui_names=[k for k in base if k.startswith('ui_')]
-for locale in ('uk','ru','ar','zh-rCN'):
- translated=strings(locale)
- names=owned
- missing=[k for k in names if not translated.get(k)]
- check('UI translations '+locale,bool(names) and not missing,f'{len(names)} strings, missing={missing}')
+# Our interface's texts (HuText): a table of keys and one row per language, all the same length.
+text=files.get('Llocal/spotify/unified/HuText;','')
+rows=[int(m[2])-int(m[1])+1 for m in re.finditer(r'filled-new-array/range \{v(\d+) \.\. v(\d+)\}, \[Ljava/lang/String;',text)]
+check('UI translations (en, uk, ru, ar, zh)',len(rows)==6 and len(set(rows))==1 and all('"'+l+'"' in text for l in ('uk','ru','ar','zh')),f'{rows[0] if rows else 0} texts, {len(rows)} tables')
 signer=bt/'apksigner';align=bt/'zipalign'
 try:out=run([str(signer),'verify','--verbose','--min-sdk-version',str(args.min_api),str(apk)]);check('APK signature', 'Verified using v3 scheme (APK Signature Scheme v3): true' in out)
 except (OSError,subprocess.CalledProcessError):check('APK signature',False)

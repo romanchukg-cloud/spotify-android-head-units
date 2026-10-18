@@ -11,13 +11,13 @@ import android.widget.*;
  * keeps the controls in view; small windows get smaller controls. The seek bar, times and controls
  * stay left-to-right in right-to-left languages, as media controls do in Material. The top bar
  * collapses the player and opens the sleep timer, Jam and the queue; a swipe down collapses it
- * too.
+ * too, and a swipe to the left or right switches to the next or previous track (HuSkipSwipe).
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final boolean accent;private final Runnable collapse;
  private final ImageView cover,play,like,shuffle,repeat,sleep;private final TextView title,artist,elapsed,remaining;private final SeekBar seek;
  private final GradientDrawable background;private String art;private boolean dragging;
- private final int slop;private float downX,downY;private boolean swiping;private VelocityTracker velocity;
+ private final int slop;private float downX,downY;private boolean swiping;private VelocityTracker velocity;private final HuSkipSwipe skip;
  private final Runnable tick=new Runnable(){public void run(){progress();if(isAttachedToWindow() && session.playing())postDelayed(this,500);}};
  /** width and height: the room the player gets, in dp. */
  HuNowPlaying(HuUi ui,boolean accent,float width,float height,Runnable collapse,Runnable queue){
@@ -45,6 +45,8 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   FrameLayout box=new FrameLayout(ui.activity);
   cover=new HuUi.Cover(ui,ui.dp(14)){protected void onMeasure(int w,int h){super.onMeasure(w,h);int s=Math.min(ui.dp(640),Math.min(getMeasuredWidth(),getMeasuredHeight()));setMeasuredDimension(s,s);}};
   box.addView(cover,new FrameLayout.LayoutParams(-1,-1,Gravity.CENTER));
+  // The cover slides out of its box when a swipe switches tracks.
+  box.setClipChildren(false);body.setClipChildren(false);skip=new HuSkipSwipe(ui,session,cover);
   LinearLayout col=new LinearLayout(ui.activity);col.setOrientation(VERTICAL);col.setGravity(Gravity.CENTER_VERTICAL);
   if(wide){col.setPaddingRelative(0,0,ui.dp(48),0);body.addView(col,new LayoutParams(0,-1,1));body.addView(box,new LayoutParams(0,-1,0.7f));}
   else{LayoutParams b=new LayoutParams(-1,0,1);b.topMargin=ui.dp(compact?4:12);body.addView(box,b);col.setPadding(0,ui.dp(compact?12:24),0,0);body.addView(col,new LayoutParams(-1,-2));}
@@ -86,8 +88,10 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private void sleepState(){boolean on=HuSleep.left(getContext())>0;sleep.setImageDrawable(HuControls.icon(getContext(),on?"encore_icon_moon_active_24":"encore_icon_moon_24",on?ui.accent:ui.text));}
  protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}
 
- // A downward swipe anywhere outside the seek bar drags the player down; far or fast enough, it collapses.
+ // A downward swipe anywhere outside the seek bar drags the player down; far or fast enough, it
+ // collapses. A sideways one switches tracks (the seek bar keeps its own drags).
  public boolean onInterceptTouchEvent(MotionEvent e){
+  if(!swiping && skip.touch(e))return true;
   switch(e.getActionMasked()){
    case MotionEvent.ACTION_DOWN:downX=e.getRawX();downY=e.getRawY();swiping=false;track(e,true);break;
    case MotionEvent.ACTION_MOVE:track(e,false);if(begin(e))return true;break;
@@ -96,6 +100,7 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   return false;
  }
  public boolean onTouchEvent(MotionEvent e){
+  if(!swiping && skip.touch(e))return true;
   switch(e.getActionMasked()){
    case MotionEvent.ACTION_DOWN:downX=e.getRawX();downY=e.getRawY();swiping=false;track(e,true);super.onTouchEvent(e);return true;
    case MotionEvent.ACTION_MOVE:track(e,false);if(swiping || begin(e))setTranslationY(Math.max(0,e.getRawY()-downY));return true;

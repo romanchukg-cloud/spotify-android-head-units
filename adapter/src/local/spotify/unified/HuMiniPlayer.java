@@ -6,7 +6,8 @@ import android.widget.*;
 /**
  * Our mini-player: a rounded card with the controls first, then like, cover and title (the New
  * style order), on the blurred cover (with "Colour from cover art"; plain otherwise) and a thin
- * progress line. Tapping the cover or the title, or a swipe up, opens the player. The controls and
+ * progress line. Tapping the cover or the title, or a swipe up, opens the player; a swipe to the
+ * left or right switches to the next or previous track (HuSkipSwipe). The controls and
  * the progress line stay left-to-right in right-to-left languages, as media controls do in
  * Material.
  */
@@ -30,16 +31,19 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   title=HuControls.title(ui,21,1);artist=ui.label("",17,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
   texts.addView(title);texts.addView(artist);addView(texts,new LayoutParams(0,-2,1));
   cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());this.expand=expand;slop=android.view.ViewConfiguration.get(ui.activity).getScaledTouchSlop();
+  skip=new HuSkipSwipe(ui,session,cover,texts);
   progress.setColor(ui.text);track.setColor(ui.text);track.setAlpha(46);
  }
  // A swipe up anywhere on the card opens the player, as a tap on the cover or title does.
- private final Runnable expand;private final int slop;private float downX,downY;
+ private final Runnable expand;private final int slop;private float downX,downY;private final HuSkipSwipe skip;
  public boolean onInterceptTouchEvent(MotionEvent e){
+  if(skip.touch(e))return true;
   if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getRawX();downY=e.getRawY();return false;}
   if(e.getActionMasked()==MotionEvent.ACTION_MOVE){float dx=e.getRawX()-downX,dy=downY-e.getRawY();if(dy>slop*2 && dy>Math.abs(dx)*1.5f){expand.run();return true;}}
   return false;
  }
  public boolean onTouchEvent(MotionEvent e){
+  if(skip.touch(e))return true;
   if(e.getActionMasked()==MotionEvent.ACTION_DOWN){downX=e.getRawX();downY=e.getRawY();return true;}
   if(e.getActionMasked()==MotionEvent.ACTION_MOVE){float dx=e.getRawX()-downX,dy=downY-e.getRawY();if(dy>slop*2 && dy>Math.abs(dx)*1.5f){expand.run();return true;}}
   return super.onTouchEvent(e);

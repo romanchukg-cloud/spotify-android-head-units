@@ -165,7 +165,7 @@ final class HuDetail {
  }
 
  /**
-  * The page's download button, as on the BYD-derived pages (HeadUnitDownloads): download;
+  * The page's download button (HeadUnitDownloads): download;
   * downloading (tap stops); downloaded (tap asks before removing). Hidden for items without a
   * download action (keeping its place). A requested download can report "download" until Spotify starts it.
   */
