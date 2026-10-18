@@ -23,7 +23,7 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   play=HuControls.play(ui,ui.dp(64),v->session.playPause());((LayoutParams)play.getLayoutParams()).setMargins(ui.dp(8),0,ui.dp(8),0);controls.addView(play);
   controls.addView(HuControls.button(ui,"encore_icon_skip_forward_24",HuText.get("next"),ui.dp(64),v->session.next()));
   like=HuControls.button(ui,"encore_icon_heart_24","",ui.dp(64),v->session.send(session.like()));((LayoutParams)like.getLayoutParams()).setMarginStart(ui.dp(12));addView(like);
-  cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(8)));cover.setClipToOutline(true);
+  cover=new HuUi.Cover(ui,ui.dp(8));
   LayoutParams c=new LayoutParams(ui.dp(76),ui.dp(76));c.setMarginStart(ui.dp(24));addView(cover,c);
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);texts.setPaddingRelative(ui.dp(16),0,0,0);
   title=HuControls.title(ui,21,1);artist=ui.label("",17,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);

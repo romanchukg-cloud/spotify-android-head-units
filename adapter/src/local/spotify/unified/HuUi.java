@@ -27,6 +27,25 @@ final class HuUi {
   HeadUnitShell.CornerMask mask=new HeadUnitShell.CornerMask(28*a.getResources().getDisplayMetrics().density);root.getOverlay().add(mask);
   root.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(mask.getBounds().width()!=v.getWidth() || mask.getBounds().height()!=v.getHeight())mask.setBounds(0,0,v.getWidth(),v.getHeight());});
  }
+ /**
+  * A cover image with rounded corners. The corners are cut by the view's own outline, and the grey
+  * placeholder behind it is there only until the image arrives: under the image its anti-aliased
+  * edge showed as a thin light rim around the cover.
+  */
+ static class Cover extends ImageView {
+  private final int placeholder;private float radius;
+  Cover(HuUi ui,float radius){
+   super(ui.activity);placeholder=ui.control;this.radius=radius;setScaleType(ScaleType.CENTER_CROP);
+   setOutlineProvider(new ViewOutlineProvider(){public void getOutline(View v,Outline o){o.setRoundRect(0,0,v.getWidth(),v.getHeight(),Cover.this.radius);}});
+   setClipToOutline(true);setBackground(round(placeholder,radius));
+  }
+  /** A new corner radius (round for artists: half the size). */
+  void shape(float r){if(r==radius)return;radius=r;invalidateOutline();if(getDrawable()==null)setBackground(round(placeholder,r));}
+  public void setImageDrawable(Drawable d){
+   super.setImageDrawable(d);boolean empty=d==null || d instanceof BitmapDrawable && ((BitmapDrawable)d).getBitmap()==null;
+   setBackground(empty?round(placeholder,radius):null);
+  }
+ }
  static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
  Drawable pressable(int color,float radius){return new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0x33ffffff:0x22000000),round(color,radius),round(0xff000000,radius));}
  private static Typeface regular,heavy;

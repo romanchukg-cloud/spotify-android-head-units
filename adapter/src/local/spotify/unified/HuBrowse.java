@@ -57,11 +57,11 @@ final class HuBrowse {
  }
  /** A cover card: square (round for artists) cover, title and subtitle. */
  static final class Card extends LinearLayout {
-  final ImageView cover;final TextView title,subtitle;final int size;
+  final HuUi.Cover cover;final TextView title,subtitle;final int size;
   Card(HuUi ui,int size){
    super(ui.activity);this.size=size;setOrientation(VERTICAL);setPadding(ui.dp(8),ui.dp(8),ui.dp(8),ui.dp(10));
    setBackground(ui.pressable(0x00000000,ui.dp(14)));
-   cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setClipToOutline(true);addView(cover,new LayoutParams(size,size));
+   cover=new HuUi.Cover(ui,ui.dp(8));addView(cover,new LayoutParams(size,size));
    title=ui.label("",18,ui.text,false);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.END);title.setPadding(0,ui.dp(10),0,0);
    subtitle=ui.label("",15,ui.secondary,false);subtitle.setSingleLine(true);subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END);
    addView(title,new LayoutParams(size,-2));addView(subtitle,new LayoutParams(size,-2));
@@ -69,7 +69,7 @@ final class HuBrowse {
   }
   private final HuUi ui;
   void bind(MediaItem item,View.OnClickListener click){
-   boolean round=artist(item);cover.setBackground(HuUi.round(ui.control,round?size/2f:ui.dp(8)));
+   boolean round=artist(item);cover.shape(round?size/2f:ui.dp(8));
    cover.setImageDrawable(null);HuCovers.into(cover,icon(item),size);
    title.setText(title(item));String s=subtitle(item);subtitle.setText(s);subtitle.setVisibility(s.isEmpty()?GONE:VISIBLE);
    title.setGravity(round?Gravity.CENTER:Gravity.START);subtitle.setGravity(round?Gravity.CENTER:Gravity.START);

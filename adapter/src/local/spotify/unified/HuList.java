@@ -82,7 +82,7 @@ final class HuList {
    super(ui.activity);this.ui=ui;setGravity(Gravity.CENTER_VERTICAL);setMinimumHeight(ui.dp(76));setPaddingRelative(ui.dp(8),ui.dp(8),ui.dp(16),ui.dp(8));
    setBackground(ui.pressable(0x00000000,ui.dp(14)));
    number=ui.label("",17,ui.secondary,false);number.setGravity(Gravity.CENTER);addView(number,new LayoutParams(ui.dp(48),-2));
-   cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(6)));cover.setClipToOutline(true);
+   cover=new HuUi.Cover(ui,ui.dp(6));
    LayoutParams c=new LayoutParams(ui.dp(56),ui.dp(56));c.setMarginStart(ui.dp(4));addView(cover,c);
    LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);texts.setPaddingRelative(ui.dp(16),0,ui.dp(12),0);
    title=ui.label("",19,ui.text,false);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.END);

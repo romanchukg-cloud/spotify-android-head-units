@@ -42,8 +42,7 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   addView(body,new LayoutParams(-1,0,1));
   // The cover is a square as large as its box allows.
   FrameLayout box=new FrameLayout(ui.activity);
-  cover=new ImageView(ui.activity){protected void onMeasure(int w,int h){super.onMeasure(w,h);int s=Math.min(ui.dp(640),Math.min(getMeasuredWidth(),getMeasuredHeight()));setMeasuredDimension(s,s);}};
-  cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(14)));cover.setClipToOutline(true);
+  cover=new HuUi.Cover(ui,ui.dp(14)){protected void onMeasure(int w,int h){super.onMeasure(w,h);int s=Math.min(ui.dp(640),Math.min(getMeasuredWidth(),getMeasuredHeight()));setMeasuredDimension(s,s);}};
   box.addView(cover,new FrameLayout.LayoutParams(-1,-1,Gravity.CENTER));
   LinearLayout col=new LinearLayout(ui.activity);col.setOrientation(VERTICAL);col.setGravity(Gravity.CENTER_VERTICAL);
   if(wide){col.setPaddingRelative(0,0,ui.dp(48),0);body.addView(col,new LayoutParams(0,-1,1));body.addView(box,new LayoutParams(0,-1,0.7f));}

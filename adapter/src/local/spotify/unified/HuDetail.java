@@ -37,7 +37,7 @@ final class HuDetail {
   if(backButton.getDrawable()!=null)backButton.getDrawable().setAutoMirrored(true);
   top.addView(backButton);header.addView(top);
   int size=ui.dp(Math.max(120,wide?Math.min(260,Math.min(height-330,width*0.36f-32)):Math.min(220,width*0.5f)));
-  ImageView cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,round?size/2f:ui.dp(12)));cover.setClipToOutline(true);
+  ImageView cover=new HuUi.Cover(ui,round?size/2f:ui.dp(12));
   LinearLayout.LayoutParams coverParams=new LinearLayout.LayoutParams(size,size);coverParams.gravity=Gravity.CENTER_HORIZONTAL;coverParams.topMargin=ui.dp(4);header.addView(cover,coverParams);
   // The header panel (Backdrop) shows the cover blurred; the cover and its colour arrive together.
   Integer[] tone={null};android.graphics.Bitmap[] art={null};Runnable[] paint={()->{}};

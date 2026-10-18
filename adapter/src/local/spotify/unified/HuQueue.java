@@ -79,7 +79,7 @@ final class HuQueue extends LinearLayout implements HuSession.Listener {
   final ImageView cover,remove;final TextView title,subtitle;Entry entry;
   Row(){
    super(ui.activity);setGravity(Gravity.CENTER_VERTICAL);setMinimumHeight(ui.dp(80));setPaddingRelative(ui.dp(8),ui.dp(6),ui.dp(4),ui.dp(6));setBackground(ui.pressable(0x00000000,ui.dp(14)));
-   cover=new ImageView(ui.activity);cover.setScaleType(ImageView.ScaleType.CENTER_CROP);cover.setBackground(HuUi.round(ui.control,ui.dp(6)));cover.setClipToOutline(true);addView(cover,new LayoutParams(ui.dp(56),ui.dp(56)));
+   cover=new HuUi.Cover(ui,ui.dp(6));addView(cover,new LayoutParams(ui.dp(56),ui.dp(56)));
    LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);texts.setPaddingRelative(ui.dp(16),0,ui.dp(8),0);
    title=ui.label("",19,ui.text,false);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.END);
    subtitle=ui.label("",15,ui.secondary,false);subtitle.setSingleLine(true);subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END);
