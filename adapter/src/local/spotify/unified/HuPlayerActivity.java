@@ -57,6 +57,9 @@ public final class HuPlayerActivity extends Activity {
   player=new HuNowPlaying(ui,accent,stageWidth,stageHeight,this::collapse,this::openQueue);player.setVisibility(View.GONE);stage.addView(player,new FrameLayout.LayoutParams(-1,-1));
   queue=new HuQueue(ui,this::closeQueue);queue.setVisibility(View.GONE);stage.addView(queue,new FrameLayout.LayoutParams(-1,-1));
   setContentView(root);
+  // The keyboard: on landscape screens it lies over the interface (the search field is at the top),
+  // since shrinking the window squeezes the navigation rail; portrait screens make room for it.
+  getWindow().setSoftInputMode(bar?WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE:WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING);
   // Splitting the screen resizes the window without recreating the screen when the new size
   // crosses none of the app's resource size buckets; our layout depends on the size, so it is
   // built again (once per size). The window's own size counts: the keyboard leaves it alone.

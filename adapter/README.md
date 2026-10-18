@@ -294,3 +294,5 @@ QR sign-in on short screens (about 600 dp tall: 1024×600 displays, the car's sp
 Checked on the emulator without starting playback (the owner's account may be playing in the car): the queue with its groups, the sleep timer from the moon (15 and 30 min, the label in the queue, Off), back. Radio, skipping to a track and removing were not pressed.
 
 Podcast episodes and audiobook chapters show how much is played: the backend gives each its completion status (`android.media.extra.PLAYBACK_STATUS`: 0 not played, 1 partly played, 2 played) and share (`androidx.media.MediaItem.Extras.COMPLETION_PERCENTAGE`), and already writes "15 mins left" into the subtitle. Partly played rows get a thin progress bar, played ones a check mark. Checked with a partly played episode (2 %); no played one was at hand.
+
+Keyboard (owner's report from the car): with `adjustResize` the keyboard shrank the window on landscape screens and the navigation rail's items squeezed into each other. Landscape screens now let the keyboard lie over the interface (`SOFT_INPUT_ADJUST_NOTHING`; the search field is at the top), portrait screens still make room for it.
