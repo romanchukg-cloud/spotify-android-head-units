@@ -20,7 +20,12 @@ def top():
  d=shell('dumpsys','activity','activities');return '\n'.join(l.strip() for l in d.splitlines() if 'ResumedActivity' in l)
 shell('wm','size','800x480');shell('wm','density','160');shell('input','keyevent','82');shell('logcat','-c');shell('am','start','-n','com.spotify.music/local.bydui.com.vivid.spotify.MainActivity');time.sleep(3)
 fixture=subprocess.Popen(['adb','-s',serial,'shell','am','instrument','-w','-e','mode','accounts-ui','-e','seed',str(seed).lower(),'hu.tests/hu.tests.Runner'],stdout=subprocess.PIPE)
-time.sleep(8);settings=snapshot('settings');settings_task=re.search(r' t(\d+)',top())[1];entry=find(settings,'Accounts');assert entry is not None,'Accounts absent in head unit settings';click(entry);time.sleep(3)
+time.sleep(8);settings=snapshot('settings');settings_task=re.search(r' t(\d+)',top())[1];entry=find(settings,'Accounts')
+# The settings scroll on small screens: the Accounts tile can be below the fold.
+for attempt in range(6):
+ if entry is not None:break
+ shell('input','swipe','400','400','400','120','400');time.sleep(1);entry=find(tree(),'Accounts')
+assert entry is not None,'Accounts absent in head unit settings';click(entry);time.sleep(3)
 assert re.search(r' t(\d+)',top())[1]!=settings_task,'Accounts shares the player task'
 
 for attempt in range(12):
@@ -36,7 +41,13 @@ add=find(accounts,'Add account · QR');assert add is not None,'Add account absen
 # whole target package when an instrumented backend is killed.
 shell('am','force-stop','com.spotify.music');fixture.communicate(timeout=15)
 shell('am','start','-n','com.spotify.music/local.bydui.com.vivid.spotify.MainActivity');time.sleep(4)
-login=next(n for n in tree().iter('node') if n.get('resource-id','').endswith('/btn_login'));click(login)
+# Our interface's sign-in panel: the backend's own button label ("Log in"), or ours ("Sign in").
+login=None
+for attempt in range(15):
+ login=next((n for n in tree().iter('node') if n.get('resource-id','').endswith('/btn_login') or n.get('text','').casefold() in ('log in','sign in')),None)
+ if login is not None:break
+ time.sleep(1)
+assert login is not None,'Sign-in button absent';click(login)
 for attempt in range(20):
  time.sleep(1)
  if 'QrCodeLoginActivityV2' in top():break
