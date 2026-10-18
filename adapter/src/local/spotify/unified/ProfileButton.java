@@ -32,11 +32,15 @@ public final class ProfileButton {
    }
   }else if(name.equals("com.spotify.automotive.loginv2.view.QrCodeLoginActivityV2")){
    // Use the native help row as an inset-aware anchor. Do not shrink the QR
-   // viewport: some SDK layouts measure its image beyond a reduced scroll area.
+   // viewport: some SDK layouts measure its image beyond a reduced scroll area (fitQr only grows it).
    int helpId=a.getResources().getIdentifier("help_button","id",a.getPackageName());
    View help=a.findViewById(helpId);
    if(help!=null && content instanceof FrameLayout){
     Button entry=button(a);FrameLayout.LayoutParams p=new FrameLayout.LayoutParams(-2,-2);
+    // As tall as the help button it sits beside: its text size and no vertical padding, so the label is not cut.
+    if(help instanceof TextView)entry.setTextSize(android.util.TypedValue.COMPLEX_UNIT_PX,((TextView)help).getTextSize());
+    entry.setMinHeight(0);entry.setMinimumHeight(0);entry.setPadding(dp(a,16),0,dp(a,16),0);
+    fitQr(a);
     content.addView(entry,p);
     Runnable place=()->{
      if(a.isDestroyed())return;
@@ -56,6 +60,29 @@ public final class ProfileButton {
    }
   }
  }
+ /**
+  * Short screens (a split screen, displays about 600 dp tall): the sign-in card is cut at its
+  * bottom edge and the QR code with it. The card first gets small outer margins and, if the code
+  * still does not fit, loses the Spotify logo above the tabs; the scroll area only grows.
+  */
+ private static void fitQr(Activity a){
+  View card=find(a,"login_content"),logo=find(a,"login_logo"),qr=find(a,"scannable_qr_code");
+  if(card==null || qr==null)return;
+  int[] step={0};
+  card.getViewTreeObserver().addOnGlobalLayoutListener(()->{
+   if(a.isDestroyed() || step[0]>=2 || !qr.isShown() || qr.getHeight()==0)return;
+   int scrolled=0;for(View v=qr;v!=null && v!=card;v=v.getParent() instanceof View?(View)v.getParent():null)if(v instanceof ScrollView)scrolled+=v.getScrollY();
+   int[] q=new int[2],c=new int[2];qr.getLocationInWindow(q);card.getLocationInWindow(c);
+   if(q[1]+scrolled+qr.getHeight()<=c[1]+card.getHeight())return;
+   if(step[0]==0){
+    step[0]=1;
+    if(card.getLayoutParams() instanceof ViewGroup.MarginLayoutParams){ViewGroup.MarginLayoutParams m=(ViewGroup.MarginLayoutParams)card.getLayoutParams();int small=dp(a,12);
+     if(m.topMargin>small || m.bottomMargin>small){m.topMargin=Math.min(m.topMargin,small);m.bottomMargin=Math.min(m.bottomMargin,small);card.setLayoutParams(m);return;}}
+   }
+   step[0]=2;if(logo!=null && logo.getVisibility()==View.VISIBLE)logo.setVisibility(View.GONE);
+  });
+ }
+ private static View find(Activity a,String name){int id=a.getResources().getIdentifier(name,"id",a.getPackageName());return id==0?null:a.findViewById(id);}
  private static ScrollView findScroll(View view){
   if(view instanceof ScrollView)return (ScrollView)view;
   if(view instanceof ViewGroup){ViewGroup group=(ViewGroup)view;
