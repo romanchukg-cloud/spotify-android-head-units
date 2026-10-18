@@ -5,9 +5,10 @@ import android.view.*;
 import android.widget.*;
 /**
  * Our mini-player: a rounded card with the controls first, then like, cover and title (the New
- * style order), tinted with the cover's colour and a thin progress line. Tapping the cover or the
- * title, or a swipe up, opens the player. The controls and the progress line stay left-to-right in right-to-left
- * languages, as media controls do in Material.
+ * style order), on the blurred cover (with "Colour from cover art"; plain otherwise) and a thin
+ * progress line. Tapping the cover or the title, or a swipe up, opens the player. The controls and
+ * the progress line stay left-to-right in right-to-left languages, as media controls do in
+ * Material.
  */
 final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final ImageView play,like,cover;private final TextView title,artist;
@@ -50,7 +51,7 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   String t=s.title(),error=s.playbackError();title.setText(t==null?HuText.get("nothing_playing"):t);
   artist.setText(error!=null?error:s.artist()==null?"":s.artist());artist.setTextColor(error!=null?0xffe22134:ui.secondary);
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());
-  String a=s.art();if(a==null?art!=null:!a.equals(art)){art=a;HuCovers.load(getContext(),a,ui.dp(76),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);tint(color);}});}
+  String a=s.art();if(a==null?art!=null:!a.equals(art)){art=a;HuCovers.load(getContext(),a,ui.dp(76),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);if(accent && b!=null)setBackground(new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0xb3000000:0xb3ffffff));else{if(!(getBackground() instanceof GradientDrawable)){tint=0;setBackground(HuUi.round(ui.card,ui.dp(22)));}tint(color);}}});}
   update();removeCallbacks(tick);if(s.playing())postDelayed(tick,1000);
  }
  private void tint(Integer color){

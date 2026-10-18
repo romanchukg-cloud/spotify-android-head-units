@@ -4,13 +4,14 @@ import android.view.*;
 import android.widget.*;
 /**
  * Our player: a large cover, title, artist and like, a seek bar with times and the controls
- * (shuffle, previous, play/pause, next, repeat), on a gradient from the cover's colour. Wide
- * windows put the controls on the driver's side and the cover at the far end (right, or left in
- * right-to-left languages, by layout mirroring); narrow ones put the cover above them. The cover
- * takes only the room the texts and controls leave, so a split screen keeps the controls in view;
- * small windows get smaller controls. The seek bar, times and controls stay left-to-right in
- * right-to-left languages, as media controls do in Material. The top bar collapses the player and
- * opens the sleep timer, Jam and the queue; a swipe down collapses it too.
+ * (shuffle, previous, play/pause, next, repeat), on the blurred cover (with "Colour from cover
+ * art"; plain otherwise). Wide windows put the controls on the driver's side and the cover at the
+ * far end (right, or left in right-to-left languages, by layout mirroring); narrow ones put the
+ * cover above them. The cover takes only the room the texts and controls leave, so a split screen
+ * keeps the controls in view; small windows get smaller controls. The seek bar, times and controls
+ * stay left-to-right in right-to-left languages, as media controls do in Material. The top bar
+ * collapses the player and opens the sleep timer, Jam and the queue; a swipe down collapses it
+ * too.
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final boolean accent;private final Runnable collapse;
@@ -127,7 +128,7 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());HuControls.custom(ui,shuffle,s.shuffle(),s.shuffled());
   int mode=s.repeat();repeat.setImageDrawable(HuControls.icon(getContext(),mode==HuSession.REPEAT_ONE?"encore_icon_repeat_once_24":"encore_icon_repeat_24",mode==HuSession.REPEAT_NONE?ui.text:ui.accent));
   String a=s.art();
-  if(!java.util.Objects.equals(a,art)){art=a;HuCovers.load(getContext(),a,ui.dp(480),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);tint(color);}});}
+  if(!java.util.Objects.equals(a,art)){art=a;HuCovers.load(getContext(),a,ui.dp(480),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);if(accent && b!=null)setBackground(new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0x99000000:0x99ffffff));else{setBackground(background);tint(color);}}});}
   progress();removeCallbacks(tick);if(s.playing())postDelayed(tick,500);
  }
  private void tint(Integer color){

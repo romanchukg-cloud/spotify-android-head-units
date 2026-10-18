@@ -46,6 +46,37 @@ final class HuUi {
    setBackground(empty?round(placeholder,radius):null);
   }
  }
+ /**
+  * A background of a blurred cover: the cover centre-cropped to the bounds, blurred (RenderEffect
+  * on Android 12+, a tiny bitmap drawn large before), under a scrim (dark by night, light by day),
+  * with rounded corners for the view's outline.
+  */
+ static final class Blur extends Drawable {
+  private final Bitmap bitmap,small;private final float radius,blur;private final Paint image=new Paint(Paint.FILTER_BITMAP_FLAG|Paint.ANTI_ALIAS_FLAG),scrim=new Paint();
+  private RenderNode node;
+  Blur(HuUi ui,Bitmap b,float radius,int scrimColor){
+   bitmap=b;this.radius=radius;blur=ui.dp(40);scrim.setColor(scrimColor);
+   small=Bitmap.createScaledBitmap(b,Math.max(1,b.getWidth()/16),Math.max(1,b.getHeight()/16),true);
+  }
+  public void draw(Canvas c){
+   Rect r=getBounds();if(r.isEmpty())return;
+   if(android.os.Build.VERSION.SDK_INT>=31 && c.isHardwareAccelerated()){
+    if(node==null){node=new RenderNode("cover");node.setRenderEffect(RenderEffect.createBlurEffect(blur,blur,Shader.TileMode.CLAMP));}
+    node.setPosition(0,0,r.width(),r.height());
+    RecordingCanvas rc=node.beginRecording();crop(rc,bitmap,r.width(),r.height());node.endRecording();
+    c.save();c.translate(r.left,r.top);c.drawRenderNode(node);c.restore();
+   }else{c.save();c.translate(r.left,r.top);crop(c,small,r.width(),r.height());c.restore();}
+   c.drawRect(r,scrim);
+  }
+  private void crop(Canvas c,Bitmap b,int w,int h){
+   float scale=Math.max(w/(float)b.getWidth(),h/(float)b.getHeight());float bw=w/scale,bh=h/scale;
+   Rect src=new Rect(Math.round((b.getWidth()-bw)/2),Math.round((b.getHeight()-bh)/2),Math.round((b.getWidth()+bw)/2),Math.round((b.getHeight()+bh)/2));
+   c.drawBitmap(b,src,new Rect(0,0,w,h),image);
+  }
+  public void getOutline(Outline o){o.setRoundRect(getBounds(),radius);}
+  public void setAlpha(int a){}public void setColorFilter(ColorFilter f){}
+  public int getOpacity(){return PixelFormat.OPAQUE;}
+ }
  static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
  Drawable pressable(int color,float radius){return new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0x33ffffff:0x22000000),round(color,radius),round(0xff000000,radius));}
  private static Typeface regular,heavy;
