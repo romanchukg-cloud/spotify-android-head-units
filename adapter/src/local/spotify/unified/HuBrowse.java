@@ -24,6 +24,22 @@ final class HuBrowse {
  /** Podcast episodes and audiobook chapters: 0 not played, 1 partly played, 2 played (AAOS completion status). */
  static int played(MediaItem i){Bundle e=extras(i);return e==null?0:e.getInt("android.media.extra.PLAYBACK_STATUS",0);}
  static float progress(MediaItem i){Bundle e=extras(i);return e==null?0:(float)Math.max(0,Math.min(1,e.getDouble("androidx.media.MediaItem.Extras.COMPLETION_PERCENTAGE",0)));}
+ /**
+  * Downloaded tracks: the backend gives no field for it but writes its own localized prefix into
+  * the subtitle (string downloaded_subtitle_prefix, "Downloaded • %s"); found by that format.
+  */
+ private static String[] marker;
+ private static String[] marker(android.content.Context c){
+  if(marker==null){
+   int id=c.getResources().getIdentifier("downloaded_subtitle_prefix","string",c.getPackageName());String f=id==0?"Downloaded • %s":c.getResources().getString(id);
+   int at=f.indexOf("%s");if(at<0)at=f.indexOf("%1$s");int len=f.startsWith("%1$s",at)?4:2;
+   marker=at<0?new String[]{f,""}:new String[]{f.substring(0,at),f.substring(at+len)};
+  }
+  return marker;
+ }
+ static boolean downloaded(android.content.Context c,MediaItem i){String s=subtitle(i);String[] m=marker(c);return !m[0].isEmpty() || !m[1].isEmpty()?s.startsWith(m[0]) && s.endsWith(m[1]) && s.length()>=m[0].length()+m[1].length():false;}
+ /** The subtitle without the downloaded prefix (the row shows a mark instead). */
+ static String artists(android.content.Context c,MediaItem i){String s=subtitle(i);if(!downloaded(c,i))return s;String[] m=marker(c);return s.substring(m[0].length(),s.length()-m[1].length());}
  static int number(MediaItem i){Bundle e=extras(i);return e==null?0:(int)e.getLong("android.media.metadata.TRACK_NUMBER");}
  /** The item's browser actions (play, download, downloading, downloaded). */
  static java.util.ArrayList<String> actions(MediaItem i){Bundle e=extras(i);java.util.ArrayList<String> a=e==null?null:e.getStringArrayList("androidx.media.utils.extras.CUSTOM_BROWSER_ACTION_ID_LIST");return a==null?new java.util.ArrayList<>():a;}

@@ -56,6 +56,11 @@ final class HuDetail {
   LinearLayout.LayoutParams playParams=new LinearLayout.LayoutParams(playSize,playSize);playParams.setMargins(ui.dp(20),0,ui.dp(20),0);buttons.addView(play,playParams);
   ImageView download=HuControls.button(ui,"encore_icon_download_24",HuText.get("download"),ui.dp(64),null);download.setVisibility(View.INVISIBLE);buttons.addView(download);
   header.addView(buttons);
+  // Download progress, counted from the tracks' downloaded marks while the page downloads.
+  LinearLayout progressBox=new LinearLayout(ui.activity);progressBox.setOrientation(LinearLayout.VERTICAL);progressBox.setGravity(Gravity.CENTER_HORIZONTAL);progressBox.setPadding(0,ui.dp(14),0,0);progressBox.setVisibility(View.GONE);
+  TextView progressText=ui.label("",15,ui.secondary,false);progressText.setGravity(Gravity.CENTER_HORIZONTAL);progressBox.addView(progressText);
+  HuList.Progress progressBar=new HuList.Progress(ui);LinearLayout.LayoutParams pb=new LinearLayout.LayoutParams(ui.dp(240),ui.dp(4));pb.topMargin=ui.dp(8);progressBox.addView(progressBar,pb);
+  header.addView(progressBox);
 
   // The list: the header above it on narrow content, beside it on wide content.
   HuList listing=new HuList(ui,kind,open);ListView list=listing.view;List<MediaItem> tracks=listing.tracks;
@@ -72,16 +77,37 @@ final class HuDetail {
    shuffle.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_shuffle_24",session.shuffled()?ui.accent:ui.text));};
   play.setOnClickListener(v->{if(here(session,t))session.playPause();else start(session,t,tracks,false);});
   shuffle.setOnClickListener(v->{if(session.shuffle()!=null && !session.shuffled())session.send(session.shuffle());start(session,t,tracks,true);});
-  Download d=new Download(ui,session,t.id,download);d.show(state(t.actions));
+  // While downloading, the list is reloaded every few seconds for the tracks' marks and the count.
+  boolean[] full={false};
+  Runnable progress=()->{
+   int done=listing.downloadedCount(),all=listing.tracks.size();
+   progressText.setText(full[0] || all==0?HuText.get("downloading_all"):String.format(Locale.getDefault(),HuText.get("downloaded_count"),done,all));
+   progressBar.set(all==0?0:done/(float)all);
+  };
+  Runnable[] reload={null};
+  reload[0]=()->session.children(t.id,items->{listing.fill(items,"artist".equals(kind));full[0]=items.size()>=200;progress.run();});
+  Handler ticker=new Handler(Looper.getMainLooper());
+  Runnable tick=new Runnable(){public void run(){reload[0].run();ticker.postDelayed(this,4000);}};
+  String[] last={null};
+  // The button's state is polled every 2 s: the reload timer starts and stops only when it changes.
+  Download d=new Download(ui,session,t.id,download,value->{
+   if(Objects.equals(value,last[0]))return;
+   boolean on=HeadUnitDownloads.DOWNLOADING.equals(value),was=HeadUnitDownloads.DOWNLOADING.equals(last[0]);last[0]=value;
+   listing.downloading(on);progressBox.setVisibility(on?View.VISIBLE:View.GONE);
+   ticker.removeCallbacks(tick);if(on){progress.run();ticker.postDelayed(tick,4000);}
+   // Finished: the list once more, so every track shows its mark.
+   if(was && !on)reload[0].run();
+  });
+  d.show(state(t.actions));
   HuSession.Listener listener=s->playState.run();
   page.addOnAttachStateChangeListener(new View.OnAttachStateChangeListener(){
    public void onViewAttachedToWindow(View v){session.add(listener);d.attached(true);}
-   public void onViewDetachedFromWindow(View v){session.remove(listener);d.attached(false);}
+   public void onViewDetachedFromWindow(View v){session.remove(listener);d.attached(false);ticker.removeCallbacks(tick);last[0]=null;}
   });
   playState.run();
 
   session.children(t.id,items->{
-   long total=listing.fill(items,"artist".equals(kind));
+   long total=listing.fill(items,"artist".equals(kind));full[0]=items.size()>=200;progress.run();
    // The backend gives at most 200 children (Liked Songs can hold more): no count it cannot vouch for.
    meta.setText(items.isEmpty()?HuText.get("empty"):"artist".equals(kind) || "show".equals(kind) || tracks.isEmpty() || items.size()>=200?"":HuText.songs(tracks.size())+" · "+length(total));
    meta.setVisibility(meta.getText().length()==0?View.GONE:View.VISIBLE);
@@ -114,9 +140,9 @@ final class HuDetail {
  private static final class Download {
   private final HuUi ui;private final HuSession session;private final String id;private final ImageView view;
   private final Handler main=new Handler(Looper.getMainLooper());private final Runnable poll=this::refresh;
-  private String state;private boolean attached=true,busy;private long pendingUntil;
-  Download(HuUi ui,HuSession session,String id,ImageView view){
-   this.ui=ui;this.session=session;this.id=id;this.view=view;
+  private String state;private boolean attached=true,busy;private long pendingUntil;private final java.util.function.Consumer<String> changed;
+  Download(HuUi ui,HuSession session,String id,ImageView view,java.util.function.Consumer<String> changed){
+   this.ui=ui;this.session=session;this.id=id;this.view=view;this.changed=changed;
    view.setOnClickListener(v->click());
   }
   void attached(boolean on){attached=on;if(on)refresh();else main.removeCallbacks(poll);}
@@ -125,7 +151,7 @@ final class HuDetail {
    if(!attached)return;busy=false;view.setAlpha(1f);
    if(HeadUnitDownloads.DOWNLOAD.equals(value) && SystemClock.elapsedRealtime()<pendingUntil)value=HeadUnitDownloads.DOWNLOADING;
    else if(!HeadUnitDownloads.DOWNLOADING.equals(value))pendingUntil=0;
-   state=value;
+   state=value;changed.accept(value);
    if(value==null){view.setVisibility(View.INVISIBLE);return;}
    int res=ui.activity.getResources().getIdentifier("ic_action_"+value,"drawable",ui.activity.getPackageName());
    Drawable d=res==0?null:ui.activity.getDrawable(res);if(d==null){view.setVisibility(View.INVISIBLE);return;}

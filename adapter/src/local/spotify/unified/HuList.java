@@ -7,7 +7,7 @@ import java.util.*;
  * The list of a page or of search results: the backend's items in their groups (group titles as
  * headings), browsable items as a row of cards and tracks or episodes as rows (number or cover,
  * explicit mark, artists, length; the playing one in the accent colour; a tap plays it in its
- * context; episodes show how much is played). kind: playlist, album, artist, show or search, for how rows are numbered.
+ * context; episodes show how much is played; downloaded tracks a green arrow). kind: playlist, album, artist, show or search, for how rows are numbered.
  */
 final class HuList {
  private static final class Entry {
@@ -15,7 +15,7 @@ final class HuList {
   final int type,position;final String heading;final MediaItem item;final List<MediaItem> items;
   Entry(int type,String heading,MediaItem item,List<MediaItem> items,int position){this.type=type;this.heading=heading;this.item=item;this.items=items;this.position=position;}
  }
- final ListView view;final List<MediaItem> tracks=new ArrayList<>();
+ final ListView view;final List<MediaItem> tracks=new ArrayList<>();private boolean downloading;
  private final List<Entry> entries=new ArrayList<>();private final BaseAdapter adapter;private String playing;
 
  HuList(HuUi ui,String kind,HuPages.Open open){
@@ -33,7 +33,7 @@ final class HuList {
      for(MediaItem i:e.items){HuBrowse.Card c=new HuBrowse.Card(ui,HuPages.card(ui));c.bind(i,v->open.item(i));cards.addView(c);}
      return s;
     }
-    Row r=old instanceof Row?(Row)old:new Row(ui);r.bind(e.item,e.position,kind,playing,v->open.item(e.item));return r;
+    Row r=old instanceof Row?(Row)old:new Row(ui);r.bind(e.item,e.position,kind,playing,downloading,v->open.item(e.item));return r;
    }
   };
   view.setAdapter(adapter);
@@ -48,6 +48,10 @@ final class HuList {
   * group (search's top results) once. headings: group titles even when there is only one group.
   * Returns the total length of the tracks.
   */
+ /** While the page downloads, tracks not downloaded yet show a grey mark (waiting). */
+ void downloading(boolean on){if(on!=downloading){downloading=on;adapter.notifyDataSetChanged();}}
+ /** Downloaded tracks among the shown ones. */
+ int downloadedCount(){int n=0;for(MediaItem i:tracks)if(HuBrowse.downloaded(view.getContext(),i))n++;return n;}
  long fill(List<MediaItem> items,boolean headings){
   entries.clear();tracks.clear();long total=0;
   LinkedHashMap<String,List<MediaItem>> groups=HuBrowse.groups(items);boolean titles=headings || groups.size()>1;
@@ -62,7 +66,7 @@ final class HuList {
  }
 
  /** A thin progress bar: how much of an episode is played (left to right, also in right-to-left languages). */
- private static final class Progress extends View {
+ static final class Progress extends View {
   private final android.graphics.Paint track=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG),fill=new android.graphics.Paint(android.graphics.Paint.ANTI_ALIAS_FLAG);private float fraction;
   Progress(HuUi ui){super(ui.activity);track.setColor(ui.secondary);track.setAlpha(70);fill.setColor(ui.text);}
   void set(float f){fraction=f;invalidate();}
@@ -73,7 +77,7 @@ final class HuList {
  }
  /** A track row: number or cover, title (accent while it plays), explicit mark, artists, length. */
  private static final class Row extends LinearLayout {
-  private final HuUi ui;private final TextView number,title,badge,subtitle,duration;private final ImageView cover,played;private final Progress progress;
+  private final HuUi ui;private final TextView number,title,badge,subtitle,duration;private final ImageView cover,played,saved;private final Progress progress;
   Row(HuUi ui){
    super(ui.activity);this.ui=ui;setGravity(Gravity.CENTER_VERTICAL);setMinimumHeight(ui.dp(76));setPaddingRelative(ui.dp(8),ui.dp(8),ui.dp(16),ui.dp(8));
    setBackground(ui.pressable(0x00000000,ui.dp(14)));
@@ -84,6 +88,8 @@ final class HuList {
    title=ui.label("",19,ui.text,false);title.setSingleLine(true);title.setEllipsize(android.text.TextUtils.TruncateAt.END);
    LinearLayout line=new LinearLayout(ui.activity);line.setGravity(Gravity.CENTER_VERTICAL);
    badge=ui.label("E",11,ui.bg,true);badge.setGravity(Gravity.CENTER);badge.setBackground(HuUi.round(ui.secondary,ui.dp(3)));badge.setPadding(ui.dp(5),0,ui.dp(5),0);badge.setContentDescription(HuText.get("explicit"));
+   // Downloaded: a green arrow before the artists, as in Spotify's apps (grey while waiting to download).
+   saved=new ImageView(ui.activity);LayoutParams sv=new LayoutParams(ui.dp(18),ui.dp(18));sv.setMarginEnd(ui.dp(6));line.addView(saved,sv);
    LayoutParams b=new LayoutParams(-2,-2);b.setMarginEnd(ui.dp(6));line.addView(badge,b);
    subtitle=ui.label("",15,ui.secondary,false);subtitle.setSingleLine(true);subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END);line.addView(subtitle,new LayoutParams(0,-2,1));
    progress=new Progress(ui);LayoutParams pp=new LayoutParams(ui.dp(160),ui.dp(4));pp.topMargin=ui.dp(8);
@@ -92,7 +98,7 @@ final class HuList {
    LayoutParams pl=new LayoutParams(ui.dp(28),ui.dp(28));pl.setMarginEnd(ui.dp(12));addView(played,pl);
    duration=ui.label("",15,ui.secondary,false);addView(duration);
   }
-  void bind(MediaItem item,int position,String kind,String playing,View.OnClickListener click){
+  void bind(MediaItem item,int position,String kind,String playing,boolean downloading,View.OnClickListener click){
    // Episodes carry their date and length in the subtitle: no number and no length column.
    String icon=HuBrowse.icon(item);boolean album="album".equals(kind),show="show".equals(kind) || String.valueOf(HuBrowse.uri(HuBrowse.id(item))).startsWith("spotify:episode:"),showCover=!album && icon!=null;
    int n=album && HuBrowse.number(item)>0?HuBrowse.number(item):position;
@@ -100,7 +106,10 @@ final class HuList {
    cover.setVisibility(showCover?VISIBLE:GONE);cover.setImageDrawable(null);if(showCover)HuCovers.into(cover,icon,ui.dp(56));
    boolean current=playing!=null && playing.equals(HuBrowse.uri(HuBrowse.id(item)));
    title.setText(HuBrowse.title(item));title.setTextColor(current?ui.accent:ui.text);
-   badge.setVisibility(HuBrowse.explicit(item)?VISIBLE:GONE);subtitle.setText(HuBrowse.subtitle(item));
+   badge.setVisibility(HuBrowse.explicit(item)?VISIBLE:GONE);subtitle.setText(HuBrowse.artists(ui.activity,item));
+   boolean down=HuBrowse.downloaded(ui.activity,item);
+   if(down || downloading){saved.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_downloaded_16",down?ui.accent:ui.secondary));saved.setAlpha(down?1f:.45f);saved.setContentDescription(HuText.get(down?"downloaded_mark":"waiting_download"));saved.setVisibility(VISIBLE);}
+   else saved.setVisibility(GONE);
    long d=HuBrowse.duration(item);duration.setText(d>0 && !show?HuControls.time(d):"");title.setMaxLines(show?2:1);title.setSingleLine(!show);
    int status=HuBrowse.played(item);progress.set(status==1?HuBrowse.progress(item):0);progress.setVisibility(status==1?VISIBLE:GONE);played.setVisibility(status==2?VISIBLE:GONE);
    setContentDescription(HuBrowse.title(item));setOnClickListener(click);

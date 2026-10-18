@@ -92,10 +92,15 @@ public class Probe extends Activity {
    public void onResult(String a,Bundle e,Bundle r){log("ACTION RESULT "+dump(r));}
    public void onError(String a,Bundle e,Bundle d){log("ACTION ERROR "+dump(d));}
   });
-  for(int s=0;s<=watch;s+=5)main.postDelayed(()->browser.getItem(id,new MediaBrowserCompat.ItemCallback(){
+  for(int s=0;s<=watch;s+=5)main.postDelayed(()->{browser.getItem(id,new MediaBrowserCompat.ItemCallback(){
    public void onItemLoaded(MediaBrowserCompat.MediaItem item){log("ITEM "+(item==null?"null":describe(item)));}
    public void onError(String i){log("ITEM ERROR "+i);}
-  }),s*1000L);
+  });
+   // How many children the backend marks as downloaded (its subtitle prefix) at this moment.
+   if(getIntent().getBooleanExtra("children",false))browser.subscribe(id,new MediaBrowserCompat.SubscriptionCallback(){
+    public void onChildrenLoaded(String parent,List<MediaBrowserCompat.MediaItem> children){int n=0;for(MediaBrowserCompat.MediaItem c:children){CharSequence sub=c.getDescription().getSubtitle();if(sub!=null && sub.toString().startsWith("Downloaded"))n++;}log("CHILDREN downloaded="+n+" of "+children.size());browser.unsubscribe(parent);}
+   });
+  },s*1000L);
   main.postDelayed(()->log("WATCH DONE"),watch*1000L+3000);
  }
  static String describe(MediaBrowserCompat.MediaItem item){
