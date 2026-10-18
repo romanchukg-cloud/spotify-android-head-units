@@ -47,4 +47,4 @@ Unofficial experimental project. This app is free — if you paid for it, ask fo
 
 Our Java code — the interface, the integration, patch and build scripts, audits and emulator tests — is in the repository. The proprietary Spotify backend is a local build input. The APK still contains parts of the BYD (Vivid) player app (its media service for the car's voice assistant, resources and a typeface); they are to be removed.
 
-[Java / build](adapter/) · [What has been tested](reports/headunit-test.12.md)
+[Java / build](adapter/) · [What has been tested](reports/headunit-test.12.md) · [NOTICE](NOTICE.md)

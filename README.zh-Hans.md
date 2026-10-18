@@ -47,4 +47,4 @@ Android 9+ · 55.7 MiB · 非官方适配
 
 我们的 Java 代码——界面、集成、补丁和构建脚本、审核及模拟器测试——均在仓库中。专有的 Spotify 后端是本地构建输入。APK 仍包含 BYD（Vivid）播放器的部分内容：用于汽车语音助手的媒体服务、资源和一种字体；之后会移除。
 
-[Java / build](adapter/) · [已完成的测试](reports/headunit-test.12.md)
+[Java / build](adapter/) · [已完成的测试](reports/headunit-test.12.md) · [NOTICE](NOTICE.md)

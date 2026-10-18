@@ -55,7 +55,7 @@ for lang,c in CONTENT.items():
 <p><strong>{e(c['pendingStrong'])}</strong> {e(c['pending'])}</p><p>{e(c['compatibility'])}</p></section>
 <section><h2>{e(c['installTitle'])}</h2><ol>{steps}</ol></section>
 <section><h2>{e(c['verifyTitle'])}</h2><p>{e(c['verify'])}</p><code dir="ltr">{SHA}</code></section>
-<section><h2>{e(c['sourceTitle'])}</h2><p>{e(c['source'])}</p><p><a href="{REPO}/tree/main/adapter">Java / build</a> · <a href="{REPO}/blob/main/reports/{LABEL}.md">{e(c['testedTitle'])}</a></p></section>
+<section><h2>{e(c['sourceTitle'])}</h2><p>{e(c['source'])}</p><p><a href="{REPO}/tree/main/adapter">Java / build</a> · <a href="{REPO}/blob/main/reports/{LABEL}.md">{e(c['testedTitle'])}</a> · <a href="{REPO}/blob/main/NOTICE.md" dir="ltr">NOTICE</a></p></section>
 <footer>{e(c['footer'])}</footer>
 </main></body></html>
 '''
@@ -65,7 +65,7 @@ for lang,c in CONTENT.items():
  markdown=f"# {c['name']}\n\n{languages}\n\n{c['intro']}\n\n[{c['download']}]({DOWNLOAD}) · [🌐 {c['name']}]({SITE+route(lang)})\n\n![{c['shots'][0]}](docs/screens/{SHOTS[0]['file']})\n\n## {c['testedTitle']}\n\n{c['tested']}\n\n**{c['pendingStrong']}** {c['pending']}\n\n{c['compatibility']}\n\n## {SUPPORT['supportTitle']}\n\n{SUPPORT['support']}\n\n## {c['installTitle']}\n\n"
  markdown+='\n'.join(f'{i}. {s}' for i,s in enumerate(c['steps'],1))
  markdown+=f"\n\n{c['meta']}\n\n## {c['verifyTitle']}\n\n`{APK_NAME}` · {SIZE} bytes\n\n{c['verify']}\n\n```text\n{SHA}\n```\n\n{c['footer']}\n"
- markdown+=f"\n## {c['sourceTitle']}\n\n{c['source']}\n\n[Java / build](adapter/) · [{c['testedTitle']}](reports/{LABEL}.md)\n"
+ markdown+=f"\n## {c['sourceTitle']}\n\n{c['source']}\n\n[Java / build](adapter/) · [{c['testedTitle']}](reports/{LABEL}.md) · [NOTICE](NOTICE.md)\n"
  if lang=='ar':markdown='<div dir="rtl">\n\n'+markdown+'\n</div>\n'
  (ROOT/readme).write_text(markdown)
 print('Generated 5 pages and 5 READMEs. English is the default.')

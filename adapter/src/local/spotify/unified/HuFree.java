@@ -10,11 +10,32 @@ import android.widget.*;
  * free, that a buyer was misled and should ask for the money back, and that it comes only from the
  * official page (address and a QR code to open it on a phone). Shown once per version over our
  * main screen, as a line with a small code on the sign-in panel and on Spotify's QR sign-in
- * screen, and from "About this app" in Head unit settings.
+ * screen, and from "About this app" in Head unit settings. A copy signed with another key than
+ * the release certificate (the notice can only be removed by changing and re-signing the APK)
+ * says instead that it has been changed, every time the main screen opens.
  */
 final class HuFree {
  private HuFree(){}
  static final String URL="https://romanchukg-cloud.github.io/spotify-android-head-units/",SHORT="romanchukg-cloud.github.io/spotify-android-head-units";
+ /** The terms the notice stands for; kept in the code (and logged for a changed copy) so they travel with it. */
+ static final String NOTICE="Spotify for Android Head Units is distributed free of charge from "+URL+". Selling it, or removing or hiding its free-of-charge notice or the check of its signing certificate, is not permitted. It is unofficial and not made by Spotify or BYD.";
+ private static Boolean genuine;
+ /**
+  * Whether this installation is signed with the release certificate. Removing the notice means
+  * changing and re-signing the APK with another key, so a changed copy fails this check (and
+  * Android refuses our updates over it).
+  */
+ static boolean genuine(Context c){
+  if(genuine!=null)return genuine;
+  boolean ok=true;
+  try{
+   android.content.pm.PackageInfo i=c.getPackageManager().getPackageInfo(c.getPackageName(),android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES|android.content.pm.PackageManager.GET_SIGNATURES);
+   android.content.pm.Signature[] s=i.signingInfo!=null?(i.signingInfo.hasMultipleSigners()?i.signingInfo.getApkContentsSigners():i.signingInfo.getSigningCertificateHistory()):i.signatures;
+   ok=false;if(s!=null)for(android.content.pm.Signature x:s)if(UpdateFeed.SIGNER.equals(UpdateDownload.hex(java.security.MessageDigest.getInstance("SHA-256").digest(x.toByteArray()))))ok=true;
+  }catch(Exception e){android.util.Log.w("SpotifyHU","Signing certificate unreadable",e);ok=true;}
+  if(!ok)android.util.Log.w("SpotifyHU","Changed copy (not the release certificate). "+NOTICE);
+  genuine=ok;return ok;
+ }
  /** The official page as a QR code (version 4, level M; generated and decoded with CoreImage). */
  private static final String[] MODULES={
   "111111100010101010111001001111111",
@@ -66,8 +87,9 @@ final class HuFree {
  static View notice(HuUi ui,boolean wide){
   LinearLayout box=new LinearLayout(ui.activity);box.setOrientation(wide?LinearLayout.HORIZONTAL:LinearLayout.VERTICAL);box.setGravity(Gravity.CENTER_VERTICAL);
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(LinearLayout.VERTICAL);
-  TextView title=ui.label(HuText.get("free_title"),26,ui.text,true);texts.addView(title);
-  TextView body=ui.label(HuText.get("free_body"),19,ui.text,false);body.setPadding(0,ui.dp(12),0,0);body.setLineSpacing(0,1.15f);texts.addView(body);
+  boolean ok=genuine(ui.activity);
+  TextView title=ui.label(HuText.get(ok?"free_title":"modified_title"),26,ok?ui.text:0xffe22134,true);texts.addView(title);
+  TextView body=ui.label(HuText.get(ok?"free_body":"modified_body"),19,ui.text,false);body.setPadding(0,ui.dp(12),0,0);body.setLineSpacing(0,1.15f);texts.addView(body);
   TextView page=ui.label(HuText.get("official_page")+": "+SHORT,16,ui.secondary,false);page.setPadding(0,ui.dp(14),0,0);page.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);texts.addView(page);
   Code code=new Code(ui.activity,ui.dp(10));int size=ui.dp(wide?200:180);
   if(wide){box.addView(texts,new LinearLayout.LayoutParams(0,-2,1));LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(size,size);cp.setMarginStart(ui.dp(28));box.addView(code,cp);}
@@ -79,7 +101,7 @@ final class HuFree {
   LinearLayout row=new LinearLayout(c);row.setGravity(Gravity.CENTER_VERTICAL);
   Code code=new Code(c,6*density);int size=Math.round(84*density);row.addView(code,new LinearLayout.LayoutParams(size,size));
   LinearLayout texts=new LinearLayout(c);texts.setOrientation(LinearLayout.VERTICAL);texts.setPaddingRelative(Math.round(14*density),0,0,0);
-  TextView a=new TextView(c);a.setText(HuText.get("free_short"));a.setTextColor(text);a.setTextSize(textSize);a.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);texts.addView(a);
+  TextView a=new TextView(c);a.setText(HuText.get(genuine(c)?"free_short":"modified_short"));a.setTextColor(genuine(c)?text:0xffe22134);a.setTextSize(textSize);a.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);texts.addView(a);
   TextView b=new TextView(c);b.setText(HuText.get("official_page")+": "+SHORT);b.setTextColor(secondary);b.setTextSize(textSize-2);b.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);b.setPadding(0,Math.round(4*density),0,0);texts.addView(b);
   row.addView(texts,new LinearLayout.LayoutParams(-2,-2));
   return row;
@@ -98,10 +120,10 @@ final class HuFree {
    int width=Math.min(ui.dp(wide?820:560),a.getResources().getDisplayMetrics().widthPixels-ui.dp(32));w.setLayout(width,ViewGroup.LayoutParams.WRAP_CONTENT);}
   d.show();
  }
- /** Once per version, over the main screen. */
+ /** Once per version over the main screen; a changed copy says so every time the screen opens. */
  static void maybeShow(Activity a){
   android.content.SharedPreferences p=a.getSharedPreferences("hu_free",Context.MODE_PRIVATE);
-  if(p.getInt("seen",0)==HeadUnitBuild.VERSION_CODE)return;
+  if(genuine(a) && p.getInt("seen",0)==HeadUnitBuild.VERSION_CODE)return;
   p.edit().putInt("seen",HeadUnitBuild.VERSION_CODE).apply();
   a.getWindow().getDecorView().postDelayed(()->{if(!a.isFinishing() && !a.isDestroyed())show(a,null);},800);
  }
@@ -111,7 +133,7 @@ final class HuFree {
   */
  static void loginScreen(Activity a,FrameLayout content){
   if(content.findViewWithTag("hu_free")!=null)return;float d=a.getResources().getDisplayMetrics().density;
-  TextView t=new TextView(a);t.setTag("hu_free");t.setText(HuText.get("free_short")+"  ·  "+HuText.get("official_page")+": "+SHORT);
+  TextView t=new TextView(a);t.setTag("hu_free");t.setText(HuText.get(genuine(a)?"free_short":"modified_short")+"  ·  "+HuText.get("official_page")+": "+SHORT);
   t.setTextColor(0xe6ffffff);t.setTextSize(15);t.setMaxLines(2);t.setGravity(Gravity.CENTER);t.setBackground(HuUi.round(0xb3000000,14*d));
   int pad=Math.round(8*d);t.setPadding(Math.round(16*d),pad,Math.round(16*d),pad);
   FrameLayout.LayoutParams p=new FrameLayout.LayoutParams(-2,-2,Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL);p.bottomMargin=Math.round(6*d);p.leftMargin=p.rightMargin=Math.round(24*d);content.addView(t,p);
