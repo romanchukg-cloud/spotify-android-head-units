@@ -7,7 +7,7 @@ import android.view.*;
 import android.widget.*;
 /**
  * The compact player another app shows in its panel (PanelProviderService): cover, title and
- * artist, previous / play-pause / next and a thin progress line, with rounded corners in the host's colours (black by
+ * artist, previous / play-pause / next, a thin progress line with elapsed and remaining time, with rounded corners in the host's colours (black by
  * night, white by day). A tall panel gets a column, a wide one a strip. Data and commands go
  * through our session with the Spotify backend; it connects only once the backend runs, so a
  * host that binds starts neither the backend nor the music. Signed out or without a session it
@@ -16,7 +16,7 @@ import android.widget.*;
 final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
  private final HuSession session;private final Runnable open;
  private boolean night,listening;private int widthPx,heightPx;
- private ImageView cover,play;private TextView title,artist;private Progress progress;private String art;
+ private ImageView cover,play;private TextView title,artist,elapsed,remaining;private Progress progress;private String art;
  private int bg,text,secondary;private final float radius;
  private final Runnable tick=new Runnable(){public void run(){update();if(isAttachedToWindow())postDelayed(this,1000);}};
  private final Runnable watch=new Runnable(){public void run(){if(!listening && backendRunning())listen();if(!listening && isAttachedToWindow())postDelayed(this,5000);}};
@@ -56,6 +56,11 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
   title=label(column?18:17,text,true);title.setMaxLines(column?2:1);artist=label(column?15:14,secondary,false);artist.setMaxLines(1);
   LinearLayout words=new LinearLayout(getContext());words.setOrientation(LinearLayout.VERTICAL);words.addView(title);words.addView(artist);words.setOnClickListener(v->open.run());
   progress=new Progress();
+  // Elapsed and remaining time under the progress line, left to right in every language.
+  LinearLayout times=new LinearLayout(getContext());times.setLayoutDirection(LAYOUT_DIRECTION_LTR);
+  elapsed=label(column?13:12,secondary,false);elapsed.setMaxLines(1);elapsed.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);elapsed.setGravity(Gravity.START);
+  remaining=label(column?13:12,secondary,false);remaining.setMaxLines(1);remaining.setTextAlignment(View.TEXT_ALIGNMENT_GRAVITY);remaining.setGravity(Gravity.END);
+  times.addView(elapsed,new LinearLayout.LayoutParams(0,-2,1));times.addView(remaining,new LinearLayout.LayoutParams(0,-2,1));
   // Controls keep their left-to-right order in right-to-left languages, as media controls do.
   LinearLayout controls=new LinearLayout(getContext());controls.setGravity(Gravity.CENTER);controls.setLayoutDirection(LAYOUT_DIRECTION_LTR);
   int side=dp(column?56:52),main=dp(column?64:56);
@@ -67,13 +72,13 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
    int room=Math.min(widthPx-2*pad,(int)(heightPx*0.45f));
    box.addView(cover,new LinearLayout.LayoutParams(room,room));
    LinearLayout.LayoutParams w=new LinearLayout.LayoutParams(-1,-2);w.topMargin=dp(12);box.addView(words,w);
-   LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(16));p.topMargin=dp(6);box.addView(progress,p);
+   LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(16));p.topMargin=dp(6);box.addView(progress,p);box.addView(times,new LinearLayout.LayoutParams(-1,-2));
    LinearLayout.LayoutParams c=new LinearLayout.LayoutParams(-1,-2);c.topMargin=dp(4);box.addView(controls,c);
   }else{
    int room=Math.max(dp(40),heightPx-2*pad-dp(10));
    box.addView(cover,new LinearLayout.LayoutParams(room,room));
    LinearLayout middle=new LinearLayout(getContext());middle.setOrientation(LinearLayout.VERTICAL);middle.setGravity(Gravity.CENTER_VERTICAL);
-   middle.addView(words);LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(14));p.topMargin=dp(4);middle.addView(progress,p);
+   middle.addView(words);LinearLayout.LayoutParams p=new LinearLayout.LayoutParams(-1,dp(14));p.topMargin=dp(4);middle.addView(progress,p);middle.addView(times,new LinearLayout.LayoutParams(-1,-2));
    LinearLayout.LayoutParams m=new LinearLayout.LayoutParams(0,-2,1);m.setMarginStart(dp(14));m.setMarginEnd(dp(8));box.addView(middle,m);
    box.addView(controls,new LinearLayout.LayoutParams(-2,-2));
   }
@@ -111,7 +116,11 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
   else if(!a.equals(art)){art=a;int size=Math.max(dp(64),cover.getLayoutParams().width);HuCovers.load(getContext(),a,size,(b,color)->{if(a.equals(art))cover.setImageBitmap(b);});}
   update();
  }
- private void update(){if(progress==null)return;long d=session.duration();progress.fraction=listening && d>0?Math.min(1f,session.position()/(float)d):0f;progress.invalidate();}
+ private void update(){
+  if(progress==null)return;long d=listening?session.duration():0,at=listening?Math.min(session.position(),d>0?d:Long.MAX_VALUE):0;
+  progress.fraction=d>0?Math.min(1f,at/(float)d):0f;progress.invalidate();
+  elapsed.setText(HuControls.time(at));remaining.setText("-"+HuControls.time(Math.max(0,d-at)));
+ }
 
  /** A thin rounded progress line over a faint track, centred in its box, always left to right. */
  private final class Progress extends View {

@@ -61,7 +61,7 @@ Spotify's own uid is allowed only in debug builds (`HU_DEBUG=1`, for the test ho
 
 ## The block
 
-- Cover, title and artist, previous / play-pause / next and a thin progress line. Touch targets are at least 48 dp.
+- Cover, title and artist, previous / play-pause / next and a thin progress line with the elapsed and remaining time. Touch targets are at least 48 dp.
 - A panel taller than wide gets a column (a side panel in landscape); otherwise a strip (a bottom panel in portrait). `RESIZE` switches between them.
 - Colours follow `night`: a black block by night, a white one by day, to sit on the host's black or white card.
 - Rounded corners: the block is drawn with `cornerRadiusPx` and is transparent outside it, so the host's card shows in the corners. Give the card's own radius when the SurfaceView fills the card, or the concentric one when it is inset (card radius minus the inset; our interface uses 22 dp cards and 14 dp inner panels with an 8 dp inset). Set the SurfaceView's format to `PixelFormat.TRANSLUCENT` (`getHolder().setFormat`), or the corners stay black.
