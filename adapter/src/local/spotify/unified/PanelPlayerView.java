@@ -66,8 +66,9 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
   }else s=mode==STRIP?clamp(hDp/280f,0.85f,1.15f):clamp(Math.min(wDp/380f,hDp/560f),1f,1.4f);
   int side=dp((mode==STRIP?60:64)*s),main=dp((mode==STRIP?72:80)*s),gap=dp(10*s);
   LinearLayout box=new LinearLayout(getContext());box.setPadding(pad,pad,pad,pad);addView(box,new LayoutParams(-1,-1));
-  this.cover=new ImageView(getContext());this.cover.setScaleType(ImageView.ScaleType.CENTER_CROP);this.cover.setBackground(round(night?0xff282828:0xffe8e8e8,dp(mode==STRIP?8:12)));
-  this.cover.setOutlineProvider(ViewOutlineProvider.BACKGROUND);this.cover.setClipToOutline(true);this.cover.setOnClickListener(v->open.run());
+  // HuUi.Cover cuts the corners with its own outline and drops the placeholder once the image is
+  // set, so no rim of it shows around the image's anti-aliased corners.
+  this.cover=new HuUi.Cover(getContext(),night?0xff282828:0xffe8e8e8,dp(mode==STRIP?8:12));this.cover.setOnClickListener(v->open.run());
   title=label((mode==STRIP?21:22)*s,text,true);title.setMaxLines(mode==COLUMN?2:1);artist=label((mode==STRIP?16:17)*s,secondary,false);artist.setMaxLines(1);
   LinearLayout words=new LinearLayout(getContext());words.setOrientation(LinearLayout.VERTICAL);words.addView(title);words.addView(artist);words.setOnClickListener(v->open.run());
   progress=new Progress();progress.line=dp(3*Math.min(s,1.2f));

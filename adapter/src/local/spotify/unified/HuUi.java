@@ -59,8 +59,10 @@ final class HuUi {
   */
  static class Cover extends ImageView {
   private final int placeholder;private float radius;
-  Cover(HuUi ui,float radius){
-   super(ui.activity);placeholder=ui.control;this.radius=radius;setScaleType(ScaleType.CENTER_CROP);
+  Cover(HuUi ui,float radius){this(ui.activity,ui.control,radius);}
+  /** For views outside an activity (the panel block): its own placeholder colour. */
+  Cover(android.content.Context c,int placeholder,float radius){
+   super(c);this.placeholder=placeholder;this.radius=radius;setScaleType(ScaleType.CENTER_CROP);
    setOutlineProvider(new ViewOutlineProvider(){public void getOutline(View v,Outline o){o.setRoundRect(0,0,v.getWidth(),v.getHeight(),Cover.this.radius);}});
    setClipToOutline(true);setBackground(round(placeholder,radius));
   }
