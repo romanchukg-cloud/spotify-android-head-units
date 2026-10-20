@@ -71,7 +71,7 @@ public final class PanelProviderService extends Service {
   Display display=getSystemService(DisplayManager.class).getDisplay(b.getInt("displayId"));
   if(display==null){error(reply,"bad_display","No display "+b.getInt("displayId"));return;}
   close(uid,null);
-  Session s=new Session(uid,reply,display,token,w,h,b.getInt("densityDpi"),b.getBoolean("night"));sessions.put(uid,s);s.opened();
+  Session s=new Session(uid,reply,display,token,w,h,b.getInt("densityDpi"),b.getBoolean("night"),b.getInt("cornerRadiusPx",-1));sessions.put(uid,s);s.opened();
   Log.i("SpotifyHU","Panel opened for "+host+" "+w+"x"+h);
  }
  private void close(int uid,String reason){
@@ -94,14 +94,14 @@ public final class PanelProviderService extends Service {
  /** One host's block: its SurfaceControlViewHost, the player view and the host's death watch. */
  private final class Session implements IBinder.DeathRecipient {
   final int uid;final Messenger reply;final SurfaceControlViewHost viewHost;final PanelPlayerView view;
-  Session(int uid,Messenger reply,Display display,IBinder token,int w,int h,int densityDpi,boolean night){
+  Session(int uid,Messenger reply,Display display,IBinder token,int w,int h,int densityDpi,boolean night,int radiusPx){
    this.uid=uid;this.reply=reply;
    // The host's display, density and day/night decide sizes and colours.
    Context c=createDisplayContext(display);Configuration config=new Configuration(c.getResources().getConfiguration());
    if(densityDpi>0)config.densityDpi=densityDpi;
    config.uiMode=(config.uiMode&~Configuration.UI_MODE_NIGHT_MASK)|(night?Configuration.UI_MODE_NIGHT_YES:Configuration.UI_MODE_NIGHT_NO);
    c=new ContextThemeWrapper(c.createConfigurationContext(config),android.R.style.Theme_Material_NoActionBar);
-   view=new PanelPlayerView(c,night,w,h,PanelProviderService.this::openSpotify);
+   view=new PanelPlayerView(c,night,w,h,radiusPx,PanelProviderService.this::openSpotify);
    viewHost=new SurfaceControlViewHost(c,display,token);viewHost.setView(view,w,h);
    try{reply.getBinder().linkToDeath(this,0);}catch(RemoteException e){binderDied();}
   }

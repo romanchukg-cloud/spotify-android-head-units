@@ -7,7 +7,7 @@ import android.view.*;
 import android.widget.*;
 /**
  * The compact player another app shows in its panel (PanelProviderService): cover, title and
- * artist, previous / play-pause / next and a thin progress line, in the host's colours (black by
+ * artist, previous / play-pause / next and a thin progress line, with rounded corners in the host's colours (black by
  * night, white by day). A tall panel gets a column, a wide one a strip. Data and commands go
  * through our session with the Spotify backend; it connects only once the backend runs, so a
  * host that binds starts neither the backend nor the music. Signed out or without a session it
@@ -17,11 +17,14 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
  private final HuSession session;private final Runnable open;
  private boolean night,listening;private int widthPx,heightPx;
  private ImageView cover,play;private TextView title,artist;private Progress progress;private String art;
- private int bg,text,secondary;
+ private int bg,text,secondary;private final float radius;
  private final Runnable tick=new Runnable(){public void run(){update();if(isAttachedToWindow())postDelayed(this,1000);}};
  private final Runnable watch=new Runnable(){public void run(){if(!listening && backendRunning())listen();if(!listening && isAttachedToWindow())postDelayed(this,5000);}};
- PanelPlayerView(Context c,boolean night,int widthPx,int heightPx,Runnable open){
-  super(c);session=HuSession.get(c);this.open=open;this.night=night;this.widthPx=widthPx;this.heightPx=heightPx;build();
+ /** radiusPx: the block's corner radius (negative: 22 dp); outside it the block is transparent, so the host's card shows. */
+ PanelPlayerView(Context c,boolean night,int widthPx,int heightPx,float radiusPx,Runnable open){
+  super(c);session=HuSession.get(c);this.open=open;this.night=night;this.widthPx=widthPx;this.heightPx=heightPx;
+  radius=radiusPx>=0?radiusPx:22*c.getResources().getDisplayMetrics().density;
+  setOutlineProvider(ViewOutlineProvider.BACKGROUND);setClipToOutline(true);build();
  }
  void size(int w,int h){if(w==widthPx && h==heightPx)return;widthPx=w;heightPx=h;build();}
  void theme(boolean night){if(this.night==night)return;this.night=night;build();}
@@ -44,7 +47,7 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
 
  private void build(){
   removeAllViews();art=null;
-  bg=night?0xff000000:0xffffffff;text=night?0xffffffff:0xff000000;secondary=night?0xffb3b3b3:0xff6a6a6a;setBackgroundColor(bg);
+  bg=night?0xff000000:0xffffffff;text=night?0xffffffff:0xff000000;secondary=night?0xffb3b3b3:0xff6a6a6a;setBackground(round(bg,radius));
   boolean column=column();int pad=dp(column?14:10);
   LinearLayout box=new LinearLayout(getContext());box.setOrientation(column?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
   box.setGravity(column?Gravity.CENTER_HORIZONTAL:Gravity.CENTER_VERTICAL);box.setPadding(pad,pad,pad,pad);addView(box,new LayoutParams(-1,-1));
@@ -76,7 +79,7 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
   }
   // Signed out, without a session or with nothing to play: a single "Open Spotify" target.
   LinearLayout hint=new LinearLayout(getContext());hint.setGravity(Gravity.CENTER);hint.setOrientation(column?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-  hint.setBackgroundColor(bg);hint.setTag("open");hint.setClickable(true);hint.setOnClickListener(v->open.run());hint.setMinimumHeight(dp(48));
+  hint.setBackground(round(bg,radius));hint.setTag("open");hint.setClickable(true);hint.setOnClickListener(v->open.run());hint.setMinimumHeight(dp(48));
   ImageView logo=new ImageView(getContext());logo.setImageDrawable(HuControls.icon(getContext(),"encore_icon_spotify_logo_24",0xff1ed760));hint.addView(logo,new LinearLayout.LayoutParams(dp(40),dp(40)));
   TextView say=label(column?18:17,text,true);say.setText(HuText.get("panel_open"));say.setGravity(Gravity.CENTER);say.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);say.setPadding(dp(12),dp(8),dp(12),dp(8));hint.addView(say);
   addView(hint,new LayoutParams(-1,-1));

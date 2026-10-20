@@ -25,10 +25,12 @@ public final class PanelTestActivity extends Activity {
   LinearLayout buttons=new LinearLayout(this);page.addView(buttons);
   button(buttons,"Open",v->newSurface());
   button(buttons,"Resize",v->{column=!column;size();surface.post(()->send(PanelProviderService.RESIZE,sizeBundle()));});
-  button(buttons,"Theme",v->{night=!night;card.setBackgroundColor(night?0xff000000:0xffffffff);Bundle b=new Bundle();b.putBoolean("night",night);send(PanelProviderService.THEME,b);});
+  button(buttons,"Theme",v->{night=!night;paintCard();Bundle b=new Bundle();b.putBoolean("night",night);send(PanelProviderService.THEME,b);});
   button(buttons,"Close",v->send(PanelProviderService.CLOSE,new Bundle()));
   button(buttons,"Exit",v->android.os.Process.killProcess(android.os.Process.myPid()));
-  card=new FrameLayout(this);card.setBackgroundColor(0xff000000);card.setPadding(dp(16),dp(16),dp(16),dp(16));
+  // A rounded card (22 dp) with an 8 dp inset; the block gets the concentric 14 dp radius. The card
+  // is a shade lighter than the block, so that the block's transparent corners show.
+  card=new FrameLayout(this);paintCard();card.setPadding(dp(8),dp(8),dp(8),dp(8));
   LinearLayout.LayoutParams cp=new LinearLayout.LayoutParams(-2,-2);cp.topMargin=dp(16);page.addView(card,cp);
   newSurface();
   setContentView(page);
@@ -42,7 +44,7 @@ public final class PanelTestActivity extends Activity {
   */
  private void newSurface(){
   card.removeAllViews();attached=false;surfaceReady=false;
-  surface=new SurfaceView(this);surface.setZOrderOnTop(true);card.addView(surface);size();
+  surface=new SurfaceView(this);surface.setZOrderOnTop(true);surface.getHolder().setFormat(android.graphics.PixelFormat.TRANSLUCENT);card.addView(surface);size();
   surface.getHolder().addCallback(new SurfaceHolder.Callback(){
    public void surfaceCreated(SurfaceHolder h){surfaceReady=true;if(provider!=null && !attached)open();}
    public void surfaceChanged(SurfaceHolder h,int f,int w,int ht){}
@@ -50,12 +52,13 @@ public final class PanelTestActivity extends Activity {
   });
  }
  protected void onDestroy(){if(bound)unbindService(connection);super.onDestroy();}
+ private void paintCard(){android.graphics.drawable.GradientDrawable d=new android.graphics.drawable.GradientDrawable();d.setColor(night?0xff262626:0xffe0e0e0);d.setCornerRadius(dp(22));card.setBackground(d);}
  private void size(){surface.setLayoutParams(new FrameLayout.LayoutParams(dp(column?300:720),dp(column?560:180)));}
  private Bundle sizeBundle(){Bundle b=new Bundle();b.putInt("widthPx",surface.getWidth());b.putInt("heightPx",surface.getHeight());return b;}
  private void open(){
   if(provider==null || !surfaceReady)return;
   Bundle b=sizeBundle();b.putInt("version",PanelProviderService.VERSION);b.putBinder("hostToken",surface.getHostToken());
-  b.putInt("displayId",getDisplay().getDisplayId());b.putInt("densityDpi",getResources().getConfiguration().densityDpi);b.putBoolean("night",night);
+  b.putInt("cornerRadiusPx",dp(14));b.putInt("displayId",getDisplay().getDisplayId());b.putInt("densityDpi",getResources().getConfiguration().densityDpi);b.putBoolean("night",night);
   send(PanelProviderService.OPEN,b);
  }
  private void send(int what,Bundle data){

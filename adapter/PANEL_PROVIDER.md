@@ -26,7 +26,7 @@ Binding has no side effects: it starts Spotify's light interface process only. I
 
 | `what` | From | Data (`Bundle`) | Answer |
 |---|---|---|---|
-| 1 `OPEN` | host | `version` int = 1; `hostToken` IBinder (`Bundle.putBinder`, the value of `SurfaceView.getHostToken()`); `displayId` int; `widthPx`, `heightPx` int (the SurfaceView's size); `densityDpi` int (the host's); `night` boolean | 101 `OPENED` or 199 `ERROR` |
+| 1 `OPEN` | host | `version` int = 1; `hostToken` IBinder (`Bundle.putBinder`, the value of `SurfaceView.getHostToken()`); `displayId` int; `widthPx`, `heightPx` int (the SurfaceView's size); `densityDpi` int (the host's); `night` boolean; optional `cornerRadiusPx` int (the block's corner radius, default 22 dp) | 101 `OPENED` or 199 `ERROR` |
 | 2 `RESIZE` | host | `widthPx`, `heightPx` | none (the block relayouts) |
 | 3 `THEME` | host | `night` | none (the block redraws in the host's theme) |
 | 4 `CLOSE` | host | — | none (the block and its surface are released) |
@@ -63,14 +63,15 @@ Spotify's own uid is allowed only in debug builds (`HU_DEBUG=1`, for the test ho
 
 - Cover, title and artist, previous / play-pause / next and a thin progress line. Touch targets are at least 48 dp.
 - A panel taller than wide gets a column (a side panel in landscape); otherwise a strip (a bottom panel in portrait). `RESIZE` switches between them.
-- Colours follow `night`: a black block by night, a white one by day, to sit on the host's black or white card. The block is an opaque rectangle: keep the SurfaceView inside the card's padding, away from its rounded corners.
+- Colours follow `night`: a black block by night, a white one by day, to sit on the host's black or white card.
+- Rounded corners: the block is drawn with `cornerRadiusPx` and is transparent outside it, so the host's card shows in the corners. Give the card's own radius when the SurfaceView fills the card, or the concentric one when it is inset (card radius minus the inset; our interface uses 22 dp cards and 14 dp inner panels with an 8 dp inset). Set the SurfaceView's format to `PixelFormat.TRANSLUCENT` (`getHolder().setFormat`), or the corners stay black.
 - Sizes use the host's `densityDpi`.
 - A tap on the cover or the title opens Spotify; so does "Open Spotify".
 
 ## Host checklist
 
 1. Find the provider (action, meta-data) and bind (see above).
-2. Lay out the `SurfaceView`, call `setZOrderOnTop(true)` (touches go to the embedded block only when its surface is above the host's window), and wait for `surfaceCreated`.
+2. Lay out the `SurfaceView`, call `setZOrderOnTop(true)` (touches go to the embedded block only when its surface is above the host's window) and `getHolder().setFormat(PixelFormat.TRANSLUCENT)` (the rounded corners), and wait for `surfaceCreated`.
 3. Send `OPEN` with `replyTo`; on `OPENED` call `setChildSurfacePackage`. Open once per SurfaceView: an attached package survives the SurfaceView's surface being destroyed and created again (the host activity stopped and started), so do not send `OPEN` again on every `surfaceCreated`.
    - To show a new block (after `CLOSE`, `CLOSED`, `ERROR`, or to `OPEN` again) use a new SurfaceView: Android 11 and 12 (checked on Android 12) detach the old package without attaching the new one to a SurfaceView that already had one, and the panel stays black.
 4. Send `RESIZE` after the SurfaceView's size changes and `THEME` when day/night changes.
