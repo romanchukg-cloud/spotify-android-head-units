@@ -29,3 +29,4 @@ tests/updates/out/
 incremental/
 stub-classes/
 tests/downloads/out/
+tests/panel/out/

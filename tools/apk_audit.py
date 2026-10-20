@@ -5,7 +5,7 @@ This checks structure and guarded call sites, not runtime SDK/API compatibility 
 import argparse, hashlib, os, re, shutil, subprocess, sys, tempfile, zipfile
 from pathlib import Path
 import xml.etree.ElementTree as ET
-p=argparse.ArgumentParser();p.add_argument('apk',type=Path);p.add_argument('--min-api',type=int,default=28);p.add_argument('--decoded',type=Path);args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('apk',type=Path);p.add_argument('--min-api',type=int,default=28);p.add_argument('--decoded',type=Path);p.add_argument('--debug-build',action='store_true',help='the HU_DEBUG=1 variant with the panel test host');args=p.parse_args()
 checks=[]
 def check(name,ok,detail=''):
  checks.append(bool(ok));print(('PASS' if ok else 'FAIL')+' '+name+(' — '+detail if detail else ''))
@@ -52,6 +52,16 @@ check('No BYD-derived interface or vehicle API',not byd and not vehicle,f'{len(b
 driver=files.get('Llocal/spotify/unified/HeadUnitDriver;','')
 queries=[n.get(A+'authorities') for q in m.findall('queries') for n in q.findall('provider')]
 check('Driving side / BYD car service only on BYD','HeadUnitProfile;->isByd()Z' in driver and 'com.byd.car.carinfo.ICarInfoService' in driver and 'com.byd.car.server.provider.CarServiceProvider' in queries and 'Lcom/byd/spi/ipc/cursor/BinderCursor$BinderParcelable;' in files)
+panel=component('service','local.spotify.unified.PanelProviderService')
+panel_meta={n.get(A+'name'):n.get(A+'value') for n in (panel.findall('meta-data') if panel is not None else [])}
+check('Panel provider / exported service, action and meta-data',panel is not None and panel.get(A+'exported')=='true' and panel.get(A+'permission') is None and panel.get(A+'process')==':bydui' and any(x.get(A+'name')=='local.byd.panel.action.PROVIDER' for x in panel.findall('.//action')) and panel_meta.get('local.byd.panel.label')=='Spotify' and all(panel_meta.get(k) for k in ('local.byd.panel.min_width_dp','local.byd.panel.min_height_dp')) and 'com.google.android.apps.maps.automotive' in [n.get(A+'name') for q in m.findall('queries') for n in q.findall('package')])
+provider=''.join(v for k,v in files.items() if k.startswith(('Llocal/spotify/unified/PanelProviderService','Llocal/spotify/unified/PanelPlayerView')))
+access=files.get('Llocal/spotify/unified/PanelAccess;','')
+check('Panel provider / caller checked in every message','Landroid/os/Message;->sendingUid:I' in provider and 'PanelAccess;->host(' in provider and 'a8401545b03562933c095667ae0eb54bab189d8571010e4eb3384753ad6508d5' in access)
+check('Panel provider / no music start, screen or setting on bind',provider!='' and not any(v in provider for v in ('ui_open','HeadUnitRuntime;->playerOpened','HeadUnitRuntime;->requestResume','"set"','TaskGuardService')))
+build_info=files.get('Llocal/spotify/unified/HeadUnitBuild;','');test_host=component('activity','local.spotify.unified.PanelTestActivity')
+debug_flag='DEBUG:Z = true' in build_info
+check('Panel provider / test host and own uid only in debug builds',(test_host is not None and 'Llocal/spotify/unified/PanelTestActivity;' in files and debug_flag) if args.debug_build else (test_host is None and 'Llocal/spotify/unified/PanelTestActivity;' not in files and 'DEBUG:Z = false' in build_info),'debug build' if args.debug_build else 'release build')
 controllers=files.get('Lle/d;','')
 check('External controller policy hook','HeadUnitControllers;->allow(' in controllers and 'HeadUnitControllers;->matches(' in controllers and 'HeadUnitControllers;->result(' in controllers)
 gate=files.get('Llocal/spotify/close/PlaybackGate;','');death=files.get('Llocal/spotify/close/PlaybackGate$1;','')

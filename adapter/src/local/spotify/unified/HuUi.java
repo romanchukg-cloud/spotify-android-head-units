@@ -102,12 +102,13 @@ final class HuUi {
  static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
  Drawable pressable(int color,float radius){return new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0x33ffffff:0x22000000),round(color,radius),round(0xff000000,radius));}
  private static Typeface regular,heavy;
+ Typeface font(boolean bold){return figtree(activity,bold);}
  /** Figtree (SIL OFL 1.1, assets/hu_fonts) at weights 400 and 700, or null to keep the system font. */
- Typeface font(boolean bold){
+ static synchronized Typeface figtree(android.content.Context c,boolean bold){
   if(regular==null){
    try{
-    regular=new Typeface.Builder(activity.getAssets(),"hu_fonts/Figtree-wght.ttf").setFontVariationSettings("'wght' 400").build();
-    heavy=new Typeface.Builder(activity.getAssets(),"hu_fonts/Figtree-wght.ttf").setFontVariationSettings("'wght' 700").build();
+    regular=new Typeface.Builder(c.getAssets(),"hu_fonts/Figtree-wght.ttf").setFontVariationSettings("'wght' 400").build();
+    heavy=new Typeface.Builder(c.getAssets(),"hu_fonts/Figtree-wght.ttf").setFontVariationSettings("'wght' 700").build();
    }catch(RuntimeException e){android.util.Log.w("SpotifyHU","Figtree unavailable",e);}
   }
   return bold?heavy:regular;

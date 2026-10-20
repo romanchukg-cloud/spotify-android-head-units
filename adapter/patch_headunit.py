@@ -169,3 +169,18 @@ q=E.SubElement(root,'queries');E.SubElement(q,'provider',{A+'authorities':'com.b
 E.SubElement(app,'uses-library',{A+'name':'android.car',A+'required':'false'})
 m.write(p,encoding='utf-8',xml_declaration=True)
 print('Driving side: car service visibility and the optional android.car library')
+
+# Panel provider: other apps' panels embed our compact player (PanelProviderService, protocol in
+# PANEL_PROVIDER.md). Exported without a permission: every message's sending uid is checked
+# against the allowed hosts in code (PanelAccess), whose packages are declared visible.
+from build_config import DEBUG
+p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+q=E.SubElement(root,'queries');E.SubElement(q,'package',{A+'name':'com.google.android.apps.maps.automotive'})
+svc=E.SubElement(app,'service',{A+'name':'local.spotify.unified.PanelProviderService',A+'process':':bydui',A+'exported':'true'})
+f=E.SubElement(svc,'intent-filter');E.SubElement(f,'action',{A+'name':'local.byd.panel.action.PROVIDER'})
+for key,value in (('local.byd.panel.label','Spotify'),('local.byd.panel.min_width_dp','280'),('local.byd.panel.min_height_dp','160')):
+ E.SubElement(svc,'meta-data',{A+'name':key,A+'value':value})
+# Debug builds only: the test host, in its own process (exported so adb can start it).
+if DEBUG:E.SubElement(app,'activity',{A+'name':'local.spotify.unified.PanelTestActivity',A+'process':':paneltest',A+'exported':'true',A+'label':'Panel test',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
+m.write(p,encoding='utf-8',xml_declaration=True)
+print('Panel provider: exported service, allowed-host visibility'+(', debug test host' if DEBUG else ''))
