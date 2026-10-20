@@ -15,7 +15,8 @@ final class HuRail extends LinearLayout {
  HuRail(HuUi ui,boolean bar,Pick pick,Runnable settings){
   super(ui.activity);this.ui=ui;setOrientation(bar?HORIZONTAL:VERTICAL);setGravity(bar?Gravity.CENTER_VERTICAL:Gravity.CENTER_HORIZONTAL);
   int pad=ui.dp(bar?6:10);setPadding(pad,pad,pad,pad);
-  setBackground(HuUi.round(ui.dark?0xff121212:0xffffffff,ui.dp(22)));setClipToOutline(true);setOutlineProvider(ViewOutlineProvider.BACKGROUND);
+  // The rail lies on the window's background (black by night, light grey by day) next to the
+  // content cards, without a card of its own or a gap.
   for(int i=0;i<=PAGES.length;i++){
    // The pages, then settings: an item like the others, with its label, that opens a screen.
    String key=i<PAGES.length?PAGES[i]:"settings_short";

@@ -44,25 +44,26 @@ public final class HuPlayerActivity extends Activity {
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
   int gap=ui.dp(6);android.content.res.Configuration cf=getResources().getConfiguration();boolean bar=cf.screenWidthDp<cf.screenHeightDp;
   LinearLayout shell=new LinearLayout(this);shell.setOrientation(bar?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-  // The cards reach the window's edges, as other apps' content does; a 6 dp gap stays between them.
+  // The cards reach the window's edges, as other apps' content does, and the navigation (on the
+  // window's background) touches them; the 6 dp gap stays only between the content and the mini-player.
   root.addView(shell);
   rail=new HuRail(ui,bar,this::show,()->HeadUnitSettings.open(this));
   // The stage holds the content card with the mini-player and, over both, the player: it covers
   // them at full height and leaves the navigation in view.
   FrameLayout stage=new FrameLayout(this);
-  if(bar){shell.addView(stage,new LinearLayout.LayoutParams(-1,0,1));LinearLayout.LayoutParams railParams=new LinearLayout.LayoutParams(-1,ui.dp(104));railParams.topMargin=gap;shell.addView(rail,railParams);}
+  if(bar){shell.addView(stage,new LinearLayout.LayoutParams(-1,0,1));LinearLayout.LayoutParams railParams=new LinearLayout.LayoutParams(-1,ui.dp(104));shell.addView(rail,railParams);}
   else{
    // The navigation rail is on the driver's side: the start, or the end with right-hand drive.
    LinearLayout.LayoutParams stageParams=new LinearLayout.LayoutParams(0,-1,1);
-   if(ui.rhd){stageParams.setMarginEnd(gap);shell.addView(stage,stageParams);shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));}
-   else{shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));stageParams.setMarginStart(gap);shell.addView(stage,stageParams);}
+   if(ui.rhd){shell.addView(stage,stageParams);shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));}
+   else{shell.addView(rail,new LinearLayout.LayoutParams(ui.dp(120),-1));shell.addView(stage,stageParams);}
   }
   LinearLayout column=new LinearLayout(this);column.setOrientation(LinearLayout.VERTICAL);stage.addView(column,new FrameLayout.LayoutParams(-1,-1));
   content=new FrameLayout(this);content.setBackground(HuUi.round(ui.card,ui.dp(22)));content.setClipToOutline(true);content.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
   column.addView(content,new LinearLayout.LayoutParams(-1,0,1));
   HuMiniPlayer mini=new HuMiniPlayer(ui,accent,this::expand);
   LinearLayout.LayoutParams miniParams=new LinearLayout.LayoutParams(-1,-2);miniParams.topMargin=gap;column.addView(mini,miniParams);
-  float stageWidth=cf.screenWidthDp-(bar?0:126),stageHeight=cf.screenHeightDp-(bar?110:0);contentWidth=stageWidth;contentHeight=stageHeight-110;
+  float stageWidth=cf.screenWidthDp-(bar?0:120),stageHeight=cf.screenHeightDp-(bar?104:0);contentWidth=stageWidth;contentHeight=stageHeight-110;
   player=new HuNowPlaying(ui,accent,stageWidth,stageHeight,this::collapse,this::openQueue);player.setVisibility(View.GONE);stage.addView(player,new FrameLayout.LayoutParams(-1,-1));
   queue=new HuQueue(ui,this::closeQueue);queue.setVisibility(View.GONE);stage.addView(queue,new FrameLayout.LayoutParams(-1,-1));
   setContentView(root);
