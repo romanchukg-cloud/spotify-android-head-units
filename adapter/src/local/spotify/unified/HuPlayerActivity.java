@@ -34,7 +34,7 @@ public final class HuPlayerActivity extends Activity {
  protected void attachBaseContext(Context base){super.attachBaseContext(HeadUnitSettings.scaled(base));}
  private String side=HeadUnitDriver.AUTO;
  protected void onCreate(Bundle state){
-  super.onCreate(state);local.spotify.close.TaskGuardService.opened(this);ui=new HuUi(this);ui.window();session=HuSession.get(this);
+  super.onCreate(state);local.spotify.close.TaskGuardService.opened(this);ui=new HuUi(this);ui.corner=22;ui.window();session=HuSession.get(this);
   boolean accent;try{Bundle settings=HeadUnitSettings.call(this,"get",null);accent=settings.getBoolean("cover_accent",true);side=settings.getString("drive_side",HeadUnitDriver.AUTO);}catch(RuntimeException e){accent=true;}
   ui.rhd=HeadUnitDriver.right(this,side);
   if(state!=null){
@@ -43,7 +43,9 @@ public final class HuPlayerActivity extends Activity {
   }
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
   int gap=ui.dp(6);android.content.res.Configuration cf=getResources().getConfiguration();boolean bar=cf.screenWidthDp<cf.screenHeightDp;
-  LinearLayout shell=new LinearLayout(this);shell.setOrientation(bar?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);shell.setPadding(gap,gap,gap,gap);root.addView(shell);
+  LinearLayout shell=new LinearLayout(this);shell.setOrientation(bar?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
+  // The cards reach the window's edges, as other apps' content does; a 6 dp gap stays between them.
+  root.addView(shell);
   rail=new HuRail(ui,bar,this::show,()->HeadUnitSettings.open(this));
   // The stage holds the content card with the mini-player and, over both, the player: it covers
   // them at full height and leaves the navigation in view.
@@ -60,7 +62,7 @@ public final class HuPlayerActivity extends Activity {
   column.addView(content,new LinearLayout.LayoutParams(-1,0,1));
   HuMiniPlayer mini=new HuMiniPlayer(ui,accent,this::expand);
   LinearLayout.LayoutParams miniParams=new LinearLayout.LayoutParams(-1,-2);miniParams.topMargin=gap;column.addView(mini,miniParams);
-  float stageWidth=cf.screenWidthDp-12-(bar?0:126),stageHeight=cf.screenHeightDp-12-(bar?110:0);contentWidth=stageWidth;contentHeight=stageHeight-110;
+  float stageWidth=cf.screenWidthDp-(bar?0:126),stageHeight=cf.screenHeightDp-(bar?110:0);contentWidth=stageWidth;contentHeight=stageHeight-110;
   player=new HuNowPlaying(ui,accent,stageWidth,stageHeight,this::collapse,this::openQueue);player.setVisibility(View.GONE);stage.addView(player,new FrameLayout.LayoutParams(-1,-1));
   queue=new HuQueue(ui,this::closeQueue);queue.setVisibility(View.GONE);stage.addView(queue,new FrameLayout.LayoutParams(-1,-1));
   setContentView(root);

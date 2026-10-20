@@ -18,7 +18,9 @@ final class HuUi {
   divider=dark?0x12ffffff:0x14000000;accent=dark?0xff1ed760:0xff0f7a36;control=dark?0xff2e2e2e:0xffebebeb;selected=dark?0xffffffff:0xff121212;selectedInk=dark?0xff121212:0xffffffff;
  }
  int dp(float v){return Math.round(v*activity.getResources().getDisplayMetrics().density);}
- void window(){Window w=activity.getWindow();w.setStatusBarColor(bg);w.setNavigationBarColor(bg);lightBars(w,dark);corners(activity);}
+ void window(){Window w=activity.getWindow();w.setStatusBarColor(bg);w.setNavigationBarColor(bg);lightBars(w,dark);corners(activity,corner);}
+ /** The window's corner radius in dp: the cards' 22 dp on the main screen, whose cards reach the window's edges; 28 elsewhere. */
+ float corner=28;
  /** Dark bar icons by day (status bar and navigation bar follow the window's light-bar request). */
  @SuppressWarnings("deprecation")
  static void lightBars(Window w,boolean dark){
@@ -41,12 +43,13 @@ final class HuUi {
  }
  private static final java.util.WeakHashMap<Activity,Boolean> cornered=new java.util.WeakHashMap<>();
  /**
-  * The app's rounded outer corners (card radius 22 dp + gap 6 dp), as on the main screen: a black
-  * mask over the content, black like BYD's status bar and dock.
+  * The app's rounded outer corners (on the main screen the cards' 22 dp, elsewhere 28 dp: card
+  * radius 22 dp + gap 6 dp): a black mask over the content, black like BYD's status bar and dock.
   */
- static void corners(Activity a){
+ static void corners(Activity a){corners(a,28);}
+ static void corners(Activity a,float radiusDp){
   if(cornered.containsKey(a))return;View root=a.findViewById(android.R.id.content);if(root==null)return;cornered.put(a,Boolean.TRUE);
-  CornerMask mask=new CornerMask(28*a.getResources().getDisplayMetrics().density);root.getOverlay().add(mask);
+  CornerMask mask=new CornerMask(radiusDp*a.getResources().getDisplayMetrics().density);root.getOverlay().add(mask);
   root.addOnLayoutChangeListener((v,l,t,r,b,ol,ot,or,ob)->{if(mask.getBounds().width()!=v.getWidth() || mask.getBounds().height()!=v.getHeight())mask.setBounds(0,0,v.getWidth(),v.getHeight());});
  }
  /**
