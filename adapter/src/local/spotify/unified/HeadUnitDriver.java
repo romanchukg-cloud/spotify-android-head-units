@@ -35,7 +35,8 @@ public final class HeadUnitDriver {
  }
  /** BYD: the car service's binder from its provider, then ICarInfoService.getDriverSeat (transaction 1). */
  private static int byd(Context c){
-  try(Cursor cursor=c.getContentResolver().query(Uri.parse("content://com.byd.car.server.provider.CarServiceProvider/sync_binder"),new String[]{"com.byd.car.carinfo.ICarInfoService"},null,null,null)){
+  // As BYD's DiCar/Spi client asks: the service's interface name is the one selection argument.
+  try(Cursor cursor=c.getContentResolver().query(Uri.parse("content://com.byd.car.server.provider.CarServiceProvider/sync_binder"),null,null,new String[]{"com.byd.car.carinfo.ICarInfoService"},null)){
    if(cursor==null){Log.i("SpotifyHU","BYD car service not found");return 0;}
    Bundle extras=cursor.getExtras();extras.setClassLoader(BinderCursor.class.getClassLoader());
    Parcelable holder=extras.getParcelable("binder");
