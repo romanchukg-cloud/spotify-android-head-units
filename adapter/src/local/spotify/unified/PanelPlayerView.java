@@ -10,8 +10,8 @@ import android.widget.*;
  * artist, previous / play-pause / next and a thin progress line, in the host's colours (black by
  * night, white by day). A tall panel gets a column, a wide one a strip. Data and commands go
  * through our session with the Spotify backend; it connects only once the backend runs, so a
- * host that binds starts neither the backend nor the music. Signed out, without a session or with
- * nothing to play it says "Open Spotify", and a tap opens Spotify.
+ * host that binds starts neither the backend nor the music. Signed out or without a session it
+ * says "Open Spotify", and a tap opens Spotify; with nothing playing it says so, and play resumes.
  */
 final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
  private final HuSession session;private final Runnable open;
@@ -78,7 +78,7 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
   LinearLayout hint=new LinearLayout(getContext());hint.setGravity(Gravity.CENTER);hint.setOrientation(column?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
   hint.setBackgroundColor(bg);hint.setTag("open");hint.setClickable(true);hint.setOnClickListener(v->open.run());hint.setMinimumHeight(dp(48));
   ImageView logo=new ImageView(getContext());logo.setImageDrawable(HuControls.icon(getContext(),"encore_icon_spotify_logo_24",0xff1ed760));hint.addView(logo,new LinearLayout.LayoutParams(dp(40),dp(40)));
-  TextView say=label(column?18:17,text,true);say.setText(HuText.get("panel_open"));say.setGravity(Gravity.CENTER);say.setPadding(dp(12),dp(8),dp(12),dp(8));hint.addView(say);
+  TextView say=label(column?18:17,text,true);say.setText(HuText.get("panel_open"));say.setGravity(Gravity.CENTER);say.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);say.setPadding(dp(12),dp(8),dp(12),dp(8));hint.addView(say);
   addView(hint,new LayoutParams(-1,-1));
   changed(session);
  }
@@ -95,9 +95,12 @@ final class PanelPlayerView extends FrameLayout implements HuSession.Listener {
  private static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
 
  public void changed(HuSession s){
-  String t=listening && s.ready() && s.signIn()==null?s.title():null;
-  View hint=findViewWithTag("open");if(hint!=null)hint.setVisibility(t==null?VISIBLE:GONE);
-  if(t==null)return;
+  // Connected and signed in: the player, with "Nothing is playing" until there is a track (play
+  // then resumes Spotify's last context); otherwise "Open Spotify".
+  boolean player=listening && s.ready() && s.signIn()==null;
+  View hint=findViewWithTag("open");if(hint!=null)hint.setVisibility(player?GONE:VISIBLE);
+  if(!player)return;
+  String t=s.title()==null?HuText.get("nothing_playing"):s.title();
   title.setText(t);String error=s.playbackError();artist.setText(error!=null?error:s.artist()==null?"":s.artist());artist.setTextColor(error!=null?0xffe22134:secondary);
   boolean on=s.playing();play.setImageDrawable(HuControls.icon(getContext(),on?"encore_icon_pause_24":"encore_icon_play_24",bg));play.setContentDescription(HuText.get(on?"pause":"play"));
   String a=s.art();

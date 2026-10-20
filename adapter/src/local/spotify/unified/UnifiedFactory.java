@@ -1,15 +1,17 @@
 package local.spotify.unified;
 import android.app.*;
 /**
- * The app's processes: the main one runs Spotify's own Application (the music backend); the
- * interface (":bydui", the process name kept from earlier builds), settings and accounts run a
- * plain Application. Every screen gets the diagnostics log; the main screen, once per task, the
+ * The app's processes: the main one runs Spotify's own Application (the music backend); our
+ * secondary processes — the interface (":bydui", the process name kept from earlier builds),
+ * settings and accounts — run a plain Application. Every screen gets the diagnostics log; the main screen, once per task, the
  * opening work (auto resume, diagnostics notice, update offer) unless a profile switch opened it.
  */
 public final class UnifiedFactory extends AppComponentFactory {
  public Application instantiateApplication(ClassLoader cl,String name) throws InstantiationException,IllegalAccessException,ClassNotFoundException {
   String process=Application.getProcessName();
-  boolean own=process!=null && (process.endsWith(":settings") || process.endsWith(":profiles") || process.endsWith(":bydui"));
+  // Every secondary process is ours (the backend declares none): ":bydui", ":settings",
+  // ":profiles" and, in debug builds, ":paneltest".
+  boolean own=process!=null && process.indexOf(':')>=0;
   Application app=super.instantiateApplication(cl,own?"android.app.Application":name);
   app.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks(){
    private int playerTask=-1;

@@ -18,7 +18,7 @@ The host must see the provider's package (Android 11+): declare `<queries><inten
 
 Bind with `bindService(intent.setComponent(found), connection, Context.BIND_AUTO_CREATE)`; on Android 14+ add `Context.BIND_ALLOW_ACTIVITY_STARTS`, so that a tap on "Open Spotify" in the block may open Spotify while the host is visible (Android 10–13 allow it for a service bound by a visible app).
 
-Binding has no side effects: it starts Spotify's light interface process only. It plays nothing (the auto-resume and "play when opening Spotify" paths run only when Spotify's own screen opens), opens no screen and changes no profile or scale. The block joins Spotify's media session only once the Spotify backend runs; until then, or when signed out or with nothing to play, it shows "Open Spotify".
+Binding has no side effects: it starts Spotify's light interface process only. It plays nothing (the auto-resume and "play when opening Spotify" paths run only when Spotify's own screen opens), opens no screen and changes no profile or scale. The block joins Spotify's media session only once the Spotify backend runs; until then, and when signed out, it shows "Open Spotify". Connected with nothing playing, it shows "Nothing is playing" with the controls (play resumes Spotify's last context).
 
 ## Protocol (version 1)
 
@@ -71,7 +71,8 @@ Spotify's own uid is allowed only in debug builds (`HU_DEBUG=1`, for the test ho
 
 1. Find the provider (action, meta-data) and bind (see above).
 2. Lay out the `SurfaceView`, call `setZOrderOnTop(true)` (touches go to the embedded block only when its surface is above the host's window), and wait for `surfaceCreated`.
-3. Send `OPEN` with `replyTo`; on `OPENED` call `setChildSurfacePackage`.
+3. Send `OPEN` with `replyTo`; on `OPENED` call `setChildSurfacePackage`. Open once per SurfaceView: an attached package survives the SurfaceView's surface being destroyed and created again (the host activity stopped and started), so do not send `OPEN` again on every `surfaceCreated`.
+   - To show a new block (after `CLOSE`, `CLOSED`, `ERROR`, or to `OPEN` again) use a new SurfaceView: Android 11 and 12 (checked on Android 12) detach the old package without attaching the new one to a SurfaceView that already had one, and the panel stays black.
 4. Send `RESIZE` after the SurfaceView's size changes and `THEME` when day/night changes.
 5. Send `CLOSE` and unbind when the panel goes away; on `CLOSED` or `ERROR` show the host's own placeholder.
 
