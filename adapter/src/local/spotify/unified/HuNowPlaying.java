@@ -28,6 +28,9 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   // The column's width decides the size of the controls: full ones need about 460 dp, compact
   // ones 380, small ones 320.
   float column=wide?(width-56)/1.7f-48:width-56;boolean compact=column<480 || height<480,small=column<380;
+  // With the cover above the controls, a low window (a split screen on a portrait display, about
+  // 600 dp high) gives the controls and a one-line title less room, so the cover keeps about half.
+  boolean low=!wide && height<820;if(low){compact=true;if(height<640)small=true;}
   setOrientation(VERTICAL);setPaddingRelative(ui.dp(small?16:24),ui.dp(8),ui.dp(small?16:32),ui.dp(compact?12:24));setClickable(true);
   background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{ui.bg,ui.bg});background.setCornerRadius(ui.dp(22));setBackground(background);
   setOutlineProvider(ViewOutlineProvider.BACKGROUND);setClipToOutline(true);
@@ -55,7 +58,7 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   // Title and artist with like at the end.
   LinearLayout heading=new LinearLayout(ui.activity);heading.setGravity(Gravity.CENTER_VERTICAL);
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);
-  title=HuControls.title(ui,compact?26:34,2);artist=ui.label("",compact?18:22,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
+  title=HuControls.title(ui,compact?26:34,low?1:2);artist=ui.label("",compact?18:22,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
   texts.addView(title);texts.addView(artist);heading.addView(texts,new LayoutParams(0,-2,1));
   like=HuControls.button(ui,"encore_icon_heart_24","",bar,v->session.send(session.like()));heading.addView(like);
   col.addView(heading);

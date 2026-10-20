@@ -62,7 +62,7 @@ Spotify's own uid is allowed only in debug builds (`HU_DEBUG=1`, for the test ho
 ## The block
 
 - Cover, title and artist, previous / play-pause / next and a thin progress line with the elapsed and remaining time. Touch targets are at least 48 dp.
-- A panel taller than wide gets a column (a side panel in landscape); otherwise a strip (a bottom panel in portrait). `RESIZE` switches between them.
+- Layout by the block's size (dp): a low, wide block (width ≥ 1.25 × height and height ≤ 420 dp) is a strip — cover at most 30 % of the width, dropped before the controls when room is short; a tall and wide one puts the cover (≤ 45 % of the width) beside title, progress, time and controls, as Spotify's own player does; any other block is a column whose cover leaves about 220 dp for the details, centred. Text and controls start at the size of Spotify's mini-player (title 22 sp, play 80 dp) and grow up to 1.4× in large blocks instead of stretching. `RESIZE` re-lays the block.
 - Colours follow `night`: a black block by night, a white one by day, to sit on the host's black or white card.
 - Rounded corners: the block is drawn with `cornerRadiusPx` and is transparent outside it, so the host's card shows in the corners. Give the card's own radius when the SurfaceView fills the card, or the concentric one when it is inset (card radius minus the inset; our interface uses 22 dp cards and 14 dp inner panels with an 8 dp inset). Set the SurfaceView's format to `PixelFormat.TRANSLUCENT` (`getHolder().setFormat`), or the corners stay black.
 - Sizes use the host's `densityDpi`.
