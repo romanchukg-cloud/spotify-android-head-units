@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 13,
+  "version": "test.13",
+  "version_code": 95490,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.13/Spotify-5.5.0-HeadUnit-test.13.apk",
+  "sha256": "d7469ce9383defdc9455e40b7fcbabb101ca7f1d55cfd37ddb8b4d684de3433c",
+  "size": 48279511,
+  "notes": "Swipe left or right to switch tracks, right-hand drive (detected on BYD), an interface that reaches the screen's edges and a large cover in a portrait split screen. A Spotify widget for other apps' panels (Google Maps for BYD will be the first). No code from the BYD player app any more: 10 MB smaller. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.13",
+  "min_sdk": 28
+}

@@ -1,0 +1,1 @@
+Swipe left or right to switch tracks, right-hand drive (detected on BYD), an interface that reaches the screen's edges and a large cover in a portrait split screen. A Spotify widget for other apps' panels (Google Maps for BYD will be the first). No code from the BYD player app any more: 10 MB smaller. Experimental prerelease.
