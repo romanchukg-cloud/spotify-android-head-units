@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 14,
+  "version": "test.14",
+  "version_code": 95491,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.14/Spotify-5.5.0-HeadUnit-test.14.apk",
+  "sha256": "9a6408d84b2d193762c72efe5a082627e771c696ac74748251456294109cf905",
+  "size": 48350322,
+  "notes": "Home-screen widgets for launchers that let you add widgets, Spotify links from other apps open in Spotify, other apps can see what is playing, and Spotify can start in the background when the head unit starts (not on BYD). Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.14",
+  "min_sdk": 28
+}

@@ -3,12 +3,12 @@
     "name": "Spotify for Android Head Units",
     "title": "Spotify for Android Head Units — one app",
     "description": "Experimental Spotify Automotive 5.5.0 for Android head units, with its own car interface in one APK.",
-    "badge": "Experimental build · 5.5.0 · test.13",
+    "badge": "Experimental build · 5.5.0 · test.14",
     "headline": "Made for the car.",
     "highlight": "One app.",
     "intro": "An experimental Spotify Automotive player for Android head units, with an interface of its own made for the car: one APK, one icon and the standard Spotify sign-in. Free — never pay for it.",
-    "download": "Download test.13 APK",
-    "meta": "Android 9+ · 46.0 MiB · unofficial adaptation",
+    "download": "Download test.14 APK",
+    "meta": "Android 9+ · 46.1 MiB · unofficial adaptation",
     "languages": "Language",
     "cards": [
       [
@@ -22,6 +22,14 @@
       [
         "Right-hand drive",
         "Head unit settings → Steering wheel: Auto, Left or Right. On BYD, Auto asks the car which seat is the driver's; with right-hand drive the navigation, the controls and the microphone move to the right."
+      ],
+      [
+        "Home-screen widgets",
+        "Two Spotify widgets for launchers that let you add widgets: a strip, squares or a large player with the cover, times and controls, depending on their size, in day and night colours. BYD's own launcher shows only BYD's widgets."
+      ],
+      [
+        "Links and other apps",
+        "Spotify links that other apps open (spotify:, open.spotify.com, spotify.link) show the playlist, album or artist, or play the song. Launchers, scrobblers and head-up apps can see what is playing (a setting)."
       ],
       [
         "Queue and sleep timer",
@@ -65,7 +73,7 @@
       ],
       [
         "Playback startup",
-        "Head unit settings has separate options for resuming after boot or a long sleep and for playing on a new Spotify launch. Playback waits for the player to be ready; pause cancels automatic retries."
+        "Head unit settings has separate options for resuming after boot or a long sleep and for playing on a new Spotify launch. Playback waits for the player to be ready; pause cancels automatic retries. It can also start Spotify in the background when the head unit starts (not on BYD, where switching the car off stops apps)."
       ],
       [
         "BYD ambient music rhythm",
@@ -73,9 +81,9 @@
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Headunit-test.13 removes the last parts of the BYD (Vivid) player app from the APK, adds swiping between tracks, right-hand drive (detected on BYD) and an interface that reaches the screen's edges, keeps a large cover in a portrait split screen, and adds a Spotify widget that other apps can show in their panels (Google Maps for BYD will be the first). A copy re-signed with another key now says it has been changed. It was made with the full reference build. The release audit reports 48 PASS / 0 FAIL, 152 updater, 39 sign-in and 14 panel-access checks pass, and the signing certificate equals test.12. On Android 9 and 13 emulators test.13 installs as an update over test.12 and runs its update check without a crash. Builds of test.13 ran in a BYD Tang (DiLink 5, Android 12): swipes, steering-wheel buttons, the BYD voice button, the ambient rhythm, the car reporting left-hand drive and split screen with Google Maps; this exact file is installed there.",
-    "pendingStrong": "Experimental headunit-test.13.",
-    "pending": "Right-hand drive has not been seen on a right-hand-drive car (the value comes from BYD's own code); DiLink 5.1 / Android 13 and other head units remain unverified; Arabic was checked on an emulator only. The widget appears only in apps that support it; support in Google Maps for BYD is in progress. Spotify keeps downloads off for its Automotive client; this build turns the client's support on, so Spotify may change how downloads behave.",
+    "tested": "Headunit-test.14 adds home-screen widgets for launchers that let you add widgets (five layouts by size, day and night), opens Spotify links from other apps, tells other apps what is playing and can start Spotify in the background when the head unit starts (not on BYD). It was made with the full reference build. The release audit reports 51 PASS / 0 FAIL; 152 updater, 39 sign-in, 14 panel-access and 19 playback-start checks pass, and the signing certificate equals test.13. On Android 9 and 13 emulators test.14 installs as an update over test.13 and runs its update check without a crash; the sign-in and Accounts flow passes on Android 13. The widgets were checked in the stock launchers of Android 11 and 12 emulators; links opened playlists, albums and artists there. This exact file is installed in a BYD Tang (DiLink 5, Android 12).",
+    "pendingStrong": "Experimental headunit-test.14.",
+    "pending": "The widgets have shown only made-up tracks so far, and BYD's own launcher cannot show them. A song link playing and a real app reading what is playing are unverified. Right-hand drive has not been seen on a right-hand-drive car; DiLink 5.1 / Android 13 and other head units remain unverified; Arabic was checked on an emulator only. The panel block appears only in apps that support it. Spotify keeps downloads off for its Automotive client; this build turns the client's support on, so Spotify may change how downloads behave.",
     "installTitle": "How to install",
     "steps": [
       "Use the download button above to get the APK, then transfer it to the infotainment system.",
@@ -104,12 +112,12 @@
     "name": "Spotify для Android-магнітол",
     "title": "Spotify для Android-магнітол — один додаток",
     "description": "Експериментальний Spotify Automotive 5.5.0 для Android-магнітол із власним автомобільним інтерфейсом в одному APK.",
-    "badge": "Експериментальна збірка · 5.5.0 · test.13",
+    "badge": "Експериментальна збірка · 5.5.0 · test.14",
     "headline": "Зроблено для авто.",
     "highlight": "Один додаток.",
     "intro": "Експериментальний плеєр Spotify Automotive для Android-магнітол із власним інтерфейсом, зробленим для авто: один APK, одна іконка й стандартний вхід у Spotify. Безкоштовно — ніколи не платіть за нього.",
-    "download": "Завантажити APK test.13",
-    "meta": "Android 9+ · 46,0 MiB · неофіційна адаптація",
+    "download": "Завантажити APK test.14",
+    "meta": "Android 9+ · 46,1 MiB · неофіційна адаптація",
     "languages": "Мова",
     "cards": [
       [
@@ -123,6 +131,14 @@
       [
         "Праве кермо",
         "Налаштування магнітоли → Кермо: Авто, Зліва або Справа. На BYD режим «Авто» питає в машини, де сидить водій; з правим кермом навігація, кнопки й мікрофон переходять праворуч."
+      ],
+      [
+        "Віджети робочого столу",
+        "Два віджети Spotify для лаунчерів, у яких можна додавати віджети: смуга, квадрати або великий плеєр з обкладинкою, часом і кнопками — залежно від розміру, у денних і нічних кольорах. Штатний лаунчер BYD показує лише віджети BYD."
+      ],
+      [
+        "Посилання та інші застосунки",
+        "Посилання Spotify з інших застосунків (spotify:, open.spotify.com, spotify.link) відкривають плейлист, альбом чи виконавця або вмикають пісню. Лаунчери, скроблери й HUD-застосунки бачать, що грає (вимикається в налаштуваннях)."
       ],
       [
         "Черга й таймер сну",
@@ -166,7 +182,7 @@
       ],
       [
         "Запуск відтворення",
-        "У налаштуваннях магнітоли є окремі опції відновлення після запуску чи тривалого сну та відтворення при новому запуску Spotify. Додаток чекає готовності плеєра; пауза скасовує автоматичні повтори."
+        "У налаштуваннях магнітоли є окремі опції відновлення після запуску чи тривалого сну та відтворення при новому запуску Spotify. Додаток чекає готовності плеєра; пауза скасовує автоматичні повтори. Також може запускати Spotify у фоні під час старту магнітоли (не на BYD: вимкнення машини зупиняє застосунки)."
       ],
       [
         "Музичний ритм підсвітки BYD",
@@ -174,9 +190,9 @@
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Headunit-test.13 прибирає з APK останні частини плеєра BYD (Vivid), додає перемикання треків свайпом, праве кермо (на BYD визначається автоматично) й інтерфейс до країв екрана, зберігає велику обкладинку у вертикальному розділеному екрані і додає віджет Spotify, який інші застосунки можуть показувати у своїх панелях (першим буде Google Maps for BYD). Копія, перепідписана іншим ключем, тепер повідомляє, що її змінено. Зібрано повною еталонною збіркою. Release-аудит: 48 PASS / 0 FAIL; 152 перевірки оновлювача, 39 входу й 14 доступу до панелі проходять; сертифікат підпису збігається з test.12. На емуляторах Android 9 і 13 test.13 встановлюється оновленням поверх test.12 і перевіряє оновлення без падінь. Збірки test.13 працювали в BYD Tang (DiLink 5, Android 12): свайпи, кнопки керма, голосова кнопка BYD, підсвітка в ритм музики, машина повідомляє ліве кермо, розділений екран із Google Maps; у машині стоїть саме цей файл.",
-    "pendingStrong": "Експериментальна headunit-test.13.",
-    "pending": "Праве кермо ще не бачили на машині з правим кермом (значення взято з коду BYD); DiLink 5.1 / Android 13 та інші магнітоли не перевірено; арабську — лише на емуляторі. Віджет з'являється лише в застосунках, які його підтримують; підтримку в Google Maps for BYD готують. Spotify вимикає завантаження для свого клієнта Automotive; ця збірка вмикає їхню підтримку, тож Spotify може змінити поведінку завантажень.",
+    "tested": "Headunit-test.14 додає віджети робочого столу для лаунчерів, у яких можна додавати віджети (п'ять варіантів за розміром, день і ніч), відкриває посилання Spotify з інших застосунків, повідомляє іншим застосункам, що грає, і може запускати Spotify у фоні під час старту магнітоли (не на BYD). Зроблено повною еталонною збіркою. Аудит релізу: 51 PASS / 0 FAIL; проходять 152 перевірки оновлень, 39 входу, 14 доступу до блоку й 19 запуску відтворення; сертифікат підпису той самий, що в test.13. На емуляторах Android 9 і 13 test.14 встановлюється оновленням поверх test.13 і без падінь перевіряє оновлення; вхід і «Акаунти» проходять на Android 13. Віджети перевірено у стандартних лаунчерах емуляторів Android 11 і 12; посилання відкривали там плейлисти, альбоми й виконавців. Саме цей файл встановлено в BYD Tang (DiLink 5, Android 12).",
+    "pendingStrong": "Експериментальна headunit-test.14.",
+    "pending": "Віджети поки показували лише вигадані треки, а штатний лаунчер BYD їх не показує. Відтворення пісні за посиланням і справжній застосунок, що читає «що грає», не перевірено. Праве кермо не бачили на машині з правим кермом; DiLink 5.1 / Android 13 та інші магнітоли не перевірено; арабську перевірено лише на емуляторі. Блок для панелей з'являється лише в застосунках із його підтримкою. Spotify тримає завантаження вимкненими для свого Automotive-клієнта; ця збірка вмикає їх підтримку, тож Spotify може змінити їхню роботу.",
     "installTitle": "Як встановити",
     "steps": [
       "Натисніть кнопку завантаження вище, щоб отримати APK, і перенесіть його в мультимедійну систему.",
@@ -202,12 +218,12 @@
     "name": "Spotify для Android-магнитол",
     "title": "Spotify для Android-магнитол — одно приложение",
     "description": "Экспериментальный Spotify Automotive 5.5.0 для Android-магнитол с собственным автомобильным интерфейсом в одном APK.",
-    "badge": "Экспериментальная сборка · 5.5.0 · test.13",
+    "badge": "Экспериментальная сборка · 5.5.0 · test.14",
     "headline": "Сделано для авто.",
     "highlight": "Одно приложение.",
     "intro": "Экспериментальный плеер Spotify Automotive для Android-магнитол с собственным интерфейсом, сделанным для авто: один APK, одна иконка и стандартный вход в Spotify. Бесплатно — никогда не платите за него.",
-    "download": "Скачать APK test.13",
-    "meta": "Android 9+ · 46,0 MiB · неофициальная адаптация",
+    "download": "Скачать APK test.14",
+    "meta": "Android 9+ · 46,1 MiB · неофициальная адаптация",
     "languages": "Язык",
     "cards": [
       [
@@ -221,6 +237,14 @@
       [
         "Правый руль",
         "Настройки магнитолы → Руль: Авто, Слева или Справа. На BYD режим «Авто» спрашивает у машины, где сидит водитель; с правым рулём навигация, кнопки и микрофон переходят вправо."
+      ],
+      [
+        "Виджеты рабочего стола",
+        "Два виджета Spotify для лаунчеров, в которых можно добавлять виджеты: полоса, квадраты или большой плеер с обложкой, временем и кнопками — в зависимости от размера, в дневных и ночных цветах. Штатный лаунчер BYD показывает только виджеты BYD."
+      ],
+      [
+        "Ссылки и другие приложения",
+        "Ссылки Spotify из других приложений (spotify:, open.spotify.com, spotify.link) открывают плейлист, альбом или исполнителя либо включают песню. Лаунчеры, скробблеры и HUD-приложения видят, что играет (отключается в настройках)."
       ],
       [
         "Очередь и таймер сна",
@@ -264,7 +288,7 @@
       ],
       [
         "Запуск воспроизведения",
-        "В настройках магнитолы есть отдельные опции возобновления после запуска или длительного сна и воспроизведения при новом запуске Spotify. Приложение ждёт готовности плеера; пауза отменяет автоматические повторы."
+        "В настройках магнитолы есть отдельные опции возобновления после запуска или длительного сна и воспроизведения при новом запуске Spotify. Приложение ждёт готовности плеера; пауза отменяет автоматические повторы. Также может запускать Spotify в фоне при запуске магнитолы (не на BYD: выключение машины останавливает приложения)."
       ],
       [
         "Музыкальный ритм подсветки BYD",
@@ -272,9 +296,9 @@
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Headunit-test.13 убирает из APK последние части плеера BYD (Vivid), добавляет переключение треков свайпом, правый руль (на BYD определяется автоматически) и интерфейс до краёв экрана, сохраняет большую обложку в вертикальном разделённом экране и добавляет виджет Spotify, который другие приложения могут показывать в своих панелях (первым будет Google Maps for BYD). Копия, переподписанная другим ключом, теперь сообщает, что её изменили. Собрано полной эталонной сборкой. Release-аудит: 48 PASS / 0 FAIL; 152 проверки обновления, 39 входа и 14 доступа к панели проходят; сертификат подписи совпадает с test.12. На эмуляторах Android 9 и 13 test.13 устанавливается обновлением поверх test.12 и проверяет обновления без падений. Сборки test.13 работали в BYD Tang (DiLink 5, Android 12): свайпы, кнопки руля, голосовая кнопка BYD, подсветка в ритм музыки, машина сообщает левый руль, разделённый экран с Google Maps; в машине стоит именно этот файл.",
-    "pendingStrong": "Экспериментальная headunit-test.13.",
-    "pending": "Правый руль ещё не проверен на машине с правым рулём (значение взято из кода BYD); DiLink 5.1 / Android 13 и другие магнитолы не проверены; арабский — только на эмуляторе. Виджет появляется только в приложениях, которые его поддерживают; поддержку в Google Maps for BYD готовят. Spotify отключает загрузки для своего клиента Automotive; эта сборка включает их поддержку, поэтому Spotify может изменить поведение загрузок.",
+    "tested": "Headunit-test.14 добавляет виджеты рабочего стола для лаунчеров, в которых можно добавлять виджеты (пять вариантов по размеру, день и ночь), открывает ссылки Spotify из других приложений, сообщает другим приложениям, что играет, и может запускать Spotify в фоне при запуске магнитолы (не на BYD). Сделано полной эталонной сборкой. Аудит релиза: 51 PASS / 0 FAIL; проходят 152 проверки обновлений, 39 входа, 14 доступа к блоку и 19 запуска воспроизведения; сертификат подписи тот же, что в test.13. На эмуляторах Android 9 и 13 test.14 устанавливается обновлением поверх test.13 и без сбоев проверяет обновления; вход и «Аккаунты» проходят на Android 13. Виджеты проверены в стандартных лаунчерах эмуляторов Android 11 и 12; ссылки открывали там плейлисты, альбомы и исполнителей. Именно этот файл установлен в BYD Tang (DiLink 5, Android 12).",
+    "pendingStrong": "Экспериментальная headunit-test.14.",
+    "pending": "Виджеты пока показывали только выдуманные треки, а штатный лаунчер BYD их не показывает. Воспроизведение песни по ссылке и настоящее приложение, читающее «что играет», не проверены. Правый руль не видели на машине с правым рулём; DiLink 5.1 / Android 13 и другие магнитолы не проверены; арабский проверен только на эмуляторе. Блок для панелей появляется только в приложениях с его поддержкой. Spotify держит загрузки выключенными для своего Automotive-клиента; эта сборка включает их поддержку, поэтому Spotify может изменить их работу.",
     "installTitle": "Как установить",
     "steps": [
       "Нажмите кнопку скачивания выше, чтобы получить APK, и перенесите его в мультимедийную систему.",
@@ -300,12 +324,12 @@
     "name": "Spotify لوحدات الوسائط العاملة بنظام Android",
     "title": "Spotify لوحدات الوسائط العاملة بنظام Android — تطبيق واحد",
     "description": "Spotify Automotive 5.5.0 تجريبي لوحدات السيارات بنظام Android، بواجهة خاصة به مصممة للسيارة في ملف APK واحد.",
-    "badge": "إصدار تجريبي · 5.5.0 · test.13",
+    "badge": "إصدار تجريبي · 5.5.0 · test.14",
     "headline": "مصمم للسيارة.",
     "highlight": "تطبيق واحد.",
     "intro": "مشغّل Spotify Automotive تجريبي لوحدات السيارات بنظام Android، بواجهة خاصة به مصممة للسيارة: ملف APK واحد وأيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify. مجاني — لا تدفع مقابله أبدًا.",
-    "download": "تنزيل APK test.13",
-    "meta": "Android 9+ · 46.0 MiB · تعديل غير رسمي",
+    "download": "تنزيل APK test.14",
+    "meta": "Android 9+ · 46.1 MiB · تعديل غير رسمي",
     "languages": "اللغة",
     "cards": [
       [
@@ -319,6 +343,14 @@
       [
         "المقود على اليمين",
         "إعدادات وحدة السيارة ← عجلة القيادة: تلقائي أو يسار أو يمين. في BYD يسأل الوضع التلقائي السيارة عن مقعد السائق؛ ومع المقود على اليمين تنتقل الملاحة والأزرار والميكروفون إلى اليمين."
+      ],
+      [
+        "أدوات الشاشة الرئيسية",
+        "أداتان لـ Spotify للمشغلات التي تتيح إضافة الأدوات: شريط أو مربعات أو مشغل كبير مع الغلاف والوقت وأزرار التحكم، حسب الحجم، بألوان النهار والليل. مشغل BYD الأصلي يعرض أدوات BYD فقط."
+      ],
+      [
+        "الروابط والتطبيقات الأخرى",
+        "روابط Spotify التي تفتحها التطبيقات الأخرى (spotify: و open.spotify.com و spotify.link) تعرض قائمة التشغيل أو الألبوم أو الفنان أو تشغّل الأغنية. ويمكن للمشغلات وتطبيقات تسجيل الاستماع وتطبيقات العرض الأمامي معرفة ما يتم تشغيله (إعداد يمكن إيقافه)."
       ],
       [
         "قائمة الانتظار ومؤقت النوم",
@@ -362,7 +394,7 @@
       ],
       [
         "بدء التشغيل",
-        "تتضمن إعدادات وحدة السيارة خيارين منفصلين للاستئناف بعد بدء التشغيل أو السكون الطويل وللتشغيل عند فتح جلسة جديدة من Spotify. ينتظر التطبيق جاهزية المشغل؛ ويلغي الإيقاف المؤقت المحاولات التلقائية."
+        "تتضمن إعدادات وحدة السيارة خيارين منفصلين للاستئناف بعد بدء التشغيل أو السكون الطويل وللتشغيل عند فتح جلسة جديدة من Spotify. ينتظر التطبيق جاهزية المشغل؛ ويلغي الإيقاف المؤقت المحاولات التلقائية. ويمكنه أيضاً تشغيل Spotify في الخلفية عند بدء تشغيل وحدة السيارة (ليس في BYD، حيث يؤدي إطفاء السيارة إلى إيقاف التطبيقات)."
       ],
       [
         "إيقاع الإضاءة المحيطية في BYD",
@@ -370,9 +402,9 @@
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "يزيل headunit-test.13 آخر أجزاء مشغّل BYD (Vivid) من ملف APK، ويضيف التنقل بين المقاطع بالسحب، ودعم المقود على اليمين (يُكتشف تلقائيًا في BYD)، وواجهة تمتد حتى حواف الشاشة، ويحتفظ بغلاف كبير في تقسيم الشاشة العمودي، ويضيف أداة Spotify يمكن للتطبيقات الأخرى عرضها في لوحاتها (وسيكون Google Maps for BYD أولها). النسخة المعاد توقيعها بمفتاح آخر تُعلن الآن أنها معدّلة. بُني بالبناء المرجعي الكامل. تدقيق الإصدار: 48 PASS / 0 FAIL، وتنجح 152 فحصًا للتحديث و39 لتسجيل الدخول و14 للوصول إلى اللوحة، وشهادة التوقيع مطابقة لـ test.12. على محاكيَي Android 9 و13 يُثبَّت test.13 كتحديث فوق test.12 ويفحص التحديثات دون أعطال. عملت إصدارات test.13 في BYD Tang (DiLink 5، Android 12): السحب، وأزرار المقود، وزر الصوت في BYD، وإيقاع الإضاءة، وإبلاغ السيارة بأن المقود على اليسار، وتقسيم الشاشة مع Google Maps؛ وهذا الملف نفسه مثبّت في السيارة.",
-    "pendingStrong": "إصدار تجريبي headunit-test.13.",
-    "pending": "لم يُجرَّب المقود على اليمين في سيارة بمقود يميني (القيمة مأخوذة من شيفرة BYD)؛ ولم يُتحقق بعد من DiLink 5.1 / Android 13 ووحدات السيارات الأخرى؛ واللغة العربية جُرّبت على المحاكي فقط. لا تظهر الأداة إلا في التطبيقات التي تدعمها، ودعمها في Google Maps for BYD قيد الإعداد. يوقف Spotify التنزيلات لعميل Automotive؛ يفعّل هذا الإصدار دعمها، لذا قد يغيّر Spotify سلوك التنزيلات.",
+    "tested": "يضيف Headunit-test.14 أدوات للشاشة الرئيسية للمشغلات التي تتيح إضافة الأدوات (خمسة تخطيطات حسب الحجم، نهاراً وليلاً)، ويفتح روابط Spotify من التطبيقات الأخرى، ويُعلم التطبيقات الأخرى بما يتم تشغيله، ويمكنه تشغيل Spotify في الخلفية عند بدء تشغيل وحدة السيارة (ليس في BYD). أُنشئ بالبناء المرجعي الكامل. تدقيق الإصدار: 51 PASS / 0 FAIL؛ تنجح 152 فحصاً للتحديثات و39 لتسجيل الدخول و14 للوصول إلى الكتلة و19 لبدء التشغيل، وشهادة التوقيع مطابقة لـ test.13. على محاكيات Android 9 و13 يُثبَّت test.14 تحديثاً فوق test.13 ويتحقق من التحديثات دون أعطال؛ ويعمل تسجيل الدخول و«الحسابات» على Android 13. فُحصت الأدوات في المشغلات القياسية لمحاكيات Android 11 و12، وفتحت الروابط هناك قوائم التشغيل والألبومات والفنانين. هذا الملف نفسه مثبّت في BYD Tang (DiLink 5، Android 12).",
+    "pendingStrong": "إصدار تجريبي headunit-test.14.",
+    "pending": "لم تعرض الأدوات حتى الآن سوى مقاطع تجريبية، ولا يستطيع مشغل BYD الأصلي عرضها. لم يُتحقق من تشغيل أغنية عبر رابط ولا من تطبيق حقيقي يقرأ ما يتم تشغيله. لم يُختبر المقود الأيمن على سيارة بمقود أيمن؛ ولم يُتحقق من DiLink 5.1 / Android 13 ووحدات السيارات الأخرى؛ وفُحصت العربية على محاكٍ فقط. تظهر الكتلة للوحات فقط في التطبيقات التي تدعمها. يُبقي Spotify التنزيلات معطلة لعميل Automotive؛ هذا الإصدار يفعّل دعمها، لذا قد يغيّر Spotify طريقة عملها.",
     "installTitle": "طريقة التثبيت",
     "steps": [
       "اضغط على زر التنزيل أعلاه للحصول على ملف APK، ثم انقله إلى نظام الوسائط في السيارة.",
@@ -398,12 +430,12 @@
     "name": "适用于 Android 车机的 Spotify",
     "title": "Android 车机 Spotify — 一个应用",
     "description": "适用于 Android 车机的实验性 Spotify Automotive 5.5.0，自带为汽车设计的界面，一个 APK。",
-    "badge": "实验版本 · 5.5.0 · test.13",
+    "badge": "实验版本 · 5.5.0 · test.14",
     "headline": "为汽车而做。",
     "highlight": "一个应用。",
     "intro": "适用于 Android 车机的实验性 Spotify Automotive 播放器，拥有为汽车设计的自有界面：一个 APK、一个图标和标准的 Spotify 登录。免费——切勿付费。",
-    "download": "下载 test.13 APK",
-    "meta": "Android 9+ · 46.0 MiB · 非官方适配",
+    "download": "下载 test.14 APK",
+    "meta": "Android 9+ · 46.1 MiB · 非官方适配",
     "languages": "语言",
     "cards": [
       [
@@ -417,6 +449,14 @@
       [
         "右舵",
         "车机设置 → 方向盘：自动、左或右。在 BYD 上，“自动”会向车辆查询驾驶座位置；右舵时，导航、控制按钮和麦克风移到右侧。"
+      ],
+      [
+        "桌面小组件",
+        "两个 Spotify 小组件，适用于可以添加小组件的启动器：根据大小显示为横条、方块或带封面、时间和控制按钮的大播放器，支持白天和夜间配色。比亚迪原厂启动器只显示比亚迪自己的小组件。"
+      ],
+      [
+        "链接与其他应用",
+        "其他应用打开的 Spotify 链接（spotify:、open.spotify.com、spotify.link）会显示歌单、专辑或艺人，或直接播放歌曲。启动器、听歌记录应用和抬头显示应用可以看到正在播放的内容（可在设置中关闭）。"
       ],
       [
         "播放队列和睡眠定时",
@@ -460,7 +500,7 @@
       ],
       [
         "播放启动",
-        "车机设置提供两个独立选项：在启动或长时间休眠后恢复播放，以及在新启动 Spotify 时播放。应用会等待播放器准备就绪；暂停会取消自动重试。"
+        "车机设置提供两个独立选项：在启动或长时间休眠后恢复播放，以及在新启动 Spotify 时播放。应用会等待播放器准备就绪；暂停会取消自动重试。还可以在车机启动时在后台启动 Spotify（比亚迪除外：熄火会停止应用）。"
       ],
       [
         "比亚迪氛围灯音乐律动",
@@ -468,9 +508,9 @@
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "headunit-test.13 从 APK 中移除了 BYD (Vivid) 播放器的最后部分，新增滑动切换曲目、右舵支持（在 BYD 上自动识别）和延伸到屏幕边缘的界面，竖屏分屏时保留大封面，并新增 Spotify 小部件，其他应用可在其面板中显示它（首个支持的将是 Google Maps for BYD）。用其他密钥重新签名的副本现在会提示已被修改。采用完整的参考构建。发布审核：48 PASS / 0 FAIL；152 项更新、39 项登录和 14 项面板访问检查均通过；签名证书与 test.12 相同。在 Android 9 和 13 模拟器上，test.13 可作为更新安装在 test.12 之上，并在检查更新时无崩溃。test.13 的构建已在 BYD 唐（DiLink 5，Android 12）上运行：滑动、方向盘按键、BYD 语音按钮、氛围灯律动、车辆报告左舵，以及与 Google Maps 分屏；车上安装的正是这个文件。",
-    "pendingStrong": "实验版 headunit-test.13。",
-    "pending": "右舵尚未在右舵车辆上验证（数值来自 BYD 的代码）；DiLink 5.1 / Android 13 及其他车机尚未验证；阿拉伯语仅在模拟器上检查。小部件仅在支持它的应用中显示；Google Maps for BYD 的支持正在准备中。Spotify 为其 Automotive 客户端关闭了下载功能；此版本开启了客户端支持，因此 Spotify 可能会改变下载行为。",
+    "tested": "Headunit-test.14 为可以添加小组件的启动器加入了桌面小组件（按大小提供五种布局，支持白天和夜间），可以打开其他应用中的 Spotify 链接，会告诉其他应用正在播放什么，并可在车机启动时在后台启动 Spotify（比亚迪除外）。它由完整参考构建生成。发布审计为 51 PASS / 0 FAIL；152 项更新、39 项登录、14 项面板访问和 19 项播放启动检查通过，签名证书与 test.13 相同。在 Android 9 和 13 模拟器上，test.14 可作为更新安装在 test.13 之上，并在无崩溃的情况下检查更新；登录和“账号”流程在 Android 13 上通过。小组件已在 Android 11 和 12 模拟器的原生启动器中检查；链接在其中打开了歌单、专辑和艺人。正是这个文件已安装在比亚迪唐（DiLink 5，Android 12）上。",
+    "pendingStrong": "实验版 headunit-test.14。",
+    "pending": "小组件目前只显示过虚构的曲目，比亚迪原厂启动器也无法显示它们。通过链接播放歌曲以及真正读取“正在播放”的应用尚未验证。右舵尚未在右舵车上见过；DiLink 5.1 / Android 13 和其他车机尚未验证；阿拉伯语只在模拟器上检查过。面板区块只会出现在支持它的应用中。Spotify 为其 Automotive 客户端关闭了下载；本版本开启了客户端支持，因此 Spotify 可能会改变下载的工作方式。",
     "installTitle": "安装方法",
     "steps": [
       "点击上方下载按钮获取 APK，然后将其传输到车载多媒体系统。",

@@ -1,0 +1,1 @@
+Home-screen widgets for launchers that let you add widgets, Spotify links from other apps open in Spotify, other apps can see what is playing, and Spotify can start in the background when the head unit starts (not on BYD). Experimental prerelease.
