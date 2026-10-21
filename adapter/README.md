@@ -383,3 +383,11 @@ From the review of developer.spotify.com (`Spotify/reports/` of the project note
 - `tools/apk_audit.py` checks the link filters and the three session hooks.
 
 Checked on the Android 12 emulator: `spotify:search:` opened the search page with the query; with the network on, `https://open.spotify.com/album/…?si=…`, `…/intl-uk/playlist/…` and `spotify:artist:…` opened their pages with title, cover and tracks (nothing played); the debug host's Broadcast (made-up session objects, read by name like the backend's) produced exactly: the track (length 215), playing, nothing for normal progress, paused, the seek, the queue, each with `timeSent`, and nothing with the setting off. Not checked: a real short link, a song link playing (it would take over the account's playback elsewhere), a real listener app.
+
+## After test.14 (owner's requests)
+
+- **A 3 dp frame:** the main screen keeps a 3 dp frame of the window's background on every side (`HuPlayerActivity`; the stage's size takes it into account).
+- **The time in the mini-player:** elapsed / length ("2:49 / 5:24", tabular digits, left-to-right) at the end of the card, where it is at least 640 dp wide; narrower, the title keeps the room.
+- **The navigation closes the full-screen player:** a tab tapped in the navigation (or Settings) closes the queue and the full-screen player first, which cover the content but not the navigation; the tab already under them is only uncovered.
+
+Checked on the Android 12 emulator: the frame; the player open, Library tapped: the player closed and Library showed. The mini-player's time needs a song (not checked offline).

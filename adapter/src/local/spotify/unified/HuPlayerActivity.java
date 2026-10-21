@@ -42,12 +42,14 @@ public final class HuPlayerActivity extends Activity {
    ArrayList<Bundle> saved=state.getParcelableArrayList("trail");if(saved!=null)for(Bundle b:saved){HuDetail.Target t=HuDetail.Target.restore(b);if(t!=null)restored.add(t);}
   }
   FrameLayout root=new FrameLayout(this);root.setBackgroundColor(ui.dark?0xff000000:0xffe4e4e4);
+  // A thin frame of the window's background on every side (owner's request: 3 dp).
+  int frame=ui.dp(3);root.setPadding(frame,frame,frame,frame);
   int gap=ui.dp(6);android.content.res.Configuration cf=getResources().getConfiguration();boolean bar=cf.screenWidthDp<cf.screenHeightDp;
   LinearLayout shell=new LinearLayout(this);shell.setOrientation(bar?LinearLayout.VERTICAL:LinearLayout.HORIZONTAL);
-  // The cards reach the window's edges, as other apps' content does, and the navigation (on the
+  // The cards come within the 3 dp frame of the window's edges, and the navigation (on the
   // window's background) touches them; the 6 dp gap stays only between the content and the mini-player.
   root.addView(shell);
-  rail=new HuRail(ui,bar,this::show,()->HeadUnitSettings.open(this));
+  rail=new HuRail(ui,bar,this::picked,()->{uncover();HeadUnitSettings.open(this);});
   // The stage holds the content card with the mini-player and, over both, the player: it covers
   // them at full height and leaves the navigation in view.
   FrameLayout stage=new FrameLayout(this);
@@ -63,7 +65,7 @@ public final class HuPlayerActivity extends Activity {
   column.addView(content,new LinearLayout.LayoutParams(-1,0,1));
   HuMiniPlayer mini=new HuMiniPlayer(ui,accent,this::expand);
   LinearLayout.LayoutParams miniParams=new LinearLayout.LayoutParams(-1,-2);miniParams.topMargin=gap;column.addView(mini,miniParams);
-  float stageWidth=cf.screenWidthDp-(bar?0:120),stageHeight=cf.screenHeightDp-(bar?104:0);contentWidth=stageWidth;contentHeight=stageHeight-110;
+  float stageWidth=cf.screenWidthDp-(bar?0:120)-6,stageHeight=cf.screenHeightDp-(bar?104:0)-6;contentWidth=stageWidth;contentHeight=stageHeight-110;
   player=new HuNowPlaying(ui,accent,stageWidth,stageHeight,this::collapse,this::openQueue);player.setVisibility(View.GONE);stage.addView(player,new FrameLayout.LayoutParams(-1,-1));
   queue=new HuQueue(ui,this::closeQueue);queue.setVisibility(View.GONE);stage.addView(queue,new FrameLayout.LayoutParams(-1,-1));
   setContentView(root);
@@ -144,6 +146,13 @@ public final class HuPlayerActivity extends Activity {
   * window metrics of this activity's scaled context keep the size it was created with.)
   */
  private int[] windowSize(){View d=getWindow().getDecorView();return new int[]{d.getWidth(),d.getHeight()};}
+ /**
+  * A tab tapped in the navigation: the full-screen player and the queue, which cover the content
+  * but not the navigation, close first; the tab already under them is only uncovered.
+  */
+ private void picked(String key){boolean covered=uncover();if(covered && key.equals(page))return;show(key);}
+ /** Closes the queue and the full-screen player; true if either was open. */
+ private boolean uncover(){boolean covered=expanded || queueOpen;closeQueue();collapse();return covered;}
  /** Shows a tab at its root page; the current tab, tapped at its root, is built afresh. */
  private void show(String key){
   boolean refresh=key.equals(page) && detail==null && levels.isEmpty();

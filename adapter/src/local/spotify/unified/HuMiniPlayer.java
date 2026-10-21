@@ -5,14 +5,14 @@ import android.view.*;
 import android.widget.*;
 /**
  * Our mini-player: a rounded card with the controls first, then like, cover and title (the New
- * style order), on the blurred cover (with "Colour from cover art"; plain otherwise) and a thin
- * progress line. Tapping the cover or the title, or a swipe up, opens the player; a swipe to the
+ * style order) and the time (elapsed / length, where the card is wide enough), on the blurred
+ * cover (with "Colour from cover art"; plain otherwise) and a thin progress line. Tapping the cover or the title, or a swipe up, opens the player; a swipe to the
  * left or right switches to the next or previous track (HuSkipSwipe). The controls and
  * the progress line stay left-to-right in right-to-left languages, as media controls do in
  * Material.
  */
 final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
- private final HuUi ui;private final HuSession session;private final ImageView play,like,cover;private final TextView title,artist;
+ private final HuUi ui;private final HuSession session;private final ImageView play,like,cover;private final TextView title,artist,time;private boolean roomy=true;
  private final Paint progress=new Paint(Paint.ANTI_ALIAS_FLAG),track=new Paint(Paint.ANTI_ALIAS_FLAG);private final boolean accent;private float fraction;private String art;private int tint;
  private final Runnable tick=new Runnable(){public void run(){update();if(isAttachedToWindow() && session.playing())postDelayed(this,1000);}};
  HuMiniPlayer(HuUi ui,boolean accent,Runnable expand){
@@ -30,6 +30,9 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);texts.setPaddingRelative(ui.dp(16),0,0,0);
   title=HuControls.title(ui,21,1);artist=ui.label("",17,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
   texts.addView(title);texts.addView(artist);addView(texts,new LayoutParams(0,-2,1));
+  // Tabular digits, so the time does not shift as it counts; always left-to-right.
+  time=ui.label("",17,ui.secondary,false);time.setFontFeatureSettings("tnum");time.setTextDirection(TEXT_DIRECTION_LTR);time.setVisibility(GONE);
+  LayoutParams tp=new LayoutParams(-2,-2);tp.setMarginStart(ui.dp(16));addView(time,tp);
   cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());this.expand=expand;slop=android.view.ViewConfiguration.get(ui.activity).getScaledTouchSlop();
   skip=new HuSkipSwipe(ui,session,cover,texts);
   progress.setColor(ui.text);track.setColor(ui.text);track.setAlpha(46);
@@ -65,7 +68,13 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   int t=color==null?ui.card:CoverAccent.tone(color,ui.dark,0.42f);if(t==tint)return;tint=t;
   ((GradientDrawable)getBackground()).setColor(t);
  }
- private void update(){long d=session.duration();fraction=d>0?Math.min(1f,session.position()/(float)d):0f;invalidate();}
+ private void update(){
+  long d=session.duration(),p=session.position();fraction=d>0?Math.min(1f,p/(float)d):0f;
+  boolean shown=d>0 && roomy;time.setVisibility(shown?VISIBLE:GONE);if(shown)time.setText(HuControls.time(Math.min(p,d))+" / "+HuControls.time(d));
+  invalidate();
+ }
+ /** The time needs a wide card (a full screen or half of one); narrower, the title keeps the room. */
+ protected void onSizeChanged(int w,int h,int ow,int oh){super.onSizeChanged(w,h,ow,oh);boolean r=w>=ui.dp(640);if(r!=roomy){roomy=r;post(this::update);}}
  /** The progress: a thin rounded bar inside the card, clear of its rounded corners, over a faint track. */
  protected void dispatchDraw(Canvas c){
   super.dispatchDraw(c);float h=ui.dp(3),inset=ui.dp(22),bottom=getHeight()-ui.dp(6),width=getWidth()-2*inset;if(width<=0)return;
