@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 15,
+  "version": "test.15",
+  "version_code": 95492,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.15/Spotify-5.5.0-HeadUnit-test.15.apk",
+  "sha256": "8582e41a8b137a78b8842e464152f6539c80f87dad06904069392763e1c6983b",
+  "size": 48350322,
+  "notes": "The mini-player shows the time, a thin frame around the screen, and the navigation closes the full-screen player. With test.14: home-screen widgets for launchers that let you add widgets, Spotify links from other apps, what's playing for other apps. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.15",
+  "min_sdk": 28
+}

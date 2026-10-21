@@ -1,0 +1,1 @@
+The mini-player shows the time, a thin frame around the screen, and the navigation closes the full-screen player. With test.14: home-screen widgets for launchers that let you add widgets, Spotify links from other apps, what's playing for other apps. Experimental prerelease.
