@@ -8,6 +8,7 @@ public final class HeadUnitSettingsProvider extends ContentProvider {
  public Bundle call(String method,String arg,Bundle extras){
   if(Binder.getCallingUid()!=android.os.Process.myUid())throw new SecurityException("Private settings");
   if(method.startsWith("sleep_"))return HeadUnitSleep.call(getContext(),method,extras);
+  if(method.startsWith("connect_"))return HeadUnitConnect.call(getContext(),method,extras);
   if(method.startsWith("update_")){try{return AppUpdates.call(getContext(),method,extras);}catch(Throwable e){throw new IllegalStateException("Update operation unavailable");}}
   if(method.startsWith("diagnostics_")){try{
    if("diagnostics_status".equals(method))return DiagnosticsQueue.summary(getContext());

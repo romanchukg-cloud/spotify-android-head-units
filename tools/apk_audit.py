@@ -69,6 +69,7 @@ hosts={(d.get(A+'scheme'),d.get(A+'host')) for f in views for d in f.findall('da
 check('Links / spotify:, open.spotify.com and spotify.link open our interface',{('spotify',None),('https','open.spotify.com'),('https','spotify.link')}<=hosts and all(any(c.get(A+'name')=='android.intent.category.BROWSABLE' for c in f.findall('category')) for f in views))
 compat=files.get('Landroid/support/v4/media/session/MediaSessionCompat;','')
 check('Broadcasts / session metadata, playback and queue hooks','HeadUnitRuntime;->metadata(' in compat and 'HeadUnitRuntime;->playback(' in compat and 'HeadUnitRuntime;->queue()' in compat and 'com.spotify.music.metadatachanged' in files.get('Llocal/spotify/unified/HuBroadcasts;',''))
+check('Connect / session callback captured, provider route','HeadUnitConnect;->session(' in files.get('Lbd/j;','') and 'HeadUnitConnect;->call(' in files.get('Llocal/spotify/unified/HeadUnitSettingsProvider;','') and 'ConnectService/' in files.get('Llocal/spotify/unified/HeadUnitConnect;',''))
 controllers=files.get('Lle/d;','')
 check('External controller policy hook','HeadUnitControllers;->allow(' in controllers and 'HeadUnitControllers;->matches(' in controllers and 'HeadUnitControllers;->result(' in controllers)
 gate=files.get('Llocal/spotify/close/PlaybackGate;','');death=files.get('Llocal/spotify/close/PlaybackGate$1;','')

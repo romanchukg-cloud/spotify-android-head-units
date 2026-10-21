@@ -214,3 +214,11 @@ p=out/'smali/android/support/v4/media/session/MediaSessionCompat.smali';s=p.read
 s,count=re.subn(r'(\.method public setQueue\(Ljava/util/List;\)V\n    \.locals \d+\n(?:    \.annotation .*?\n    \.end annotation\n)?)',r'\1\n    invoke-static {}, Llocal/spotify/unified/HeadUnitRuntime;->queue()V\n',s,flags=re.S);assert count==1
 p.write_text(s)
 print('Broadcasts: session queue hook')
+
+# Connect: the devices of the account and moving playback between them (HeadUnitConnect). The
+# backend's media session callback (bd/j) holds its ConnectService client; it is captured as the
+# backend builds it, again after every sign-in.
+p=out/'smali/bd/j.smali';s=p.read_text()
+s,count=re.subn(r'(\.method public constructor <init>\(Llv/d;Lmb/y;[^\n]*\)V\n(?:(?!\.end method).)*?)(    return-void)',r'\1    invoke-static {p0}, Llocal/spotify/unified/HeadUnitConnect;->session(Ljava/lang/Object;)V\n\n\2',s,flags=re.S);assert count==1
+p.write_text(s)
+print('Connect: session callback hook')

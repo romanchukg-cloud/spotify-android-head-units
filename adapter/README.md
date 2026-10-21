@@ -391,3 +391,14 @@ Checked on the Android 12 emulator: `spotify:search:` opened the search page wit
 - **The navigation closes the full-screen player:** a tab tapped in the navigation (or Settings) closes the queue and the full-screen player first, which cover the content but not the navigation; the tab already under them is only uncovered.
 
 Checked on the Android 12 emulator: the frame; the player open, Library tapped: the player closed and Library showed. The mini-player's time needs a song (not checked offline).
+
+## After test.15: devices (Spotify Connect, owner's request)
+
+The player's top bar has a devices button (Spotify's own "connect to devices" icon): a menu of the account's devices — this car first, then the others that are online, the playing one in green — moves playback with a tap. While another device plays, the player shows "Playing on …" in green under the artist (a tap opens the menu) and the mini-player shows it in place of the artist; the devices button turns green.
+
+- **Music process** (`HeadUnitConnect`): the backend's media session callback (`bd/j`, captured by a hook in its constructor, again after every sign-in) holds the ConnectService client; through its Esperanto router (`yr/b.a` → `CoroutineClientBase.transport` → `CosmosCoroutineTransport.router`) we send the core's own requests: `SUB …/ConnectService/State` (`include_local_device`), `POST …/Pull` (to this car) and `POST …/Transfer` (`TransferRequest.connect_device_identifier`; a refusal is tried once more with the device's local identifier: which one the core takes is not documented, and the method name comes from the request type in the native library's descriptors).
+- **Messages** (`ConnectWire`): StateRequest, TransferRequest, StatusResponse and StateResponse with its devices (self, ids, name, type, active, activating, disabled, group, offline, output category) encoded and decoded by hand; `tests/connect/run.sh` checks them on the JVM (13 checks).
+- **Interface** (`HuConnect`): the state through the settings provider (`connect_get`, `connect_transfer`), refreshed when `HeadUnitConnect.CHANGED` is notified; device icons by Connect type or output category. Device names are not logged.
+- `tools/apk_audit.py` checks the session hook and the provider route.
+
+Checked on the Android 12 emulator (network off): the subscription starts, the menu lists this car. Not yet checked: other devices, transferring and pulling playback (in the car, with the owner's devices).

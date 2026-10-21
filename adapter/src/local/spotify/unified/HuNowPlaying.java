@@ -16,7 +16,7 @@ import android.widget.*;
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final boolean accent;private final Runnable collapse;
- private final ImageView cover,play,like,shuffle,repeat,sleep;private final TextView title,artist,elapsed,remaining;private final SeekBar seek;
+ private final ImageView cover,play,like,shuffle,repeat,sleep,devices;private final TextView title,artist,where,elapsed,remaining;private final SeekBar seek;
  private final GradientDrawable background;private String art;private boolean dragging;
  private final int slop;private float downX,downY;private boolean swiping;private VelocityTracker velocity;private final HuSkipSwipe skip;
  private final Runnable tick=new Runnable(){public void run(){progress();if(isAttachedToWindow() && session.playing())postDelayed(this,500);}};
@@ -34,11 +34,12 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   setOrientation(VERTICAL);setPaddingRelative(ui.dp(small?16:24),ui.dp(8),ui.dp(small?16:32),ui.dp(compact?12:24));setClickable(true);
   background=new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM,new int[]{ui.bg,ui.bg});background.setCornerRadius(ui.dp(22));setBackground(background);
   setOutlineProvider(ViewOutlineProvider.BACKGROUND);setClipToOutline(true);
-  // Top bar: collapse, then the sleep timer, Jam and the queue.
+  // Top bar: collapse, then the devices (Spotify Connect), the sleep timer, Jam and the queue.
   int bar=ui.dp(compact?64:76);
   LinearLayout top=new LinearLayout(ui.activity);top.setGravity(Gravity.CENTER_VERTICAL);
   top.addView(HuControls.button(ui,"encore_icon_chevron_down_24",HuText.get("collapse"),bar,v->collapse.run()));
   TextView label=ui.label(HuText.get("now_playing"),18,ui.secondary,true);label.setPaddingRelative(ui.dp(8),0,0,0);top.addView(label,new LayoutParams(0,-2,1));
+  devices=HuControls.button(ui,"encore_icon_connect_to_devices_24",HuText.get("devices"),bar,v->HuConnect.menu(ui));top.addView(devices);
   sleep=HuControls.button(ui,"encore_icon_moon_24",HuText.get("sleep_timer"),bar,v->HuSleep.menu(ui,session,this::sleepState));top.addView(sleep);
   top.addView(HuControls.button(ui,"encore_icon_group_session_24",HuText.get("start_jam"),bar,v->HeadUnitJam.open(getContext())));
   top.addView(HuControls.button(ui,"encore_icon_queue_24",HuText.get("queue"),bar,v->queue.run()));
@@ -59,7 +60,9 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   LinearLayout heading=new LinearLayout(ui.activity);heading.setGravity(Gravity.CENTER_VERTICAL);
   LinearLayout texts=new LinearLayout(ui.activity);texts.setOrientation(VERTICAL);
   title=HuControls.title(ui,compact?26:34,low?1:2);artist=ui.label("",compact?18:22,ui.secondary,false);artist.setSingleLine(true);artist.setEllipsize(android.text.TextUtils.TruncateAt.END);
-  texts.addView(title);texts.addView(artist);heading.addView(texts,new LayoutParams(0,-2,1));
+  // Another device plays: its name in green under the artist, as Spotify shows it; a tap opens the devices.
+  where=ui.label("",compact?16:18,ui.accent,true);where.setSingleLine(true);where.setEllipsize(android.text.TextUtils.TruncateAt.END);where.setVisibility(GONE);where.setOnClickListener(v->HuConnect.menu(ui));
+  texts.addView(title);texts.addView(artist);texts.addView(where);heading.addView(texts,new LayoutParams(0,-2,1));
   like=HuControls.button(ui,"encore_icon_heart_24","",bar,v->session.send(session.like()));heading.addView(like);
   col.addView(heading);
   // Seek bar and times.
@@ -88,10 +91,16 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   if(column<330){shuffle.setVisibility(GONE);repeat.setVisibility(GONE);}
   LayoutParams controlsParams=new LayoutParams(-1,-2);controlsParams.topMargin=ui.dp(compact?4:16);col.addView(controls,controlsParams);
  }
- protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);sleepState();}
+ protected void onAttachedToWindow(){super.onAttachedToWindow();session.add(this);sleepState();HuConnect.add(getContext(),connect);}
+ /** The devices button and line are green while another device plays. */
+ private final HuConnect.Listener connect=this::devicesChanged;
+ private void devicesChanged(android.os.Bundle s){
+  boolean away=HuConnect.elsewhere(s);devices.setImageDrawable(HuControls.icon(getContext(),"encore_icon_connect_to_devices_24",away?ui.accent:ui.text));
+  where.setVisibility(away?VISIBLE:GONE);if(away)where.setText(String.format(HuText.get("playing_on"),HuConnect.name(HuConnect.active(s))));
+ }
  /** The moon is green while the sleep timer runs. */
  private void sleepState(){boolean on=HuSleep.left(getContext())>0;sleep.setImageDrawable(HuControls.icon(getContext(),on?"encore_icon_moon_active_24":"encore_icon_moon_24",on?ui.accent:ui.text));}
- protected void onDetachedFromWindow(){session.remove(this);removeCallbacks(tick);super.onDetachedFromWindow();}
+ protected void onDetachedFromWindow(){session.remove(this);HuConnect.remove(connect);removeCallbacks(tick);super.onDetachedFromWindow();}
 
  // A downward swipe anywhere outside the seek bar drags the player down; far or fast enough, it
  // collapses. A sideways one switches tracks (the seek bar keeps its own drags).
