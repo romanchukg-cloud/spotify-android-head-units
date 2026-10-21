@@ -1,0 +1,1 @@
+Devices: see where the music plays and move it between this car, your phone, computer or speakers (Spotify Connect). The mini-player has shuffle, repeat and the devices button. Experimental prerelease.

@@ -1,0 +1,56 @@
+APK Spotify-5.5.0-HeadUnit-test.16.apk
+SHA256 517be876fa0cc2fb8a4a5c10b8dc7557da8b15502b3f8bf34929fb5ce92b484a
+PASS Package / minimum API — minSdk=28
+PASS Optional automotive feature
+PASS Legacy Back dispatch
+PASS Privacy metadata
+PASS Boot permission
+PASS Private settings / playback components
+PASS One cold-start media receiver
+PASS No vendor restore service
+PASS Main screen is our interface — launchers=['local.bydui.com.vivid.spotify.MainActivity']
+PASS Helper present
+PASS No BYD-derived interface or vehicle API — 0 BYD-derived classes, 0 using the vehicle API
+PASS Driving side / BYD car service only on BYD
+PASS Panel provider / exported service, action and meta-data
+PASS Panel provider / caller checked in every message
+PASS Panel provider / no music start, screen or setting on bind
+PASS Panel provider / test host and own uid only in debug builds — release build
+PASS Widgets / providers with resources, private button receiver
+PASS Links / spotify:, open.spotify.com and spotify.link open our interface
+PASS Broadcasts / session metadata, playback and queue hooks
+PASS Connect / session callback captured, provider route
+PASS External controller policy hook
+PASS Binder death does not close gate
+PASS BYD legacy UI trust gated
+PASS Explicit transport commands unblocked
+PASS Private accounts / isolated coordinator
+PASS Account storage / settings entry
+PASS Sign-in / pinned device ID — 2 SDK call sites
+PASS Sign-in / reasons and stale account removals
+PASS Sign-in / one recovery per boot
+PASS Account transition transport guards
+PASS BYD rhythm / off-main profile guard
+PASS BYD rhythm / one token and vehicle-owned effects
+PASS BYD rhythm / playback and session cleanup
+PASS Diagnostics / private components and temporary URI grants
+PASS Diagnostics / bounded allowlisted private recording
+PASS Diagnostics / strict Spotify playback v2
+PASS Diagnostics / exact persisted manual consent and receipt
+PASS Diagnostics / fixed HTTPS origin and receipt headers
+PASS Diagnostics / native persisted job and private notice
+PASS Diagnostics / consent and negotiated automatic support
+PASS Diagnostics / sanitized ZIP export and share/save UI
+PASS Updates / installer permission and private result receiver
+PASS Updates / pinned feed, release URLs and certificate
+PASS Updates / verified APK and Android Update confirmation
+PASS Acknowledged resume / bounded readiness retries
+PASS Opt-in player launch / profile handoff guard
+PASS Settings entry / density context
+PASS Interface typeface / widget resources only
+PASS DEX version compatible with Android 9 — {'classes.dex': 39, 'classes2.dex': 39}
+PASS UI translations (en, uk, ru, ar, zh) — 102 texts, 6 tables
+PASS APK signature
+PASS ZIP / native 16 KiB alignment
+RESULT 52 PASS, 0 FAIL
+LIMIT: static policy checks do not validate login, audio, all SDK API calls, or real head-unit firmware.

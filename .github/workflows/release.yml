@@ -9,11 +9,11 @@ on:
     inputs:
       base_tag:
         description: Previous published release tag
-        default: v5.5.0-headunit-test.15
+        default: v5.5.0-headunit-test.16
         required: true
       base_info:
         description: Metadata of that release
-        default: reports/headunit-test.15/release.json
+        default: reports/headunit-test.16/release.json
         required: true
       since:
         description: patch_headunit.py section added after the base release

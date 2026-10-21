@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 16,
+  "version": "test.16",
+  "version_code": 95493,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.16/Spotify-5.5.0-HeadUnit-test.16.apk",
+  "sha256": "517be876fa0cc2fb8a4a5c10b8dc7557da8b15502b3f8bf34929fb5ce92b484a",
+  "size": 48370802,
+  "notes": "Devices: see where the music plays and move it between this car, your phone, computer or speakers (Spotify Connect). The mini-player has shuffle, repeat and the devices button. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.16",
+  "min_sdk": 28
+}
