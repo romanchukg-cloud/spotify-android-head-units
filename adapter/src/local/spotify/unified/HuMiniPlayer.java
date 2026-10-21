@@ -4,8 +4,9 @@ import android.graphics.drawable.GradientDrawable;
 import android.view.*;
 import android.widget.*;
 /**
- * Our mini-player: a rounded card with the controls first, then like, cover and title (the New
- * style order) and the time (elapsed / length, where the card is wide enough; the device that
+ * Our mini-player: a rounded card with the controls first (with shuffle and repeat around them
+ * and the devices at the end where the card is wide, as in the player), then like, cover and
+ * title (the New style order) and the time (elapsed / length, where the card is wide enough; the device that
  * plays, in place of the artist, when it is not this car), on the blurred
  * cover (with "Colour from cover art"; plain otherwise) and a thin progress line. Tapping the cover or the title, or a swipe up, opens the player; a swipe to the
  * left or right switches to the next or previous track (HuSkipSwipe). The controls and
@@ -13,7 +14,7 @@ import android.widget.*;
  * Material.
  */
 final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
- private final HuUi ui;private final HuSession session;private final ImageView play,like,cover;private final TextView title,artist,time;private boolean roomy=true;private String away;
+ private final HuUi ui;private final HuSession session;private final ImageView play,like,cover,shuffle,repeat,devices;private final TextView title,artist,time;private boolean roomy=true,full=true;private String away;
  private final Paint progress=new Paint(Paint.ANTI_ALIAS_FLAG),track=new Paint(Paint.ANTI_ALIAS_FLAG);private final boolean accent;private float fraction;private String art;private int tint;
  private final Runnable tick=new Runnable(){public void run(){update();if(isAttachedToWindow() && session.playing())postDelayed(this,1000);}};
  HuMiniPlayer(HuUi ui,boolean accent,Runnable expand){
@@ -22,9 +23,11 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   tint=ui.card;GradientDrawable bg=HuUi.round(tint,ui.dp(22));setBackground(bg);setClipToOutline(true);setOutlineProvider(ViewOutlineProvider.BACKGROUND);
   // Playback controls keep their left-to-right order in right-to-left languages (Material).
   LinearLayout controls=new LinearLayout(ui.activity);controls.setGravity(Gravity.CENTER_VERTICAL);controls.setLayoutDirection(LAYOUT_DIRECTION_LTR);addView(controls);
+  shuffle=HuControls.button(ui,"encore_icon_shuffle_24",HuText.get("shuffle"),ui.dp(64),v->session.send(session.shuffle()));controls.addView(shuffle);
   controls.addView(HuControls.button(ui,"encore_icon_skip_back_24",HuText.get("previous"),ui.dp(64),v->session.previous()));
   play=HuControls.play(ui,ui.dp(64),v->session.playPause());((LayoutParams)play.getLayoutParams()).setMargins(ui.dp(8),0,ui.dp(8),0);controls.addView(play);
   controls.addView(HuControls.button(ui,"encore_icon_skip_forward_24",HuText.get("next"),ui.dp(64),v->session.next()));
+  repeat=HuControls.button(ui,"encore_icon_repeat_24",HuText.get("repeat"),ui.dp(64),v->session.cycleRepeat());controls.addView(repeat);
   like=HuControls.button(ui,"encore_icon_heart_24","",ui.dp(64),v->session.send(session.like()));((LayoutParams)like.getLayoutParams()).setMarginStart(ui.dp(12));addView(like);
   cover=new HuUi.Cover(ui,ui.dp(8));
   LayoutParams c=new LayoutParams(ui.dp(76),ui.dp(76));c.setMarginStart(ui.dp(24));addView(cover,c);
@@ -34,6 +37,8 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   // Tabular digits, so the time does not shift as it counts; always left-to-right.
   time=ui.label("",17,ui.secondary,false);time.setFontFeatureSettings("tnum");time.setTextDirection(TEXT_DIRECTION_LTR);time.setVisibility(GONE);
   LayoutParams tp=new LayoutParams(-2,-2);tp.setMarginStart(ui.dp(16));addView(time,tp);
+  devices=HuControls.button(ui,"encore_icon_connect_to_devices_24",HuText.get("devices"),ui.dp(64),v->HuConnect.menu(ui));
+  LayoutParams dp=(LayoutParams)devices.getLayoutParams();dp.setMarginStart(ui.dp(8));addView(devices);
   cover.setOnClickListener(v->expand.run());texts.setOnClickListener(v->expand.run());this.expand=expand;slop=android.view.ViewConfiguration.get(ui.activity).getScaledTouchSlop();
   skip=new HuSkipSwipe(ui,session,cover,texts);
   progress.setColor(ui.text);track.setColor(ui.text);track.setAlpha(46);
@@ -64,6 +69,12 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   // Another device plays (Spotify Connect): its name in green in place of the artist.
   artist.setText(error!=null?error:away!=null?away:s.artist()==null?"":s.artist());artist.setTextColor(error!=null?0xffe22134:away!=null?ui.accent:ui.secondary);
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());
+  if(full){
+   HuControls.custom(ui,shuffle,s.shuffle(),s.shuffled());
+   int mode=s.repeat();repeat.setImageDrawable(HuControls.icon(getContext(),mode==HuSession.REPEAT_ONE?"encore_icon_repeat_once_24":"encore_icon_repeat_24",mode==HuSession.REPEAT_NONE?ui.text:ui.accent));
+   repeat.setVisibility(VISIBLE);devices.setVisibility(VISIBLE);
+  }else{shuffle.setVisibility(GONE);repeat.setVisibility(GONE);devices.setVisibility(GONE);}
+  devices.setImageDrawable(HuControls.icon(getContext(),"encore_icon_connect_to_devices_24",away!=null?ui.accent:ui.text));
   String a=s.art();if(a==null?art!=null:!a.equals(art)){art=a;HuCovers.load(getContext(),a,ui.dp(76),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);if(accent && b!=null)setBackground(new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0xb3000000:0xb3ffffff));else{if(!(getBackground() instanceof GradientDrawable)){tint=0;setBackground(HuUi.round(ui.card,ui.dp(22)));}tint(color);}}});}
   update();removeCallbacks(tick);if(s.playing())postDelayed(tick,1000);
  }
@@ -77,8 +88,14 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
   boolean shown=d>0 && roomy;time.setVisibility(shown?VISIBLE:GONE);if(shown)time.setText(HuControls.time(Math.min(p,d))+" / "+HuControls.time(d));
   invalidate();
  }
- /** The time needs a wide card (a full screen or half of one); narrower, the title keeps the room. */
- protected void onSizeChanged(int w,int h,int ow,int oh){super.onSizeChanged(w,h,ow,oh);boolean r=w>=ui.dp(640);if(r!=roomy){roomy=r;post(this::update);}}
+ /**
+  * The time needs a wide card (a full screen or half of one), shuffle, repeat and the devices a
+  * wider one (about a full screen); narrower, the title keeps the room.
+  */
+ protected void onSizeChanged(int w,int h,int ow,int oh){
+  super.onSizeChanged(w,h,ow,oh);boolean r=w>=ui.dp(640),f=w>=ui.dp(900);
+  if(r!=roomy || f!=full){roomy=r;full=f;post(()->changed(session));}
+ }
  /** The progress: a thin rounded bar inside the card, clear of its rounded corners, over a faint track. */
  protected void dispatchDraw(Canvas c){
   super.dispatchDraw(c);float h=ui.dp(3),inset=ui.dp(22),bottom=getHeight()-ui.dp(6),width=getWidth()-2*inset;if(width<=0)return;
