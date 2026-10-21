@@ -6,6 +6,8 @@ BT="$SDK_ROOT/build-tools/${BUILD_TOOLS_VERSION:-35.0.0}"
 ANDROID_JAR="$SDK_ROOT/platforms/android-35/android.jar"
 python3 prepare.py
 python3 build_config.py
+# Our own resources (the home-screen widgets) and their IDs for the Java code (HuR).
+python3 widget_resources.py
 rm -rf classes helper-dex stub-classes
 mkdir -p classes helper-dex stub-classes
 # The backend's own support-library media classes: compile-time only, never in the helper DEX.

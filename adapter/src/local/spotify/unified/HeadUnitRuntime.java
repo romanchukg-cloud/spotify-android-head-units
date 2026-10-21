@@ -24,6 +24,9 @@ public final class HeadUnitRuntime {
   }else if(Intent.ACTION_SHUTDOWN.equals(action)){BydMusicRhythm.stop();p.edit().putBoolean("shutdown_playing",p.getBoolean("was_playing",false)).commit();}
   else if(Intent.ACTION_BOOT_COMPLETED.equals(action)){
    if(HeadUnitPreferences.resume() && p.getBoolean("boot_restore_pending",false))requestResume(c,"boot");
+   // Started with the head unit: the playback service brings the backend and its session up, plays
+   // nothing and stops itself once idle; this process (the backend's) stays.
+   else if(HeadUnitPreferences.startOnBoot()){Log.i("SpotifyHU","Started with the head unit");HeadUnitPlaybackService.keepAlive(c);}
   }else Log.w("SpotifyHU","Unknown broadcast action="+action);
  }
  public static void playerOpened(Context c){
@@ -56,7 +59,7 @@ public final class HeadUnitRuntime {
   if(pending)Log.i("SpotifyHU","Auto resume confirmed PLAYING");
  }
  public static synchronized void playback(Object value){
-  if(context==null)return;int state=0;
+  if(context==null)return;int state=0;HuWidgets.playback(context,value);HuBroadcasts.playback(context,value);
   try{if(value!=null)state=(Integer)value.getClass().getMethod("getState").invoke(value);}catch(ReflectiveOperationException e){Log.w("SpotifyHU","Cannot read playback state");return;}
   if(local.spotify.close.PlaybackGate.blocked())BydMusicRhythm.stop();else BydMusicRhythm.playback(state);
   if(state==lastState)return;lastState=state;DiagnosticLog.playback(state,HeadUnitPlaybackService.connected());
@@ -70,7 +73,21 @@ public final class HeadUnitRuntime {
  }
  public static synchronized int diagnosticState(){return lastState;}
  public static void explicitPause(){if(context!=null)explicitPause(context);}
- public static synchronized void sessionEnded(){DiagnosticLog.playback(0,false);BydMusicRhythm.stop();lastState=-1;}
+ public static synchronized void sessionEnded(){DiagnosticLog.playback(0,false);BydMusicRhythm.stop();lastState=-1;if(context!=null)HuWidgets.ended(context);}
+ /** The backend's media session metadata (MediaSessionCompat.setMetadata): the home-screen widgets and other apps follow it. */
+ public static void metadata(Object value){Context c=context;if(c!=null){HuWidgets.metadata(c,value);HuBroadcasts.metadata(c,value);}}
+ /** The backend's media session queue changed (MediaSessionCompat.setQueue). */
+ public static void queue(){Context c=context;if(c!=null)HuBroadcasts.queue(c);}
+ /**
+  * A public method of a session object (the backend's support-library metadata or playback state)
+  * by name, with no argument or one key; null if it has none or fails. By name, so code without
+  * the backend (test fixtures) still loads.
+  */
+ static Object call(Object o,String name,String... key){
+  if(o==null)return null;
+  try{return key.length==0?o.getClass().getMethod(name).invoke(o):o.getClass().getMethod(name,String.class).invoke(o,key[0]);}
+  catch(ReflectiveOperationException | RuntimeException e){return null;}
+ }
  public static synchronized void explicitPause(Context c){
   BydMusicRhythm.stop();HeadUnitPreferences.init(c);SharedPreferences p=HeadUnitPreferences.store();
   p.edit().putBoolean("was_playing",false).putBoolean("screen_playing",false).putBoolean("boot_restore_pending",false).remove("shutdown_playing").remove("resume_source").remove("resume_started").putLong("resume_generation",p.getLong("resume_generation",0)+1).commit();

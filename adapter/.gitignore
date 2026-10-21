@@ -30,3 +30,5 @@ incremental/
 stub-classes/
 tests/downloads/out/
 tests/panel/out/
+hu-res/
+hu-refs.json

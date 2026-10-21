@@ -7,6 +7,18 @@ if not out.exists():shutil.copytree(prev/'backend',out,ignore=shutil.ignore_patt
 # resources here for the manifest references of the BYD-derived interface.
 shutil.copyfile(prev/'backend/res/values/public.xml',out/'res/values/public.xml')
 (out/'res/values/unified_refs.xml').unlink(missing_ok=True)
+# The widgets' manifest entries point at our own XML resources (res-hu, packaged as 0x7e), which
+# the backend's resource compile does not know: they compile against placeholder XML files with
+# new IDs in the backend's table (never packaged), and package.py rewrites those IDs in the
+# binary manifest (hu-refs.json).
+import json
+HU_REFS={'hu_ref_widget_wide':'xml/hu_widget_wide_info','hu_ref_widget_square':'xml/hu_widget_square_info'}
+pub=E.parse(out/'res/values/public.xml');pr=pub.getroot();nxt=max(int(n.get('id'),16) for n in pr if n.get('type')=='xml')+1;refs={}
+for name,target in HU_REFS.items():
+ (out/'res/xml'/(name+'.xml')).write_text('<?xml version="1.0" encoding="utf-8"?>\n<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android" />\n')
+ E.SubElement(pr,'public',{'type':'xml','name':name,'id':hex(nxt)});refs[hex(nxt)]=target;nxt+=1
+pub.write(out/'res/values/public.xml',encoding='utf-8',xml_declaration=True)
+(base/'hu-refs.json').write_text(json.dumps(refs,indent=1)+'\n')
 A='{http://schemas.android.com/apk/res/android}';E.register_namespace('android',A[1:-1])
 m=E.parse(prev/'backend/AndroidManifest.xml');mr=m.getroot();app=mr.find('application')
 app.set(A+'appComponentFactory','local.spotify.unified.UnifiedFactory');app.set(A+'extractNativeLibs','true')

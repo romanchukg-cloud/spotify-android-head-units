@@ -86,6 +86,7 @@ public final class HuPlayerActivity extends Activity {
   loadRoot();
   session.add(signInWatch);
   HuFree.maybeShow(this);
+  if(state==null)link(getIntent());
  }
  protected void onDestroy(){session.remove(signInWatch);main.removeCallbacksAndMessages(null);super.onDestroy();}
  private final android.os.Handler main=new android.os.Handler(android.os.Looper.getMainLooper());
@@ -193,8 +194,30 @@ public final class HuPlayerActivity extends Activity {
   if(request!=VOICE || result!=RESULT_OK || data==null)return;
   ArrayList<String> heard=data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS);
   String q=heard==null || heard.isEmpty() || heard.get(0)==null?"":heard.get(0).trim();if(q.isEmpty())return;
+  searchFor(q);
+ }
+ /** Searches on the search page (from the microphone or a link), opening it once the tabs are loaded. */
+ private void searchFor(String q){
   if(search!=null && detail==null && "search".equals(page))search.spoken(q);
   else{pendingVoice=q;if(!ids.isEmpty())show("search");}
+ }
+ /**
+  * A Spotify link another app opened (HuLinks): songs and episodes play in the open player, pages
+  * open over the current one (or once the tabs are loaded), searches go to the search page.
+  */
+ private void link(Intent intent){
+  if(intent==null || !Intent.ACTION_VIEW.equals(intent.getAction()) || intent.getData()==null)return;
+  HuLinks.resolve(intent.getData(),l->{
+   if(isFinishing() || isDestroyed())return;
+   if(l==null){android.util.Log.w("SpotifyHU","Link not understood");return;}
+   android.util.Log.i("SpotifyHU","Link opens "+l.kind);
+   if(l.query!=null){closeQueue();collapse();searchFor(l.query);return;}
+   if(l.plays()){session.whenReady(()->session.playUri(l.uri));closeQueue();expand();return;}
+   HuDetail.Target t=new HuDetail.Target(l.pageId(),l.title,"",l.icon,null);
+   closeQueue();collapse();
+   if(ids.isEmpty()){detail=t;restored.clear();return;}
+   levels.push(new Level(detail,content.getChildCount()>0?content.getChildAt(0):null));detail=t;place(detailView(t),1);
+  });
  }
  protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putBoolean("queue",queueOpen);out.putString("page",page);if(detail!=null)detail.save(out);
   out.putString("search",search!=null?search.query():searchQuery);
@@ -220,8 +243,8 @@ public final class HuPlayerActivity extends Activity {
   if(!expanded)return;expanded=false;
   player.animate().translationY(player.getHeight()).setDuration(200).withEndAction(()->player.setVisibility(View.GONE)).start();
  }
- /** A profile switch or a notification brings the screen back with a new intent (ProfileButton reads it). */
- protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);}
+ /** A profile switch or a notification brings the screen back with a new intent (ProfileButton reads it); so does a link. */
+ protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);link(intent);}
  /** A scale changed in Head unit settings applies when the screen is shown again. */
  protected void onResume(){
   super.onResume();

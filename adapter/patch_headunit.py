@@ -158,8 +158,15 @@ p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('applica
 E.SubElement(app,'activity',{A+'name':'local.spotify.unified.HuPlayerActivity',A+'process':':bydui',A+'exported':'false',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize',A+'windowSoftInputMode':'adjustResize'})
 alias=E.SubElement(app,'activity-alias',{A+'name':'local.bydui.com.vivid.spotify.MainActivity',A+'targetActivity':'local.spotify.unified.HuPlayerActivity',A+'exported':'true'})
 f=E.SubElement(alias,'intent-filter');E.SubElement(f,'action',{A+'name':'android.intent.action.MAIN'});E.SubElement(f,'category',{A+'name':'android.intent.category.LAUNCHER'})
+# Spotify links other apps open (HuLinks): spotify: URIs, open.spotify.com and spotify.link.
+# The web links are not verified for this certificate: from Android 12 they open here only once
+# the user allows the links (Settings > Apps > Spotify > Open by default).
+for data in ([{'scheme':'spotify'}],[{'scheme':'https','host':'open.spotify.com'},{'scheme':'https','host':'spotify.link'}]):
+ f=E.SubElement(alias,'intent-filter');E.SubElement(f,'action',{A+'name':'android.intent.action.VIEW'})
+ for c in ('DEFAULT','BROWSABLE'):E.SubElement(f,'category',{A+'name':'android.intent.category.'+c})
+ for d in data:E.SubElement(f,'data',{A+k:v for k,v in d.items()})
 m.write(p,encoding='utf-8',xml_declaration=True)
-print('Own interface: main screen (launcher alias local.bydui.com.vivid.spotify.MainActivity -> HuPlayerActivity)')
+print('Own interface: main screen (launcher alias local.bydui.com.vivid.spotify.MainActivity -> HuPlayerActivity), Spotify links')
 
 # Driving side: HeadUnitDriver asks the car which seat is the driver's. BYD's car service answers
 # through its provider (visible to the app only when declared under <queries>); Android Automotive
@@ -182,5 +189,28 @@ for key,value in (('local.byd.panel.label','Spotify'),('local.byd.panel.min_widt
  E.SubElement(svc,'meta-data',{A+'name':key,A+'value':value})
 # Debug builds only: the test host, in its own process (exported so adb can start it).
 if DEBUG:E.SubElement(app,'activity',{A+'name':'local.spotify.unified.PanelTestActivity',A+'process':':paneltest',A+'exported':'true',A+'label':'Panel test',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
+if DEBUG:E.SubElement(app,'activity',{A+'name':'local.spotify.unified.WidgetTestActivity',A+'process':':paneltest',A+'exported':'true',A+'label':'Widget test',A+'theme':'@android:style/Theme.Material.NoActionBar',A+'configChanges':'orientation|screenSize'})
 m.write(p,encoding='utf-8',xml_declaration=True)
 print('Panel provider: exported service, allowed-host visibility'+(', debug test host' if DEBUG else ''))
+
+# Home-screen widgets (HuWidgets): two providers in the interface process, their XML in our own
+# resources (placeholders, see prepare.py), a private receiver for their buttons, and the media
+# session's metadata, which the backend's process passes on to them.
+p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+for cls,ref in (('HuWidgetWide','hu_ref_widget_wide'),('HuWidgetSquare','hu_ref_widget_square')):
+ r=E.SubElement(app,'receiver',{A+'name':'local.spotify.unified.'+cls,A+'process':':bydui',A+'exported':'true',A+'label':'Spotify'})
+ f=E.SubElement(r,'intent-filter');E.SubElement(f,'action',{A+'name':'android.appwidget.action.APPWIDGET_UPDATE'})
+ E.SubElement(r,'meta-data',{A+'name':'android.appwidget.provider',A+'resource':'@xml/'+ref})
+E.SubElement(app,'receiver',{A+'name':'local.spotify.unified.HuWidgetActions',A+'process':':bydui',A+'exported':'false'})
+m.write(p,encoding='utf-8',xml_declaration=True)
+p=out/'smali/android/support/v4/media/session/MediaSessionCompat.smali';s=p.read_text()
+s,count=re.subn(r'(\.method public setMetadata\(Landroid/support/v4/media/MediaMetadataCompat;\)V\n    \.locals \d+\n)',r'\1\n    invoke-static {p1}, Llocal/spotify/unified/HeadUnitRuntime;->metadata(Ljava/lang/Object;)V\n',s);assert count==1
+p.write_text(s)
+print('Widgets: two providers, private button receiver, session metadata hook')
+
+# Other apps: Spotify's "Device Broadcast Status" broadcasts (HuBroadcasts) also need the queue's
+# changes; the hook follows setQueue's generic-signature annotation.
+p=out/'smali/android/support/v4/media/session/MediaSessionCompat.smali';s=p.read_text()
+s,count=re.subn(r'(\.method public setQueue\(Ljava/util/List;\)V\n    \.locals \d+\n(?:    \.annotation .*?\n    \.end annotation\n)?)',r'\1\n    invoke-static {}, Llocal/spotify/unified/HeadUnitRuntime;->queue()V\n',s,flags=re.S);assert count==1
+p.write_text(s)
+print('Broadcasts: session queue hook')

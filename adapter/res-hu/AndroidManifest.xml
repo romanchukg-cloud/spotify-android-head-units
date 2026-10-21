@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only for compiling res-hu (the widget resources) with aapt2; not the app's manifest. -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.spotify.music" />

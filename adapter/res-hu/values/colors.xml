@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Widget colours by day; values-night has the night ones. -->
+<resources>
+    <color name="hu_widget_bg">#FFFFFFFF</color>
+    <color name="hu_widget_text">#FF121212</color>
+    <color name="hu_widget_secondary">#FF5E5E5E</color>
+    <color name="hu_widget_placeholder">#FFE8E8E8</color>
+    <color name="hu_widget_logo">#FF1ED760</color>
+</resources>

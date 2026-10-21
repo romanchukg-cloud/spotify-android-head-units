@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The wide Spotify widget: placed at about 4 x 2 cells, from 360 x 110 dp (a strip once a host's
+     padding is taken). Its layout follows its size (HuWidgets.SIZES): a strip, the strip with the
+     times, the square ones, the large player. Before Android 12 the list of widgets shows previewImage
+     (a picture of the strip; WidgetTestActivity's Preview), later previewLayout.
+     (BYD's DiLink 5 launcher hosts only its listed widgets.) -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/hu_widget_strip"
+    android:minHeight="110dp"
+    android:minWidth="360dp"
+    android:minResizeHeight="110dp"
+    android:minResizeWidth="360dp"
+    android:previewImage="@drawable/hu_widget_preview_wide"
+    android:previewLayout="@layout/hu_widget_strip"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="4"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />

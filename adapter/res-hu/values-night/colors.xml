@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="hu_widget_bg">#FF1C1C1C</color>
+    <color name="hu_widget_text">#FFFFFFFF</color>
+    <color name="hu_widget_secondary">#FFB3B3B3</color>
+    <color name="hu_widget_placeholder">#FF2E2E2E</color>
+</resources>

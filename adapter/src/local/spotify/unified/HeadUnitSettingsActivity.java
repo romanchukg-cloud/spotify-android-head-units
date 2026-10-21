@@ -57,11 +57,12 @@ public final class HeadUnitSettingsActivity extends Activity {
   draw[0].run();
   appearance.addView(ui.row(HuText.get("drive_side"),HuText.get(seat==HeadUnitDriver.SEAT_RIGHT?"drive_found_right":seat==HeadUnitDriver.SEAT_LEFT?"drive_found_left":"drive_unknown"),picker));
   LinearLayout playback=ui.card(HuText.get("channel"));
-  String[] keys={"resume","play_open","external"};
+  String[] keys={"start_boot","resume","play_open","external","broadcast"};
   for(int i=0;i<keys.length;i++){
    String key=keys[i];if(i>0)ui.divider(playback);
    HuUi.Toggle toggle=new HuUi.Toggle(ui,b.getBoolean(key));
-   playback.addView(ui.switchRow(HuText.get(key.equals("stop_close")?"close":key),null,toggle,v->{toggle.set(!toggle.on());Bundle change=new Bundle();change.putBoolean(key,toggle.on());save(change);}));
+   // Starting with the unit needs a real restart: BYD's quickboot force-stops apps instead, so the hint says so.
+   playback.addView(ui.switchRow(HuText.get(key.equals("stop_close")?"close":key),key.equals("start_boot")?HuText.get("start_boot_hint"):null,toggle,v->{toggle.set(!toggle.on());Bundle change=new Bundle();change.putBoolean(key,toggle.on());save(change);}));
   }
   boolean wide=HuUi.wide(this);
   LinearLayout cards=new LinearLayout(this);cards.setBaselineAligned(false);cards.setOrientation(wide?LinearLayout.HORIZONTAL:LinearLayout.VERTICAL);

@@ -61,7 +61,14 @@ check('Panel provider / caller checked in every message','Landroid/os/Message;->
 check('Panel provider / no music start, screen or setting on bind',provider!='' and not any(v in provider for v in ('ui_open','HeadUnitRuntime;->playerOpened','HeadUnitRuntime;->requestResume','"set"','TaskGuardService')))
 build_info=files.get('Llocal/spotify/unified/HeadUnitBuild;','');test_host=component('activity','local.spotify.unified.PanelTestActivity')
 debug_flag='DEBUG:Z = true' in build_info
-check('Panel provider / test host and own uid only in debug builds',(test_host is not None and 'Llocal/spotify/unified/PanelTestActivity;' in files and debug_flag) if args.debug_build else (test_host is None and 'Llocal/spotify/unified/PanelTestActivity;' not in files and 'DEBUG:Z = false' in build_info),'debug build' if args.debug_build else 'release build')
+check('Panel provider / test host and own uid only in debug builds',(test_host is not None and 'Llocal/spotify/unified/PanelTestActivity;' in files and debug_flag) if args.debug_build else (test_host is None and component('activity','local.spotify.unified.WidgetTestActivity') is None and 'Llocal/spotify/unified/PanelTestActivity;' not in files and 'Llocal/spotify/unified/WidgetTestActivity;' not in files and 'DEBUG:Z = false' in build_info),'debug build' if args.debug_build else 'release build')
+widgets=[component('receiver','local.spotify.unified.'+c) for c in ('HuWidgetWide','HuWidgetSquare')];actions=component('receiver','local.spotify.unified.HuWidgetActions')
+check('Widgets / providers with resources, private button receiver',all(w is not None and w.get(A+'process')==':bydui' and any(x.get(A+'name')=='android.appwidget.action.APPWIDGET_UPDATE' for x in w.findall('.//action')) and any(md.get(A+'name')=='android.appwidget.provider' and md.get(A+'resource') for md in w.findall('meta-data')) for w in widgets) and actions is not None and actions.get(A+'exported')=='false' and 'HeadUnitRuntime;->metadata(' in files.get('Landroid/support/v4/media/session/MediaSessionCompat;',''))
+alias=component('activity-alias','local.bydui.com.vivid.spotify.MainActivity');views=[f for f in alias.findall('intent-filter') if any(x.get(A+'name')=='android.intent.action.VIEW' for x in f.findall('action'))] if alias is not None else []
+hosts={(d.get(A+'scheme'),d.get(A+'host')) for f in views for d in f.findall('data')}
+check('Links / spotify:, open.spotify.com and spotify.link open our interface',{('spotify',None),('https','open.spotify.com'),('https','spotify.link')}<=hosts and all(any(c.get(A+'name')=='android.intent.category.BROWSABLE' for c in f.findall('category')) for f in views))
+compat=files.get('Landroid/support/v4/media/session/MediaSessionCompat;','')
+check('Broadcasts / session metadata, playback and queue hooks','HeadUnitRuntime;->metadata(' in compat and 'HeadUnitRuntime;->playback(' in compat and 'HeadUnitRuntime;->queue()' in compat and 'com.spotify.music.metadatachanged' in files.get('Llocal/spotify/unified/HuBroadcasts;',''))
 controllers=files.get('Lle/d;','')
 check('External controller policy hook','HeadUnitControllers;->allow(' in controllers and 'HeadUnitControllers;->matches(' in controllers and 'HeadUnitControllers;->result(' in controllers)
 gate=files.get('Llocal/spotify/close/PlaybackGate;','');death=files.get('Llocal/spotify/close/PlaybackGate$1;','')
@@ -112,7 +119,7 @@ main=''.join(v for k,v in files.items() if k.startswith(('Llocal/spotify/unified
 check('Settings entry / density context','HeadUnitSettings;->open(' in main and 'HeadUnitSettings;->scaled(' in main)
 with zipfile.ZipFile(apk) as z:
  names=z.namelist()
- check('Interface typeface / one resource package',all(n in names for n in ('assets/hu_fonts/Figtree-wght.ttf','assets/hu_fonts/OFL.txt')) and 'classes3.dex' not in names and not any(n.startswith('ui/') for n in names))
+ check('Interface typeface / widget resources only',all(n in names for n in ('assets/hu_fonts/Figtree-wght.ttf','assets/hu_fonts/OFL.txt','hu/res/layout/hu_widget_wide.xml','hu/res/xml/hu_widget_square_info.xml')) and 'classes3.dex' not in names and not any(n.startswith('ui/') for n in names))
  versions={n:int(z.read(n)[4:7]) for n in names if re.fullmatch(r'classes\d*\.dex',n)}
  check('DEX version compatible with Android 9',all(v<=39 for v in versions.values()),str(versions))
 # Our interface's texts (HuText): a table of keys and one row per language, all the same length.

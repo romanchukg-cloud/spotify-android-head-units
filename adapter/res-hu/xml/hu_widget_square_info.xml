@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The square Spotify widget: placed at about 2 x 2 cells, from 200 x 180 dp (the compact layout
+     once a host's padding is taken). Its layout follows its size (HuWidgets.SIZES), as the wide one's. -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialLayout="@layout/hu_widget_small"
+    android:minHeight="180dp"
+    android:minWidth="200dp"
+    android:minResizeHeight="180dp"
+    android:minResizeWidth="200dp"
+    android:previewImage="@drawable/hu_widget_preview_square"
+    android:previewLayout="@layout/hu_widget_small"
+    android:resizeMode="horizontal|vertical"
+    android:targetCellHeight="2"
+    android:targetCellWidth="2"
+    android:updatePeriodMillis="0"
+    android:widgetCategory="home_screen" />
