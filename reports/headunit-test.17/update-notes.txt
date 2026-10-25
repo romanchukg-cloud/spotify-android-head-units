@@ -1,0 +1,1 @@
+Smooth motion: placeholders shaped like what is loading instead of "Loading…", cards and rows rising in, covers fading in, pages sliding in and tabs fading through. Experimental prerelease.

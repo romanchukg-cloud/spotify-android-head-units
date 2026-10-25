@@ -3,17 +3,21 @@
     "name": "Spotify for Android Head Units",
     "title": "Spotify for Android Head Units — one app",
     "description": "Experimental Spotify Automotive 5.5.0 for Android head units, with its own car interface in one APK.",
-    "badge": "Experimental build · 5.5.0 · test.16",
+    "badge": "Experimental build · 5.5.0 · test.17",
     "headline": "Made for the car.",
     "highlight": "One app.",
     "intro": "An experimental Spotify Automotive player for Android head units, with an interface of its own made for the car: one APK, one icon and the standard Spotify sign-in. Free — never pay for it.",
-    "download": "Download test.16 APK",
+    "download": "Download test.17 APK",
     "meta": "Android 9+ · 46.1 MiB · unofficial adaptation",
     "languages": "Language",
     "cards": [
       [
         "Our own interface",
         "Home, Recents, Browse, Library and Search, with pages for playlists, albums, artists and podcasts and large touch targets. Navigation at the side, or along the bottom in portrait."
+      ],
+      [
+        "Smooth motion",
+        "While a page loads, placeholders in its shape shimmer instead of a “Loading…” line; then cards and rows rise in, covers fade in, pages slide in from the side and tabs fade through. The navigation highlight slides to the tab you tap."
       ],
       [
         "Blurred cover art",
@@ -85,8 +89,8 @@
       ]
     ],
     "testedTitle": "What has been tested",
-    "tested": "Headunit-test.16 shows where the music plays and moves it between this car and your other devices (Spotify Connect); the mini-player has the time, shuffle, repeat and the devices, the screen a thin frame, and the navigation closes the full-screen player. Since test.14 it also has home-screen widgets for launchers that let you add widgets (five layouts by size, day and night), opens Spotify links from other apps, tells other apps what is playing and can start Spotify in the background when the head unit starts (not on BYD). It was made with the full reference build. The release audit reports 51 PASS / 0 FAIL; 152 updater, 39 sign-in, 14 panel-access and 19 playback-start checks pass, and the signing certificate equals test.15. On Android 9 and 13 emulators test.16 installs as an update over test.15 and runs its update check without a crash; the sign-in and Accounts flow passes on Android 13. The widgets were checked in the stock launchers of Android 11 and 12 emulators; links opened playlists, albums and artists there. A build with the same code runs in a BYD Tang (DiLink 5, Android 12), where moving the music to a laptop and back was checked.",
-    "pendingStrong": "Experimental headunit-test.16.",
+    "tested": "Headunit-test.17 makes loading and moving around smooth: placeholders in the shape of what comes instead of “Loading…”, content rising in, covers fading in, pages sliding in and tabs fading through. Since test.16 it shows where the music plays and moves it between this car and your other devices (Spotify Connect); the mini-player has the time, shuffle, repeat and the devices, the screen a thin frame, and the navigation closes the full-screen player. Since test.14 it also has home-screen widgets for launchers that let you add widgets (five layouts by size, day and night), opens Spotify links from other apps, tells other apps what is playing and can start Spotify in the background when the head unit starts (not on BYD). It was made with the full reference build. The release audit reports 52 PASS / 0 FAIL; 152 updater, 39 sign-in, 14 panel-access, 13 Connect-message and 19 playback-start checks pass, and the signing certificate equals test.16. On Android 9 and 13 emulators test.17 installs as an update over test.16 and runs its update check without a crash; the sign-in and Accounts flow passes on Android 13. The widgets were checked in the stock launchers of Android 11 and 12 emulators; links opened playlists, albums and artists there. A build with the same code runs in a BYD Tang (DiLink 5, Android 12), where the new motion was checked; moving the music to a laptop and back was checked there with test.16.",
+    "pendingStrong": "Experimental headunit-test.17.",
     "pending": "Moving the music was checked with a laptop only. The widgets have shown only made-up tracks so far, and BYD's own launcher cannot show them. A song link playing and a real app reading what is playing are unverified. Right-hand drive has not been seen on a right-hand-drive car; DiLink 5.1 / Android 13 and other head units remain unverified; Arabic was checked on an emulator only. The panel block appears only in apps that support it. Spotify keeps downloads off for its Automotive client; this build turns the client's support on, so Spotify may change how downloads behave.",
     "installTitle": "How to install",
     "steps": [
@@ -116,17 +120,21 @@
     "name": "Spotify для Android-магнітол",
     "title": "Spotify для Android-магнітол — один додаток",
     "description": "Експериментальний Spotify Automotive 5.5.0 для Android-магнітол із власним автомобільним інтерфейсом в одному APK.",
-    "badge": "Експериментальна збірка · 5.5.0 · test.16",
+    "badge": "Експериментальна збірка · 5.5.0 · test.17",
     "headline": "Зроблено для авто.",
     "highlight": "Один додаток.",
     "intro": "Експериментальний плеєр Spotify Automotive для Android-магнітол із власним інтерфейсом, зробленим для авто: один APK, одна іконка й стандартний вхід у Spotify. Безкоштовно — ніколи не платіть за нього.",
-    "download": "Завантажити APK test.16",
+    "download": "Завантажити APK test.17",
     "meta": "Android 9+ · 46,1 MiB · неофіційна адаптація",
     "languages": "Мова",
     "cards": [
       [
         "Власний інтерфейс",
         "Головна, Нещодавні, Огляд, Бібліотека й Пошук, сторінки плейлістів, альбомів, виконавців і подкастів, великі кнопки. Навігація збоку, а у вертикальному режимі — знизу."
+      ],
+      [
+        "Плавні переходи",
+        "Поки сторінка вантажиться, замість напису «Завантаження…» мерехтять заготовки в її формі; потім картки й рядки плавно з'являються, обкладинки проявляються, сторінки заходять збоку, а вкладки змінюються через згасання. Виділення в навігації переїжджає до вибраної вкладки."
       ],
       [
         "Розмита обкладинка",
@@ -198,8 +206,8 @@
       ]
     ],
     "testedTitle": "Що вже перевірено",
-    "tested": "Headunit-test.16 показує, де грає музика, і переносить її між цією машиною та іншими вашими пристроями (Spotify Connect); у міні-плеєрі є час, перемішування, повтор і пристрої, навколо екрана — тонка рамка, а навігація згортає плеєр на весь екран. Із test.14 він також має віджети робочого столу для лаунчерів, у яких можна додавати віджети (п'ять варіантів за розміром, день і ніч), відкриває посилання Spotify з інших застосунків, повідомляє іншим застосункам, що грає, і може запускати Spotify у фоні під час старту магнітоли (не на BYD). Зроблено повною еталонною збіркою. Аудит релізу: 51 PASS / 0 FAIL; проходять 152 перевірки оновлень, 39 входу, 14 доступу до блоку й 19 запуску відтворення; сертифікат підпису той самий, що в test.15. На емуляторах Android 9 і 13 test.16 встановлюється оновленням поверх test.15 і без падінь перевіряє оновлення; вхід і «Акаунти» проходять на Android 13. Віджети перевірено у стандартних лаунчерах емуляторів Android 11 і 12; посилання відкривали там плейлисти, альбоми й виконавців. Збірка з тим самим кодом працює в BYD Tang (DiLink 5, Android 12); там перевірено перенесення музики на ноутбук і назад.",
-    "pendingStrong": "Експериментальна headunit-test.16.",
+    "tested": "Headunit-test.17 робить завантаження й переходи плавними: замість «Завантаження…» — заготовки у формі вмісту, вміст плавно з'являється, обкладинки проявляються, сторінки заходять збоку, вкладки змінюються через згасання. Із test.16 він показує, де грає музика, і переносить її між цією машиною та іншими вашими пристроями (Spotify Connect); у міні-плеєрі є час, перемішування, повтор і пристрої, навколо екрана — тонка рамка, а навігація згортає плеєр на весь екран. Із test.14 він також має віджети робочого столу для лаунчерів, у яких можна додавати віджети (п'ять варіантів за розміром, день і ніч), відкриває посилання Spotify з інших застосунків, повідомляє іншим застосункам, що грає, і може запускати Spotify у фоні під час старту магнітоли (не на BYD). Зроблено повною еталонною збіркою. Аудит релізу: 52 PASS / 0 FAIL; проходять 152 перевірки оновлень, 39 входу, 14 доступу до блоку, 13 повідомлень Connect і 19 запуску відтворення; сертифікат підпису той самий, що в test.16. На емуляторах Android 9 і 13 test.17 встановлюється оновленням поверх test.16 і без падінь перевіряє оновлення; вхід і «Акаунти» проходять на Android 13. Віджети перевірено у стандартних лаунчерах емуляторів Android 11 і 12; посилання відкривали там плейлисти, альбоми й виконавців. Збірка з тим самим кодом працює в BYD Tang (DiLink 5, Android 12); там перевірено нові анімації, а з test.16 — перенесення музики на ноутбук і назад.",
+    "pendingStrong": "Експериментальна headunit-test.17.",
     "pending": "Перенесення музики перевірено лише з ноутбуком. Віджети поки показували лише вигадані треки, а штатний лаунчер BYD їх не показує. Відтворення пісні за посиланням і справжній застосунок, що читає «що грає», не перевірено. Праве кермо не бачили на машині з правим кермом; DiLink 5.1 / Android 13 та інші магнітоли не перевірено; арабську перевірено лише на емуляторі. Блок для панелей з'являється лише в застосунках із його підтримкою. Spotify тримає завантаження вимкненими для свого Automotive-клієнта; ця збірка вмикає їх підтримку, тож Spotify може змінити їхню роботу.",
     "installTitle": "Як встановити",
     "steps": [
@@ -226,17 +234,21 @@
     "name": "Spotify для Android-магнитол",
     "title": "Spotify для Android-магнитол — одно приложение",
     "description": "Экспериментальный Spotify Automotive 5.5.0 для Android-магнитол с собственным автомобильным интерфейсом в одном APK.",
-    "badge": "Экспериментальная сборка · 5.5.0 · test.16",
+    "badge": "Экспериментальная сборка · 5.5.0 · test.17",
     "headline": "Сделано для авто.",
     "highlight": "Одно приложение.",
     "intro": "Экспериментальный плеер Spotify Automotive для Android-магнитол с собственным интерфейсом, сделанным для авто: один APK, одна иконка и стандартный вход в Spotify. Бесплатно — никогда не платите за него.",
-    "download": "Скачать APK test.16",
+    "download": "Скачать APK test.17",
     "meta": "Android 9+ · 46,1 MiB · неофициальная адаптация",
     "languages": "Язык",
     "cards": [
       [
         "Собственный интерфейс",
         "Главная, Недавние, Обзор, Библиотека и Поиск, страницы плейлистов, альбомов, исполнителей и подкастов, крупные кнопки. Навигация сбоку, а в вертикальном режиме — снизу."
+      ],
+      [
+        "Плавные переходы",
+        "Пока страница загружается, вместо надписи «Загрузка…» мерцают заготовки в её форме; затем карточки и строки плавно появляются, обложки проявляются, страницы въезжают сбоку, а вкладки сменяются через затухание. Выделение в навигации переезжает к выбранной вкладке."
       ],
       [
         "Размытая обложка",
@@ -308,8 +320,8 @@
       ]
     ],
     "testedTitle": "Что уже проверено",
-    "tested": "Headunit-test.16 показывает, где играет музыка, и переносит её между этой машиной и другими вашими устройствами (Spotify Connect); в мини-плеере есть время, перемешивание, повтор и устройства, вокруг экрана — тонкая рамка, а навигация сворачивает плеер на весь экран. С test.14 в нём также есть виджеты рабочего стола для лаунчеров, в которых можно добавлять виджеты (пять вариантов по размеру, день и ночь), открывает ссылки Spotify из других приложений, сообщает другим приложениям, что играет, и может запускать Spotify в фоне при запуске магнитолы (не на BYD). Сделано полной эталонной сборкой. Аудит релиза: 51 PASS / 0 FAIL; проходят 152 проверки обновлений, 39 входа, 14 доступа к блоку и 19 запуска воспроизведения; сертификат подписи тот же, что в test.15. На эмуляторах Android 9 и 13 test.16 устанавливается обновлением поверх test.15 и без сбоев проверяет обновления; вход и «Аккаунты» проходят на Android 13. Виджеты проверены в стандартных лаунчерах эмуляторов Android 11 и 12; ссылки открывали там плейлисты, альбомы и исполнителей. Сборка с тем же кодом работает в BYD Tang (DiLink 5, Android 12); там проверен перенос музыки на ноутбук и обратно.",
-    "pendingStrong": "Экспериментальная headunit-test.16.",
+    "tested": "Headunit-test.17 делает загрузку и переходы плавными: вместо «Загрузка…» — заготовки в форме содержимого, содержимое плавно появляется, обложки проявляются, страницы въезжают сбоку, вкладки сменяются через затухание. С test.16 он показывает, где играет музыка, и переносит её между этой машиной и другими вашими устройствами (Spotify Connect); в мини-плеере есть время, перемешивание, повтор и устройства, вокруг экрана — тонкая рамка, а навигация сворачивает плеер на весь экран. С test.14 в нём также есть виджеты рабочего стола для лаунчеров, в которых можно добавлять виджеты (пять вариантов по размеру, день и ночь), открывает ссылки Spotify из других приложений, сообщает другим приложениям, что играет, и может запускать Spotify в фоне при запуске магнитолы (не на BYD). Сделано полной эталонной сборкой. Аудит релиза: 52 PASS / 0 FAIL; проходят 152 проверки обновлений, 39 входа, 14 доступа к блоку, 13 сообщений Connect и 19 запуска воспроизведения; сертификат подписи тот же, что в test.16. На эмуляторах Android 9 и 13 test.17 устанавливается обновлением поверх test.16 и без сбоев проверяет обновления; вход и «Аккаунты» проходят на Android 13. Виджеты проверены в стандартных лаунчерах эмуляторов Android 11 и 12; ссылки открывали там плейлисты, альбомы и исполнителей. Сборка с тем же кодом работает в BYD Tang (DiLink 5, Android 12); там проверены новые анимации, а с test.16 — перенос музыки на ноутбук и обратно.",
+    "pendingStrong": "Экспериментальная headunit-test.17.",
     "pending": "Перенос музыки проверен только с ноутбуком. Виджеты пока показывали только выдуманные треки, а штатный лаунчер BYD их не показывает. Воспроизведение песни по ссылке и настоящее приложение, читающее «что играет», не проверены. Правый руль не видели на машине с правым рулём; DiLink 5.1 / Android 13 и другие магнитолы не проверены; арабский проверен только на эмуляторе. Блок для панелей появляется только в приложениях с его поддержкой. Spotify держит загрузки выключенными для своего Automotive-клиента; эта сборка включает их поддержку, поэтому Spotify может изменить их работу.",
     "installTitle": "Как установить",
     "steps": [
@@ -336,17 +348,21 @@
     "name": "Spotify لوحدات الوسائط العاملة بنظام Android",
     "title": "Spotify لوحدات الوسائط العاملة بنظام Android — تطبيق واحد",
     "description": "Spotify Automotive 5.5.0 تجريبي لوحدات السيارات بنظام Android، بواجهة خاصة به مصممة للسيارة في ملف APK واحد.",
-    "badge": "إصدار تجريبي · 5.5.0 · test.16",
+    "badge": "إصدار تجريبي · 5.5.0 · test.17",
     "headline": "مصمم للسيارة.",
     "highlight": "تطبيق واحد.",
     "intro": "مشغّل Spotify Automotive تجريبي لوحدات السيارات بنظام Android، بواجهة خاصة به مصممة للسيارة: ملف APK واحد وأيقونة واحدة وتسجيل الدخول المعتاد إلى Spotify. مجاني — لا تدفع مقابله أبدًا.",
-    "download": "تنزيل APK test.16",
+    "download": "تنزيل APK test.17",
     "meta": "Android 9+ · 46.1 MiB · تعديل غير رسمي",
     "languages": "اللغة",
     "cards": [
       [
         "واجهة خاصة",
         "الرئيسية والأخيرة والتصفح والمكتبة والبحث، مع صفحات لقوائم التشغيل والألبومات والفنانين والبودكاست وأزرار كبيرة. التنقل على الجانب، أو في الأسفل في الوضع العمودي."
+      ],
+      [
+        "حركة سلسة",
+        "أثناء تحميل الصفحة تظهر عناصر نائبة بشكلها مع لمعان بدلاً من عبارة «جارٍ التحميل…»، ثم تظهر البطاقات والصفوف تدريجيًا، وتظهر الأغلفة بتلاشٍ ناعم، وتنزلق الصفحات من الجانب، وتتبدّل علامات التبويب بتلاشٍ ناعم. وينتقل تمييز شريط التنقل إلى علامة التبويب التي تختارها."
       ],
       [
         "غلاف ضبابي",
@@ -418,8 +434,8 @@
       ]
     ],
     "testedTitle": "ما الذي تم اختباره؟",
-    "tested": "يعرض Headunit-test.16 أين تُشغَّل الموسيقى وينقلها بين هذه السيارة وأجهزتك الأخرى (Spotify Connect)؛ ويضم المشغّل المصغّر الوقت والخلط والتكرار والأجهزة، وحول الشاشة إطار رفيع، ويُغلق شريط التنقل المشغّل بملء الشاشة. ومنذ test.14 يتضمن أدوات للشاشة الرئيسية للمشغلات التي تتيح إضافة الأدوات (خمسة تخطيطات حسب الحجم، نهاراً وليلاً)، ويفتح روابط Spotify من التطبيقات الأخرى، ويُعلم التطبيقات الأخرى بما يتم تشغيله، ويمكنه تشغيل Spotify في الخلفية عند بدء تشغيل وحدة السيارة (ليس في BYD). أُنشئ بالبناء المرجعي الكامل. تدقيق الإصدار: 51 PASS / 0 FAIL؛ تنجح 152 فحصاً للتحديثات و39 لتسجيل الدخول و14 للوصول إلى الكتلة و19 لبدء التشغيل، وشهادة التوقيع مطابقة لـ test.15. على محاكيات Android 9 و13 يُثبَّت test.16 تحديثاً فوق test.15 ويتحقق من التحديثات دون أعطال؛ ويعمل تسجيل الدخول و«الحسابات» على Android 13. فُحصت الأدوات في المشغلات القياسية لمحاكيات Android 11 و12، وفتحت الروابط هناك قوائم التشغيل والألبومات والفنانين. يعمل إصدار بالشيفرة نفسها في BYD Tang (DiLink 5، Android 12)، وقد جرى هناك التحقق من نقل الموسيقى إلى حاسوب محمول وإعادتها.",
-    "pendingStrong": "إصدار تجريبي headunit-test.16.",
+    "tested": "يجعل Headunit-test.17 التحميل والتنقل سلسين: عناصر نائبة بشكل المحتوى بدلاً من «جارٍ التحميل…»، ويظهر المحتوى تدريجيًا، وتظهر الأغلفة بتلاشٍ ناعم، وتنزلق الصفحات من الجانب، وتتبدّل علامات التبويب بتلاشٍ ناعم. ومنذ test.16 يعرض أين تُشغَّل الموسيقى وينقلها بين هذه السيارة وأجهزتك الأخرى (Spotify Connect)؛ ويضم المشغّل المصغّر الوقت والخلط والتكرار والأجهزة، وحول الشاشة إطار رفيع، ويُغلق شريط التنقل المشغّل بملء الشاشة. ومنذ test.14 يتضمن أدوات للشاشة الرئيسية للمشغلات التي تتيح إضافة الأدوات (خمسة تخطيطات حسب الحجم، نهاراً وليلاً)، ويفتح روابط Spotify من التطبيقات الأخرى، ويُعلم التطبيقات الأخرى بما يتم تشغيله، ويمكنه تشغيل Spotify في الخلفية عند بدء تشغيل وحدة السيارة (ليس في BYD). أُنشئ بالبناء المرجعي الكامل. تدقيق الإصدار: 52 PASS / 0 FAIL؛ تنجح 152 فحصاً للتحديثات و39 لتسجيل الدخول و14 للوصول إلى الكتلة و13 لرسائل Connect و19 لبدء التشغيل، وشهادة التوقيع مطابقة لـ test.16. على محاكيات Android 9 و13 يُثبَّت test.17 تحديثاً فوق test.16 ويتحقق من التحديثات دون أعطال؛ ويعمل تسجيل الدخول و«الحسابات» على Android 13. فُحصت الأدوات في المشغلات القياسية لمحاكيات Android 11 و12، وفتحت الروابط هناك قوائم التشغيل والألبومات والفنانين. يعمل إصدار بالشيفرة نفسها في BYD Tang (DiLink 5، Android 12)، وقد جرى هناك التحقق من الحركة الجديدة، ومع test.16 من نقل الموسيقى إلى حاسوب محمول وإعادتها.",
+    "pendingStrong": "إصدار تجريبي headunit-test.17.",
     "pending": "جرى التحقق من نقل الموسيقى مع حاسوب محمول فقط. لم تعرض الأدوات حتى الآن سوى مقاطع تجريبية، ولا يستطيع مشغل BYD الأصلي عرضها. لم يُتحقق من تشغيل أغنية عبر رابط ولا من تطبيق حقيقي يقرأ ما يتم تشغيله. لم يُختبر المقود الأيمن على سيارة بمقود أيمن؛ ولم يُتحقق من DiLink 5.1 / Android 13 ووحدات السيارات الأخرى؛ وفُحصت العربية على محاكٍ فقط. تظهر الكتلة للوحات فقط في التطبيقات التي تدعمها. يُبقي Spotify التنزيلات معطلة لعميل Automotive؛ هذا الإصدار يفعّل دعمها، لذا قد يغيّر Spotify طريقة عملها.",
     "installTitle": "طريقة التثبيت",
     "steps": [
@@ -446,17 +462,21 @@
     "name": "适用于 Android 车机的 Spotify",
     "title": "Android 车机 Spotify — 一个应用",
     "description": "适用于 Android 车机的实验性 Spotify Automotive 5.5.0，自带为汽车设计的界面，一个 APK。",
-    "badge": "实验版本 · 5.5.0 · test.16",
+    "badge": "实验版本 · 5.5.0 · test.17",
     "headline": "为汽车而做。",
     "highlight": "一个应用。",
     "intro": "适用于 Android 车机的实验性 Spotify Automotive 播放器，拥有为汽车设计的自有界面：一个 APK、一个图标和标准的 Spotify 登录。免费——切勿付费。",
-    "download": "下载 test.16 APK",
+    "download": "下载 test.17 APK",
     "meta": "Android 9+ · 46.1 MiB · 非官方适配",
     "languages": "语言",
     "cards": [
       [
         "自有界面",
         "首页、最近、浏览、音乐库和搜索，以及歌单、专辑、艺人和播客页面，按钮大而易点。导航在侧边，竖屏时在底部。"
+      ],
+      [
+        "流畅的动效",
+        "页面加载时不再显示“正在加载…”，而是显示与内容形状相同、带微光的占位块；随后卡片和列表依次浮现，封面淡入，页面从侧面滑入，标签页之间淡入淡出切换。导航栏的选中标记会滑到你点按的标签。"
       ],
       [
         "模糊封面",
@@ -528,8 +548,8 @@
       ]
     ],
     "testedTitle": "已完成的测试",
-    "tested": "Headunit-test.16 会显示音乐在哪里播放，并可在本车和你的其他设备之间切换（Spotify Connect）；迷你播放器提供时间、随机播放、重复和设备按钮，屏幕四周有一圈细边框，导航栏会收起全屏播放器。test.14 为可以添加小组件的启动器加入了桌面小组件（按大小提供五种布局，支持白天和夜间），可以打开其他应用中的 Spotify 链接，会告诉其他应用正在播放什么，并可在车机启动时在后台启动 Spotify（比亚迪除外）。它由完整参考构建生成。发布审计为 51 PASS / 0 FAIL；152 项更新、39 项登录、14 项面板访问和 19 项播放启动检查通过，签名证书与 test.15 相同。在 Android 9 和 13 模拟器上，test.16 可作为更新安装在 test.15 之上，并在无崩溃的情况下检查更新；登录和“账号”流程在 Android 13 上通过。小组件已在 Android 11 和 12 模拟器的原生启动器中检查；链接在其中打开了歌单、专辑和艺人。相同代码的版本正在比亚迪唐（DiLink 5，Android 12）上运行，并在车上验证了把音乐转到笔记本电脑再转回来。",
-    "pendingStrong": "实验版 headunit-test.16。",
+    "tested": "Headunit-test.17 让加载和切换更流畅：不再显示“正在加载…”，而是显示与内容形状相同的占位块，内容依次浮现，封面淡入，页面从侧面滑入，标签页淡入淡出切换。自 test.16 起，它会显示音乐在哪里播放，并可在本车和你的其他设备之间切换（Spotify Connect）；迷你播放器提供时间、随机播放、重复和设备按钮，屏幕四周有一圈细边框，导航栏会收起全屏播放器。test.14 为可以添加小组件的启动器加入了桌面小组件（按大小提供五种布局，支持白天和夜间），可以打开其他应用中的 Spotify 链接，会告诉其他应用正在播放什么，并可在车机启动时在后台启动 Spotify（比亚迪除外）。它由完整参考构建生成。发布审计为 52 PASS / 0 FAIL；152 项更新、39 项登录、14 项面板访问、13 项 Connect 消息和 19 项播放启动检查通过，签名证书与 test.16 相同。在 Android 9 和 13 模拟器上，test.17 可作为更新安装在 test.16 之上，并在无崩溃的情况下检查更新；登录和“账号”流程在 Android 13 上通过。小组件已在 Android 11 和 12 模拟器的原生启动器中检查；链接在其中打开了歌单、专辑和艺人。相同代码的版本正在比亚迪唐（DiLink 5，Android 12）上运行，并在车上验证了新的动效；test.16 时还在车上验证了把音乐转到笔记本电脑再转回来。",
+    "pendingStrong": "实验版 headunit-test.17。",
     "pending": "转移音乐仅在笔记本电脑上验证过。小组件目前只显示过虚构的曲目，比亚迪原厂启动器也无法显示它们。通过链接播放歌曲以及真正读取“正在播放”的应用尚未验证。右舵尚未在右舵车上见过；DiLink 5.1 / Android 13 和其他车机尚未验证；阿拉伯语只在模拟器上检查过。面板区块只会出现在支持它的应用中。Spotify 为其 Automotive 客户端关闭了下载；本版本开启了客户端支持，因此 Spotify 可能会改变下载的工作方式。",
     "installTitle": "安装方法",
     "steps": [

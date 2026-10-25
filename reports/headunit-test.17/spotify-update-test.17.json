@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 17,
+  "version": "test.17",
+  "version_code": 95494,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.17/Spotify-5.5.0-HeadUnit-test.17.apk",
+  "sha256": "ad06da3de32647acdaba22b7411dc8a58468a09a0ee44814781cab2da646f8eb",
+  "size": 48387186,
+  "notes": "Smooth motion: placeholders shaped like what is loading instead of \"Loading\u2026\", cards and rows rising in, covers fading in, pages sliding in and tabs fading through. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.17",
+  "min_sdk": 28
+}
