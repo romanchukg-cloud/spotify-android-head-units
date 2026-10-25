@@ -44,12 +44,12 @@ final class HuSkipSwipe {
  }
  private void finish(float t,float speed,boolean up){
   boolean fling=Math.abs(speed)>ui.dp(800) && Math.signum(speed)==Math.signum(t) && Math.abs(t)>slop;
-  if(!up || !(Math.abs(t)>ui.dp(96) || fling)){for(View v:content)v.animate().translationX(0).alpha(1).setDuration(160).start();return;}
+  if(!up || !(Math.abs(t)>ui.dp(96) || fling)){for(View v:content)v.animate().translationX(0).alpha(1).setStartDelay(0).setDuration(HuMotion.MEDIUM).setInterpolator(HuMotion.ENTER).start();return;}
   boolean next=t<0;if(next)session.next();else session.previous();
   // Out on the side of the swipe, back in from the other side.
   View parent=(View)content[0].getParent();float out=(parent!=null?parent.getWidth():ui.dp(400))*(next?-1:1);
-  for(View v:content)v.animate().translationX(out).alpha(0).setDuration(140).withEndAction(()->{
-   v.setTranslationX(-Math.signum(out)*ui.dp(48));v.animate().translationX(0).alpha(1).setDuration(200).start();
+  for(View v:content)v.animate().translationX(out).alpha(0).setStartDelay(0).setDuration(140).setInterpolator(HuMotion.EXIT).withEndAction(()->{
+   v.setTranslationX(-Math.signum(out)*ui.dp(48));v.animate().translationX(0).alpha(1).setDuration(HuMotion.MEDIUM).setInterpolator(HuMotion.ENTER).start();
   }).start();
  }
 }

@@ -402,3 +402,15 @@ The player's top bar has a devices button (Spotify's own "connect to devices" ic
 - `tools/apk_audit.py` checks the session hook and the provider route.
 
 Checked on the Android 12 emulator (network off): the subscription starts, the menu lists this car. Not yet checked: other devices, transferring and pulling playback (in the car, with the owner's devices).
+
+## After test.16: motion and loading (owner's request)
+
+`HuMotion` holds the interface's motion: Material 3's easing (emphasized decelerate for what comes, emphasized accelerate for what leaves, standard for small changes) and its durations.
+
+- **Skeletons in place of "Loading…":** while the backend loads, placeholders in the shape of what comes stand in its place, with one light band sweeping across them all (its place is on the screen, so separate skeletons shimmer together; it runs only while a skeleton is drawn): Home's headings and rows of cards, the grids (Recents, Browse, categories), Library's filter pills and grid, a page's track rows (numbered on albums) and a line where its song count goes, search's first results. Before the browse tree's root comes, the content card shows the tab's own page in its loading shape, so the page itself replaces it unseen.
+- **Content arriving:** the skeleton fades out where it is (in its parent's overlay) while the cards, rows and headings on screen rise in one after another (12 dp up, 30 ms apart, the last within a quarter second); a page's header moves its buttons smoothly when the count's line comes or goes. Covers that had to be loaded fade in over the grey placeholder; a new track's cover and blurred background fade in over the old ones (mini-player and player); a page's blurred panel fades in.
+- **Pages:** opening a page and going back move along the reading direction (Material's shared axis: the old page fades out with a nudge, the new one comes 30 dp from its side; mirrored in right-to-left languages); tabs fade through (the new one grows slightly). The new page starts as the old one is gone, and the old one leaves in the card's overlay, so it takes no touches. The navigation's pill slides to the chosen tab, and every item ripples when pressed.
+- **Player and queue:** the player rises in 400 ms, decelerating, and leaves in 250 ms, accelerating; reopened while leaving, it turns back from where it is. The queue comes in 300 ms and leaves in 150 ms; swipes that switch tracks and the drag of the player settle with the same easing.
+- Fading views are drawn through a hardware layer while they fade; with Android's animations off, everything simply appears.
+
+Checked on the Android 12 emulator (network off), light and dark: the skeletons and their shimmer, Library's pills and grid rising in, a playlist's skeleton rows handing over to its tracks, its cover and panel fading in, the shared-axis and fade-through transitions, the rail's pill, the player rising and leaving; no crashes, and no drawing while idle. Not checked: the feel on the head unit's own GPU and screen (the emulator's frame times are not representative), a track change's cover crossfade with music playing.

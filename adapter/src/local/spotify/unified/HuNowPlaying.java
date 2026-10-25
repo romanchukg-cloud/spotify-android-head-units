@@ -5,7 +5,7 @@ import android.widget.*;
 /**
  * Our player: a large cover, title, artist and like, a seek bar with times and the controls
  * (shuffle, previous, play/pause, next, repeat), on the blurred cover (with "Colour from cover
- * art"; plain otherwise). Wide windows put the controls on the driver's side and the cover at the
+ * art"; plain otherwise; a new track's cover and blur fade in over the old ones). Wide windows put the controls on the driver's side and the cover at the
  * far end (right, or left in right-to-left languages, by layout mirroring; the other way round with
  * right-hand drive); narrow ones put the
  * cover above them. The cover takes only the room the texts and controls leave, so a split screen
@@ -16,7 +16,7 @@ import android.widget.*;
  */
 final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
  private final HuUi ui;private final HuSession session;private final boolean accent;private final Runnable collapse;
- private final ImageView cover,play,like,shuffle,repeat,sleep,devices;private final TextView title,artist,where,elapsed,remaining;private final SeekBar seek;
+ private final ImageView play,like,shuffle,repeat,sleep,devices;private final HuUi.Cover cover;private final TextView title,artist,where,elapsed,remaining;private final SeekBar seek;
  private final GradientDrawable background;private String art;private boolean dragging;
  private final int slop;private float downX,downY;private boolean swiping;private VelocityTracker velocity;private final HuSkipSwipe skip;
  private final Runnable tick=new Runnable(){public void run(){progress();if(isAttachedToWindow() && session.playing())postDelayed(this,500);}};
@@ -122,7 +122,7 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
     track(e,false);boolean was=swiping;float speed=0;
     if(velocity!=null){velocity.computeCurrentVelocity(1000);speed=velocity.getYVelocity();}
     release();
-    if(was){if(e.getActionMasked()==MotionEvent.ACTION_UP && (getTranslationY()>getHeight()*0.25f || speed>ui.dp(1200)))collapse.run();else animate().translationY(0).setDuration(160).start();}
+    if(was){if(e.getActionMasked()==MotionEvent.ACTION_UP && (getTranslationY()>getHeight()*0.25f || speed>ui.dp(1200)))collapse.run();else animate().translationY(0).setStartDelay(0).setDuration(HuMotion.MEDIUM).setInterpolator(HuMotion.ENTER).start();}
     else super.onTouchEvent(e);
     return true;
   }
@@ -147,7 +147,7 @@ final class HuNowPlaying extends LinearLayout implements HuSession.Listener {
   HuControls.playing(ui,play,s.playing());HuControls.custom(ui,like,s.like(),s.liked());HuControls.custom(ui,shuffle,s.shuffle(),s.shuffled());
   int mode=s.repeat();repeat.setImageDrawable(HuControls.icon(getContext(),mode==HuSession.REPEAT_ONE?"encore_icon_repeat_once_24":"encore_icon_repeat_24",mode==HuSession.REPEAT_NONE?ui.text:ui.accent));
   String a=s.art();
-  if(!java.util.Objects.equals(a,art)){art=a;HuCovers.load(getContext(),a,ui.dp(480),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);if(accent && b!=null)setBackground(new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0x99000000:0x99ffffff));else{setBackground(background);tint(color);}}});}
+  if(!java.util.Objects.equals(a,art)){art=a;HuCovers.load(getContext(),a,ui.dp(480),(b,color)->{if(java.util.Objects.equals(a,art)){cover.show(b);if(accent && b!=null)HuMotion.background(this,new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0x99000000:0x99ffffff));else{setBackground(background);tint(color);}}});}
   progress();removeCallbacks(tick);if(s.playing())postDelayed(tick,500);
  }
  private void tint(Integer color){

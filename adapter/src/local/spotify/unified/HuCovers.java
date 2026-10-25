@@ -56,9 +56,18 @@ final class HuCovers {
    return out.toByteArray();
   }
  }
- /** Shows the cover in an image view unless the view has meanwhile been given another one. */
+ /** In the memory cache already: it shows at once. */
+ static boolean cached(String uri,int size){return uri!=null && bitmaps.get(uri+"@"+size)!=null;}
+ /**
+  * Shows the cover in an image view unless the view has meanwhile been given another one; one that
+  * had to be loaded fades in (HuUi.Cover.show), a cached one is simply there.
+  */
  static void into(ImageView view,String uri,int size){
-  view.setTag(uri);
-  load(view.getContext(),uri,size,(b,color)->{if(uri==null?view.getTag()==null:uri.equals(view.getTag()))view.setImageBitmap(b);});
+  view.setTag(uri);boolean[] waited={false};
+  load(view.getContext(),uri,size,(b,color)->{
+   if(!(uri==null?view.getTag()==null:uri.equals(view.getTag())))return;
+   if(waited[0] && view instanceof HuUi.Cover)((HuUi.Cover)view).show(b);else view.setImageBitmap(b);
+  });
+  waited[0]=true;
  }
 }

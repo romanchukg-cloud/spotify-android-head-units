@@ -72,6 +72,21 @@ final class HuUi {
    super.setImageDrawable(d);boolean empty=d==null || d instanceof BitmapDrawable && ((BitmapDrawable)d).getBitmap()==null;
    setBackground(empty?round(placeholder,radius):null);
   }
+  private Runnable settle;
+  /**
+   * A new image fades in: over the one shown (a new track's cover), or over the placeholder (a
+   * cover that took a moment to load). Off screen or without animations it is simply shown.
+   */
+  void show(Bitmap b){
+   Drawable old=getDrawable();if(old instanceof TransitionDrawable)old=((TransitionDrawable)old).getDrawable(1);
+   if(b==null || !isAttachedToWindow() || !HuMotion.animated()){setImageBitmap(b);return;}
+   if(old instanceof BitmapDrawable && ((BitmapDrawable)old).getBitmap()==b)return;
+   boolean had=old instanceof BitmapDrawable && ((BitmapDrawable)old).getBitmap()!=null;
+   BitmapDrawable next=new BitmapDrawable(getResources(),b);int time=had?HuMotion.MEDIUM:HuMotion.SHORT+50;
+   TransitionDrawable t=new TransitionDrawable(new Drawable[]{had?old:new ColorDrawable(placeholder),next});
+   setImageDrawable(t);t.startTransition(time);
+   removeCallbacks(settle);settle=()->{if(getDrawable()==t)setImageDrawable(next);};postDelayed(settle,time+50);
+  }
  }
  /**
   * A background of a blurred cover: the cover centre-cropped to the bounds, blurred (RenderEffect
@@ -80,13 +95,14 @@ final class HuUi {
   */
  static final class Blur extends Drawable {
   private final Bitmap bitmap,small;private final float radius,blur;private final Paint image=new Paint(Paint.FILTER_BITMAP_FLAG|Paint.ANTI_ALIAS_FLAG),scrim=new Paint();
-  private RenderNode node;
+  private RenderNode node;private int alpha=255;
   Blur(HuUi ui,Bitmap b,float radius,int scrimColor){
    bitmap=b;this.radius=radius;blur=ui.dp(40);scrim.setColor(scrimColor);
    small=Bitmap.createScaledBitmap(b,Math.max(1,b.getWidth()/16),Math.max(1,b.getHeight()/16),true);
   }
   public void draw(Canvas c){
-   Rect r=getBounds();if(r.isEmpty())return;
+   Rect r=getBounds();if(r.isEmpty() || alpha==0)return;
+   int saved=alpha<255?c.saveLayerAlpha(r.left,r.top,r.right,r.bottom,alpha):-1;
    if(android.os.Build.VERSION.SDK_INT>=31 && c.isHardwareAccelerated()){
     if(node==null){node=new RenderNode("cover");node.setRenderEffect(RenderEffect.createBlurEffect(blur,blur,Shader.TileMode.CLAMP));}
     node.setPosition(0,0,r.width(),r.height());
@@ -94,6 +110,7 @@ final class HuUi {
     c.save();c.translate(r.left,r.top);c.drawRenderNode(node);c.restore();
    }else{c.save();c.translate(r.left,r.top);crop(c,small,r.width(),r.height());c.restore();}
    c.drawRect(r,scrim);
+   if(saved>=0)c.restoreToCount(saved);
   }
   private void crop(Canvas c,Bitmap b,int w,int h){
    float scale=Math.max(w/(float)b.getWidth(),h/(float)b.getHeight());float bw=w/scale,bh=h/scale;
@@ -101,8 +118,10 @@ final class HuUi {
    c.drawBitmap(b,src,new Rect(0,0,w,h),image);
   }
   public void getOutline(Outline o){o.setRoundRect(getBounds(),radius);}
-  public void setAlpha(int a){}public void setColorFilter(ColorFilter f){}
-  public int getOpacity(){return PixelFormat.OPAQUE;}
+  public void setAlpha(int a){if(a!=alpha){alpha=a;invalidateSelf();}}
+  public int getAlpha(){return alpha;}
+  public void setColorFilter(ColorFilter f){}
+  public int getOpacity(){return alpha==255?PixelFormat.OPAQUE:PixelFormat.TRANSLUCENT;}
  }
  static GradientDrawable round(int color,float radius){GradientDrawable d=new GradientDrawable();d.setColor(color);d.setCornerRadius(radius);return d;}
  Drawable pressable(int color,float radius){return new RippleDrawable(android.content.res.ColorStateList.valueOf(dark?0x33ffffff:0x22000000),round(color,radius),round(0xff000000,radius));}

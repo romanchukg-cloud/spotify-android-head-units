@@ -18,6 +18,8 @@ import java.util.*;
  */
 public final class HuPlayerActivity extends Activity {
  private HuUi ui;private HuSession session;private HuRail rail;private FrameLayout content;private HuNowPlaying player;
+ /** The page the content card shows (one that leaves stays drawn a moment longer in its overlay). */
+ private View current;
  private static String resized;private int[] laid;
  private boolean expanded,queueOpen;private HuQueue queue;private String page="home";private final Map<String,String> ids=new HashMap<>();
  private static final int VOICE=7;
@@ -84,7 +86,8 @@ public final class HuPlayerActivity extends Activity {
   // Day/night and other configuration changes recreate the screen; the open player stays open.
   if(state!=null && state.getBoolean("expanded")){expanded=true;player.setVisibility(View.VISIBLE);}
   if(state!=null && state.getBoolean("queue")){queueOpen=true;queue.setVisibility(View.VISIBLE);}
-  content.addView(HuPages.message(ui,HuText.get("loading")));rail.select(page);
+  // Until the browse tree's root comes, the tab's page as it looks while loading.
+  place(HuPages.placeholder(ui,page),0);rail.select(page);
   loadRoot();
   session.add(signInWatch);
   HuFree.maybeShow(this);
@@ -100,7 +103,7 @@ public final class HuPlayerActivity extends Activity {
    if(pendingVoice!=null){page="search";detail=null;restored.clear();}
    HuDetail.Target opened=detail;show(page);
    if(opened!=null){
-    View tab=content.getChildCount()>0?content.getChildAt(0):null;
+    View tab=current;
     for(HuDetail.Target t:restored)levels.addLast(new Level(t,null));levels.addLast(new Level(null,tab));
     detail=opened;place(detailView(opened),0);
    }
@@ -176,7 +179,7 @@ public final class HuPlayerActivity extends Activity {
  /** A card: pages for browsable items (the current page stays below for back); playable ones play. */
  private void open(MediaItem item){
   if(!item.isBrowsable()){session.playItem(HuBrowse.id(item));return;}
-  levels.push(new Level(detail,content.getChildCount()>0?content.getChildAt(0):null));
+  levels.push(new Level(detail,current));
   detail=HuDetail.Target.of(item);place(detailView(detail),1);
  }
  private View detailView(HuDetail.Target t){
@@ -186,15 +189,16 @@ public final class HuPlayerActivity extends Activity {
   Level l=levels.poll();if(l==null){detail=null;place(tab(page),-1);return;}
   detail=l.target;place(l.view!=null?l.view:l.target==null?tab(page):detailView(l.target),-1);
  }
- /** Puts a page in the content card, sliding in from the side it comes from (mirrored in right-to-left). */
+ /**
+  * Puts a page in the content card: opened pages come from the end side and back returns from the
+  * start (mirrored in right-to-left), tabs fade through (HuMotion.swap).
+  */
  private void place(View v,int direction){
+  View old=current;current=v;
+  HuMotion.swap(content,old,v,direction);
   content.removeAllViews();if(v.getParent() instanceof ViewGroup)((ViewGroup)v.getParent()).removeView(v);
   content.addView(v,new FrameLayout.LayoutParams(-1,-1));
   if(signInPanel!=null)content.addView(signInPanel,new FrameLayout.LayoutParams(-1,-1));
-  v.animate().cancel();
-  if(direction==0){v.setAlpha(1);v.setTranslationX(0);return;}
-  float shift=ui.dp(36)*direction*(content.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);
-  v.setAlpha(0);v.setTranslationX(shift);v.animate().alpha(1).translationX(0).setDuration(180).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
  }
  /** The microphone: the head unit's speech recognition; the text comes back to the search page. */
  private void listen(){try{startActivityForResult(HeadUnitVoice.recognizer(),VOICE);}catch(ActivityNotFoundException e){android.util.Log.w("SpotifyHU","Voice search unavailable",e);}}
@@ -225,32 +229,37 @@ public final class HuPlayerActivity extends Activity {
    HuDetail.Target t=new HuDetail.Target(l.pageId(),l.title,"",l.icon,null);
    closeQueue();collapse();
    if(ids.isEmpty()){detail=t;restored.clear();return;}
-   levels.push(new Level(detail,content.getChildCount()>0?content.getChildAt(0):null));detail=t;place(detailView(t),1);
+   levels.push(new Level(detail,current));detail=t;place(detailView(t),1);
   });
  }
  protected void onSaveInstanceState(Bundle out){super.onSaveInstanceState(out);out.putBoolean("expanded",expanded);out.putBoolean("queue",queueOpen);out.putString("page",page);if(detail!=null)detail.save(out);
   out.putString("search",search!=null?search.query():searchQuery);
   ArrayList<Bundle> saved=new ArrayList<>();for(Level l:levels)if(l.target!=null){Bundle b=new Bundle();l.target.save(b);saved.add(b);}out.putParcelableArrayList("trail",saved);
  }
+ /**
+  * The player rises from the mini-player's place, decelerating (Material's emphasized easing) and
+  * leaves faster, accelerating; reopened while it is still leaving, it turns back from where it is.
+  */
  private void expand(){
-  if(expanded)return;expanded=true;player.setVisibility(View.VISIBLE);
-  player.setTranslationY(player.getHeight()>0?player.getHeight():getResources().getDisplayMetrics().heightPixels);
-  player.animate().translationY(0).setDuration(220).start();
+  if(expanded)return;expanded=true;
+  if(player.getVisibility()!=View.VISIBLE){player.setVisibility(View.VISIBLE);player.setTranslationY(player.getHeight()>0?player.getHeight():getResources().getDisplayMetrics().heightPixels);}
+  player.animate().cancel();player.animate().translationY(0).setStartDelay(0).setDuration(HuMotion.LONG).setInterpolator(HuMotion.ENTER).start();
  }
- /** The queue: a card over the player, sliding in from the end side; back closes it. */
+ /** The queue: a card over the player, coming in from the end side; back closes it. */
  private void openQueue(){
-  if(queueOpen)return;queueOpen=true;queue.opened();queue.setVisibility(View.VISIBLE);queue.setAlpha(0);
-  float shift=ui.dp(48)*(queue.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);queue.setTranslationX(shift);
-  queue.animate().alpha(1).translationX(0).setDuration(200).setInterpolator(new android.view.animation.DecelerateInterpolator()).start();
+  if(queueOpen)return;queueOpen=true;queue.opened();
+  float shift=ui.dp(48)*(queue.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);
+  if(queue.getVisibility()!=View.VISIBLE){queue.setVisibility(View.VISIBLE);queue.setAlpha(0);queue.setTranslationX(shift);}
+  queue.animate().cancel();queue.animate().alpha(1).translationX(0).setStartDelay(0).setDuration(HuMotion.MEDIUM).setInterpolator(HuMotion.ENTER).start();
  }
  private void closeQueue(){
   if(!queueOpen)return;queueOpen=false;
   float shift=ui.dp(48)*(queue.getLayoutDirection()==View.LAYOUT_DIRECTION_RTL?-1:1);
-  queue.animate().alpha(0).translationX(shift).setDuration(160).withEndAction(()->{if(!queueOpen)queue.setVisibility(View.GONE);}).start();
+  queue.animate().cancel();queue.animate().alpha(0).translationX(shift).setStartDelay(0).setDuration(HuMotion.SHORT).setInterpolator(HuMotion.EXIT).withEndAction(()->{if(!queueOpen)queue.setVisibility(View.GONE);}).start();
  }
  private void collapse(){
   if(!expanded)return;expanded=false;
-  player.animate().translationY(player.getHeight()).setDuration(200).withEndAction(()->player.setVisibility(View.GONE)).start();
+  player.animate().cancel();player.animate().translationY(player.getHeight()).setStartDelay(0).setDuration(250).setInterpolator(HuMotion.EXIT).withEndAction(()->{if(!expanded)player.setVisibility(View.GONE);}).start();
  }
  /** A profile switch or a notification brings the screen back with a new intent (ProfileButton reads it); so does a link. */
  protected void onNewIntent(Intent intent){super.onNewIntent(intent);setIntent(intent);link(intent);}

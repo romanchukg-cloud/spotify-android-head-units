@@ -11,7 +11,8 @@ import java.util.*;
  * number of songs with their total time, shuffle play, play (pause when this page is what plays)
  * and download; then the backend's children in a HuList: tracks that play in this context and
  * browsable children, such as an artist's albums, as a row of cards. Wide content keeps the
- * header on the left beside the list; narrow content scrolls it above the list.
+ * header on the left beside the list; narrow content scrolls it above the list. Until the
+ * children come, skeleton rows stand in the list and a skeleton line in place of the count.
  */
 final class HuDetail {
  private HuDetail(){}
@@ -37,19 +38,22 @@ final class HuDetail {
   if(backButton.getDrawable()!=null)backButton.getDrawable().setAutoMirrored(true);
   top.addView(backButton);header.addView(top);
   int size=ui.dp(Math.max(120,wide?Math.min(260,Math.min(height-330,width*0.36f-32)):Math.min(220,width*0.5f)));
-  ImageView cover=new HuUi.Cover(ui,round?size/2f:ui.dp(12));
+  HuUi.Cover cover=new HuUi.Cover(ui,round?size/2f:ui.dp(12));
   LinearLayout.LayoutParams coverParams=new LinearLayout.LayoutParams(size,size);coverParams.gravity=Gravity.CENTER_HORIZONTAL;coverParams.topMargin=ui.dp(4);header.addView(cover,coverParams);
   // The header panel (Backdrop) shows the cover blurred; the cover and its colour arrive together.
   Integer[] tone={null};android.graphics.Bitmap[] art={null};Runnable[] paint={()->{}};
-  java.util.function.Consumer<String> showCover=uri->{cover.setTag(uri);HuCovers.load(ui.activity,uri,size,(b,c)->{if(!Objects.equals(uri,cover.getTag()))return;cover.setImageBitmap(b);art[0]=b;tone[0]=c;paint[0].run();});};
+  java.util.function.Consumer<String> showCover=uri->{cover.setTag(uri);HuCovers.load(ui.activity,uri,size,(b,c)->{if(!Objects.equals(uri,cover.getTag()))return;cover.show(b);art[0]=b;tone[0]=c;paint[0].run();});};
   if(t.icon!=null)showCover.accept(t.icon);
   // Shows are podcasts and audiobooks alike in the backend, so they get no type label.
   TextView type=ui.label(kind==null || "show".equals(kind)?"":HuText.get(kind),16,ui.secondary,true);type.setPaddingRelative(ui.dp(8),0,0,0);top.addView(type);
   // Cover, texts and buttons are centred in the header; back and the page type stay at the top start.
   TextView title=HuControls.title(ui,wide?30:28,2);title.setText(t.title);title.setPadding(0,ui.dp(14),0,0);title.setGravity(Gravity.CENTER_HORIZONTAL);
   TextView subtitle=ui.label(t.subtitle,17,ui.secondary,false);subtitle.setMaxLines(2);subtitle.setEllipsize(android.text.TextUtils.TruncateAt.END);subtitle.setGravity(Gravity.CENTER_HORIZONTAL);if(t.subtitle.isEmpty())subtitle.setVisibility(View.GONE);
-  TextView meta=ui.label(HuText.get("loading"),15,ui.secondary,false);meta.setPadding(0,ui.dp(6),0,0);meta.setGravity(Gravity.CENTER_HORIZONTAL);
+  TextView meta=ui.label("",15,ui.secondary,false);meta.setPadding(0,ui.dp(6),0,0);meta.setGravity(Gravity.CENTER_HORIZONTAL);meta.setVisibility(View.GONE);
   header.addView(title);header.addView(subtitle);header.addView(meta);
+  // The count and length: a skeleton line in their place until they come (artists and shows get none).
+  View metaLoading="artist".equals(kind) || "show".equals(kind)?null:new HuMotion.Skeleton(ui,HuMotion.Skeleton.LINE,0);
+  if(metaLoading!=null){LinearLayout.LayoutParams ml=new LinearLayout.LayoutParams(ui.dp(150),ui.dp(14));ml.gravity=Gravity.CENTER_HORIZONTAL;ml.topMargin=ui.dp(10);ml.bottomMargin=ui.dp(3);header.addView(metaLoading,ml);}
   LinearLayout buttons=new LinearLayout(ui.activity);buttons.setGravity(Gravity.CENTER);buttons.setPadding(0,ui.dp(16),0,0);
   int playSize=ui.dp(72);ImageView play=new ImageView(ui.activity);play.setScaleType(ImageView.ScaleType.FIT_CENTER);int pad=playSize*28/100;play.setPadding(pad,pad,pad,pad);
   play.setBackground(ui.pressable(0xff1ed760,playSize/2f));
@@ -64,10 +68,15 @@ final class HuDetail {
   TextView progressText=ui.label("",15,ui.secondary,false);progressText.setGravity(Gravity.CENTER_HORIZONTAL);progressBox.addView(progressText);
   HuList.Progress progressBar=new HuList.Progress(ui);LinearLayout.LayoutParams pb=new LinearLayout.LayoutParams(ui.dp(240),ui.dp(4));pb.topMargin=ui.dp(8);progressBox.addView(progressBar,pb);
   header.addView(progressBox);
+  // The count's line coming or its skeleton going, and the download progress, move the buttons smoothly.
+  HuMotion.moves(header);
 
   // The list: the header above it on narrow content, beside it on wide content.
   HuList listing=new HuList(ui,kind,open);ListView list=listing.view;List<MediaItem> tracks=listing.tracks;
   list.setPadding(ui.dp(8),ui.dp(wide?8:0),ui.dp(8),ui.dp(16));
+  // Skeleton rows below the header until the children come (numbered on albums, as their rows are).
+  FrameLayout loadingBox=new FrameLayout(ui.activity);View loading=new HuMotion.Skeleton(ui,"album".equals(kind)?HuMotion.Skeleton.NUMBERED:HuMotion.Skeleton.ROWS,8);
+  loadingBox.addView(loading,new FrameLayout.LayoutParams(-1,-2));list.addFooterView(loadingBox,null,false);
   View page;
   if(wide){
    LinearLayout row=new LinearLayout(ui.activity);ScrollView side=new ScrollView(ui.activity);side.addView(header);
@@ -117,10 +126,14 @@ final class HuDetail {
   playState.run();
 
   session.children(t.id,items->{
+   // The skeleton fades out where it is while the rows rise in.
+   HuMotion.leave(loading,list);list.removeFooterView(loadingBox);
    long total=listing.fill(items,"artist".equals(kind));full[0]=items.size()>=200;progress.run();
+   HuMotion.rise(list,list.getFirstVisiblePosition()==0?list.getHeaderViewsCount():0);
    // The backend gives at most 200 children (Liked Songs can hold more): no count it cannot vouch for.
    meta.setText(items.isEmpty()?HuText.get("empty"):"artist".equals(kind) || "show".equals(kind) || tracks.isEmpty() || items.size()>=200?"":HuText.songs(tracks.size())+" · "+length(total));
    meta.setVisibility(meta.getText().length()==0?View.GONE:View.VISIBLE);
+   if(metaLoading!=null){HuMotion.leave(metaLoading,header);if(meta.getVisibility()==View.VISIBLE)HuMotion.fadeIn(meta);}
    // Some items (shows) come without a cover of their own: the first child's stands in.
    if(t.icon==null)for(MediaItem i:items)if(HuBrowse.icon(i)!=null){showCover.accept(HuBrowse.icon(i));break;}
   });
@@ -141,11 +154,20 @@ final class HuDetail {
    scrim=new View(ui.activity);scrim.setBackgroundColor(ui.dark?0x99000000:0x99ffffff);scrim.setVisibility(GONE);addView(scrim,new LayoutParams(-1,-1));
    addView(content,new LayoutParams(-1,content instanceof ScrollView?-1:-2));
   }
+  /** The cover's blur (or colour); one that arrives while the page is shown fades in. */
   void paint(android.graphics.Bitmap art,Integer color){
+   boolean fade=isAttachedToWindow() && HuMotion.animated();
    if(art!=null && android.os.Build.VERSION.SDK_INT>=31){
     blur.setImageBitmap(art);blur.setRenderEffect(android.graphics.RenderEffect.createBlurEffect(ui.dp(40),ui.dp(40),android.graphics.Shader.TileMode.CLAMP));
     blur.setVisibility(VISIBLE);scrim.setVisibility(VISIBLE);
-   }else if(color!=null)((android.graphics.drawable.GradientDrawable)getBackground()).setColor(CoverAccent.tone(color,ui.dark,ui.dark?0.45f:1f));
+    if(fade)for(View v:new View[]{blur,scrim}){v.setAlpha(0f);v.animate().alpha(1f).setStartDelay(0).setDuration(HuMotion.LONG).setInterpolator(HuMotion.STANDARD).start();}
+   }else if(color!=null){
+    android.graphics.drawable.GradientDrawable g=(android.graphics.drawable.GradientDrawable)getBackground();int to=CoverAccent.tone(color,ui.dark,ui.dark?0.45f:1f);
+    android.content.res.ColorStateList now=g.getColor();
+    if(!fade || now==null){g.setColor(to);return;}
+    android.animation.ValueAnimator a=android.animation.ValueAnimator.ofArgb(now.getDefaultColor(),to);a.setDuration(HuMotion.LONG);a.setInterpolator(HuMotion.STANDARD);
+    a.addUpdateListener(x->g.setColor((int)x.getAnimatedValue()));a.start();
+   }
   }
  }
  private static boolean here(HuSession s,Target t){String c=s.contextUri();return c!=null && c.equals(HuBrowse.uri(t.id));}

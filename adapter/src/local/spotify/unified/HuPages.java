@@ -7,7 +7,8 @@ import java.util.*;
  * The content pages of our interface. Home shows the backend's groups ("Good evening", "Made
  * for …") as rows of cards; Recents and Browse are grids; Library has its sections (Playlists,
  * Podcasts, Albums, Artists, Downloads) as filter pills above a grid. A card opens its page
- * (HuDetail, or a grid with a back button for categories); a playable-only card plays.
+ * (HuDetail, or a grid with a back button for categories); a playable-only card plays. While the
+ * backend loads, skeletons in the shape of what comes stand in its place (HuMotion).
  */
 final class HuPages {
  private HuPages(){}
@@ -35,20 +36,53 @@ final class HuPages {
 
  /** Home: one heading and one horizontal row per group. */
  static View home(HuUi ui,String id,Open open){
-  ScrollView scroll=new ScrollView(ui.activity);scroll.setFillViewport(true);
-  LinearLayout list=new LinearLayout(ui.activity);list.setOrientation(LinearLayout.VERTICAL);list.setPadding(ui.dp(16),ui.dp(4),ui.dp(16),ui.dp(16));scroll.addView(list);
-  list.addView(message(ui,HuText.get("loading")));
+  LinearLayout list=homeColumn(ui);View loading=list.getChildAt(0);
   HuSession.get(ui.activity).children(id,items->{
-   list.removeAllViews();
-   if(items.isEmpty()){list.addView(message(ui,HuText.get("empty")));return;}
+   HuMotion.leave(loading,list);list.removeAllViews();
+   if(items.isEmpty()){TextView m=message(ui,HuText.get("empty"));list.addView(m);HuMotion.fadeIn(m);return;}
+   // The headings and cards rise in reading order.
+   List<View> order=new ArrayList<>();
    for(Map.Entry<String,List<MediaItem>> g:HuBrowse.groups(items).entrySet()){
-    if(!g.getKey().isEmpty())list.addView(heading(ui,g.getKey()));
+    if(!g.getKey().isEmpty()){TextView h=heading(ui,g.getKey());list.addView(h);order.add(h);}
     HorizontalScrollView rowScroll=row(ui);
     LinearLayout row=new LinearLayout(ui.activity);rowScroll.addView(row);
-    for(MediaItem item:g.getValue()){HuBrowse.Card c=new HuBrowse.Card(ui,card(ui));c.bind(item,v->open.item(item));row.addView(c);}
+    for(MediaItem item:g.getValue()){HuBrowse.Card c=new HuBrowse.Card(ui,card(ui));c.bind(item,v->open.item(item));row.addView(c);order.add(c);}
     list.addView(rowScroll);
    }
+   HuMotion.rise(list,order);
   });
+  return (View)list.getParent();
+ }
+ /** Home's scrolling column, holding its skeleton until the groups come. */
+ private static LinearLayout homeColumn(HuUi ui){
+  ScrollView scroll=new ScrollView(ui.activity);scroll.setFillViewport(true);
+  LinearLayout list=new LinearLayout(ui.activity);list.setOrientation(LinearLayout.VERTICAL);list.setPadding(ui.dp(16),ui.dp(4),ui.dp(16),ui.dp(16));scroll.addView(list);
+  list.addView(new HuMotion.Skeleton(ui,HuMotion.Skeleton.SECTIONS,3));
+  return list;
+ }
+ /**
+  * What the content card shows before the browse tree's root arrives: the tab's page as it looks
+  * while loading (the same skeleton in the same place), so the page itself replaces it unseen.
+  */
+ static View placeholder(HuUi ui,String key){
+  if("home".equals(key))return (View)homeColumn(ui).getParent();
+  LinearLayout page=new LinearLayout(ui.activity);page.setOrientation(LinearLayout.VERTICAL);
+  if("search".equals(key)){
+   page.setPadding(ui.dp(16),ui.dp(16),ui.dp(16),0);
+   HuMotion.Skeleton field=new HuMotion.Skeleton(ui,HuMotion.Skeleton.LINE,0);page.addView(field,new LinearLayout.LayoutParams(-1,ui.dp(72)));
+   LinearLayout.LayoutParams rows=new LinearLayout.LayoutParams(-1,-2);rows.topMargin=ui.dp(8);page.addView(new HuMotion.Skeleton(ui,HuMotion.Skeleton.ROWS,6),rows);
+   return page;
+  }
+  page.setPadding(ui.dp(16),ui.dp(4),ui.dp(16),0);page.addView(heading(ui,HuText.get(key)));
+  if("library".equals(key))page.addView(pills(ui,new LinearLayout(ui.activity)));
+  FrameLayout body=new FrameLayout(ui.activity);page.addView(body,new LinearLayout.LayoutParams(-1,0,1));
+  body.addView(new HuMotion.Skeleton(ui,HuMotion.Skeleton.GRID,0),new FrameLayout.LayoutParams(-1,-1));
+  return page;
+ }
+ /** Library's row of filter pills, with its skeleton until the sections come. */
+ private static HorizontalScrollView pills(HuUi ui,LinearLayout pills){
+  HorizontalScrollView scroll=row(ui);pills.setPadding(ui.dp(4),ui.dp(4),ui.dp(4),ui.dp(8));scroll.addView(pills);
+  pills.addView(new HuMotion.Skeleton(ui,HuMotion.Skeleton.PILLS,4));
   return scroll;
  }
 
@@ -65,10 +99,13 @@ final class HuPages {
   return page;
  }
  private static void fill(HuUi ui,FrameLayout body,String id,Open open){
-  body.removeAllViews();body.addView(message(ui,HuText.get("loading")));
+  // A section picked while another still loads: only the last one's items are shown.
+  body.setTag(id);
+  body.removeAllViews();View loading=new HuMotion.Skeleton(ui,HuMotion.Skeleton.GRID,0);body.addView(loading,new FrameLayout.LayoutParams(-1,-1));
   HuSession.get(ui.activity).children(id,items->{
-   body.removeAllViews();
-   if(items.isEmpty()){body.addView(message(ui,HuText.get("empty")));return;}
+   if(!java.util.Objects.equals(id,body.getTag()))return;
+   HuMotion.leave(loading,body);body.removeAllViews();
+   if(items.isEmpty()){TextView m=message(ui,HuText.get("empty"));body.addView(m);HuMotion.fadeIn(m);return;}
    GridView grid=new GridView(ui.activity);int size=card(ui);
    grid.setColumnWidth(size+ui.dp(16));grid.setNumColumns(GridView.AUTO_FIT);grid.setStretchMode(GridView.STRETCH_SPACING_UNIFORM);
    grid.setVerticalSpacing(ui.dp(4));grid.setSelector(new android.graphics.drawable.ColorDrawable(0));grid.setClipToPadding(false);grid.setPadding(0,0,0,ui.dp(16));
@@ -76,7 +113,7 @@ final class HuPages {
     public int getCount(){return items.size();}public Object getItem(int p){return items.get(p);}public long getItemId(int p){return p;}
     public View getView(int p,View old,ViewGroup parent){HuBrowse.Card c=old instanceof HuBrowse.Card?(HuBrowse.Card)old:new HuBrowse.Card(ui,size);MediaItem item=items.get(p);c.bind(item,v->open.item(item));return c;}
    });
-   body.addView(grid);
+   body.addView(grid);HuMotion.rise(grid,0);
   });
  }
 
@@ -84,20 +121,19 @@ final class HuPages {
  static View library(HuUi ui,String id,Open open){
   LinearLayout page=new LinearLayout(ui.activity);page.setOrientation(LinearLayout.VERTICAL);page.setPadding(ui.dp(16),ui.dp(4),ui.dp(16),0);
   page.addView(heading(ui,HuText.get("library")));
-  HorizontalScrollView pillsScroll=row(ui);
-  LinearLayout pills=new LinearLayout(ui.activity);pills.setPadding(ui.dp(4),ui.dp(4),ui.dp(4),ui.dp(8));pillsScroll.addView(pills);page.addView(pillsScroll);
+  LinearLayout pills=new LinearLayout(ui.activity);page.addView(pills(ui,pills));View pillsLoading=pills.getChildAt(0);
   FrameLayout body=new FrameLayout(ui.activity);page.addView(body,new LinearLayout.LayoutParams(-1,0,1));
-  body.addView(message(ui,HuText.get("loading")));
+  View loading=new HuMotion.Skeleton(ui,HuMotion.Skeleton.GRID,0);body.addView(loading,new FrameLayout.LayoutParams(-1,-1));
   HuSession.get(ui.activity).children(id,sections->{
-   body.removeAllViews();
-   if(sections.isEmpty()){body.addView(message(ui,HuText.get("empty")));return;}
+   HuMotion.leave(pillsLoading,pills);
+   if(sections.isEmpty()){HuMotion.leave(loading,body);TextView m=message(ui,HuText.get("empty"));body.addView(m);HuMotion.fadeIn(m);return;}
    List<TextView> all=new ArrayList<>();
    for(MediaItem section:sections){
     TextView pill=ui.label(HuBrowse.title(section),18,ui.text,true);pill.setGravity(Gravity.CENTER);pill.setMinHeight(ui.dp(60));pill.setPadding(ui.dp(26),0,ui.dp(26),0);
     LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-2,ui.dp(60));lp.setMarginEnd(ui.dp(12));pills.addView(pill,lp);all.add(pill);
     pill.setOnClickListener(v->{select(ui,all,pill);fill(ui,body,HuBrowse.id(section),open);});
    }
-   select(ui,all,all.get(0));fill(ui,body,HuBrowse.id(sections.get(0)),open);
+   select(ui,all,all.get(0));HuMotion.rise(pills,0);fill(ui,body,HuBrowse.id(sections.get(0)),open);
   });
   return page;
  }

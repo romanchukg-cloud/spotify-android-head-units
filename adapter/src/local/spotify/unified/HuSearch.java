@@ -11,12 +11,13 @@ import java.util.*;
  * microphone before it; results of the backend's search while typing, in its groups (top results, songs,
  * albums, artists, playlists, podcasts, episodes, audiobooks) through a HuList. A spoken query
  * plays the best match at once and shows its results for another choice. With an empty field the
- * recent searches (kept in this process's preferences) can be searched again.
+ * recent searches (kept in this process's preferences) can be searched again. The first results
+ * of a search have skeleton rows in their place until they come; later ones replace the shown ones.
  */
 final class HuSearch {
  private static final String PREFS="hu_search",RECENT="recent";private static final int KEEP=8;private static final long DELAY=450;
  final View view;private final HuUi ui;private final HuSession session;private final EditText field;private final ImageView clear;
- private final HuList results;private final LinearLayout recents;private final ScrollView recentScroll;private final TextView message;
+ private final HuList results;private final LinearLayout recents;private final ScrollView recentScroll;private final TextView message;private final FrameLayout body;private View loading;
  private final Runnable run=this::search;private String shown;
 
  HuSearch(HuUi ui,String query,HuPages.Open open,Runnable voice){
@@ -41,7 +42,7 @@ final class HuSearch {
   }
   page.addView(bar);
   // Below: results, recent searches or a message.
-  FrameLayout body=new FrameLayout(ui.activity);LinearLayout.LayoutParams bodyParams=new LinearLayout.LayoutParams(-1,0,1);bodyParams.topMargin=ui.dp(8);page.addView(body,bodyParams);
+  body=new FrameLayout(ui.activity);LinearLayout.LayoutParams bodyParams=new LinearLayout.LayoutParams(-1,0,1);bodyParams.topMargin=ui.dp(8);page.addView(body,bodyParams);
   results=new HuList(ui,"search",item->{remember(field.getText().toString());open.item(item);});results.view.setPadding(0,0,0,ui.dp(16));
   results.view.setOnScrollListener(new AbsListView.OnScrollListener(){
    public void onScrollStateChanged(AbsListView v,int state){if(state!=SCROLL_STATE_IDLE)hideKeyboard();}
@@ -70,17 +71,21 @@ final class HuSearch {
  private void search(){
   String q=field.getText().toString().trim();if(q.isEmpty()){idle();return;}
   if(q.equals(shown) && results.view.getVisibility()==View.VISIBLE)return;
-  if(results.view.getVisibility()!=View.VISIBLE){message.setText(HuText.get("loading"));show(message);}
+  if(results.view.getVisibility()!=View.VISIBLE && loading==null){
+   show(null);loading=new HuMotion.Skeleton(ui,HuMotion.Skeleton.ROWS,8);body.addView(loading,new FrameLayout.LayoutParams(-1,-2,Gravity.TOP));
+  }
   session.search(q,items->{
    if(!q.equals(field.getText().toString().trim()))return;
-   shown=q;
+   shown=q;boolean first=loading!=null;HuMotion.leave(loading,body);loading=null;
    if(items.isEmpty()){message.setText(HuText.get("no_results"));show(message);return;}
-   results.fill(items,true);results.view.setSelection(0);show(results.view);
+   results.fill(items,true);results.view.setSelection(0);
+   if(first){showNow(results.view);HuMotion.rise(results.view,0);}else show(results.view);
   });
  }
  /** No query: the recent searches, or what can be searched for. */
  private void idle(){
   shown=null;recents.removeAllViews();List<String> list=recent();
+  if(loading!=null){body.removeView(loading);loading=null;}
   if(list.isEmpty()){message.setText(HuText.get("search_start"));show(message);return;}
   recents.addView(HuPages.heading(ui,HuText.get("recent_searches")));
   for(String q:list){
@@ -95,7 +100,9 @@ final class HuSearch {
   LinearLayout.LayoutParams c=new LinearLayout.LayoutParams(-2,ui.dp(64));c.topMargin=ui.dp(16);c.bottomMargin=ui.dp(16);c.gravity=Gravity.CENTER_HORIZONTAL;recents.addView(clearAll,c);
   show(recentScroll);
  }
- private void show(View v){
+ /** Shows results, recent searches or a message (null: none of them); one that was hidden fades in. */
+ private void show(View v){boolean was=v!=null && v.getVisibility()==View.VISIBLE;showNow(v);if(v!=null && !was)HuMotion.fadeIn(v);}
+ private void showNow(View v){
   results.view.setVisibility(v==results.view?View.VISIBLE:View.GONE);recentScroll.setVisibility(v==recentScroll?View.VISIBLE:View.GONE);message.setVisibility(v==message?View.VISIBLE:View.GONE);
  }
  private void hideKeyboard(){

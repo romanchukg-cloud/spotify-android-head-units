@@ -8,13 +8,13 @@ import android.widget.*;
  * and the devices at the end where the card is wide, as in the player), then like, cover and
  * title (the New style order) and the time (elapsed / length, where the card is wide enough; the device that
  * plays, in place of the artist, when it is not this car), on the blurred
- * cover (with "Colour from cover art"; plain otherwise) and a thin progress line. Tapping the cover or the title, or a swipe up, opens the player; a swipe to the
+ * cover (with "Colour from cover art"; plain otherwise; a new track's cover and blur fade in over the old ones) and a thin progress line. Tapping the cover or the title, or a swipe up, opens the player; a swipe to the
  * left or right switches to the next or previous track (HuSkipSwipe). The controls and
  * the progress line stay left-to-right in right-to-left languages, as media controls do in
  * Material.
  */
 final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
- private final HuUi ui;private final HuSession session;private final ImageView play,like,cover,shuffle,repeat,devices;private final TextView title,artist,time;private boolean roomy=true,full=true;private String away;
+ private final HuUi ui;private final HuSession session;private final ImageView play,like,shuffle,repeat,devices;private final HuUi.Cover cover;private final TextView title,artist,time;private boolean roomy=true,full=true;private String away;
  private final Paint progress=new Paint(Paint.ANTI_ALIAS_FLAG),track=new Paint(Paint.ANTI_ALIAS_FLAG);private final boolean accent;private float fraction;private String art;private int tint;
  private final Runnable tick=new Runnable(){public void run(){update();if(isAttachedToWindow() && session.playing())postDelayed(this,1000);}};
  HuMiniPlayer(HuUi ui,boolean accent,Runnable expand){
@@ -75,7 +75,7 @@ final class HuMiniPlayer extends LinearLayout implements HuSession.Listener {
    repeat.setVisibility(VISIBLE);devices.setVisibility(VISIBLE);
   }else{shuffle.setVisibility(GONE);repeat.setVisibility(GONE);devices.setVisibility(GONE);}
   devices.setImageDrawable(HuControls.icon(getContext(),"encore_icon_connect_to_devices_24",away!=null?ui.accent:ui.text));
-  String a=s.art();if(a==null?art!=null:!a.equals(art)){art=a;HuCovers.load(getContext(),a,ui.dp(76),(b,color)->{if(java.util.Objects.equals(a,art)){cover.setImageBitmap(b);if(accent && b!=null)setBackground(new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0xb3000000:0xb3ffffff));else{if(!(getBackground() instanceof GradientDrawable)){tint=0;setBackground(HuUi.round(ui.card,ui.dp(22)));}tint(color);}}});}
+  String a=s.art();if(a==null?art!=null:!a.equals(art)){art=a;HuCovers.load(getContext(),a,ui.dp(76),(b,color)->{if(java.util.Objects.equals(a,art)){cover.show(b);if(accent && b!=null)HuMotion.background(this,new HuUi.Blur(ui,b,ui.dp(22),ui.dark?0xb3000000:0xb3ffffff));else{if(!(getBackground() instanceof GradientDrawable)){tint=0;setBackground(HuUi.round(ui.card,ui.dp(22)));}tint(color);}}});}
   update();removeCallbacks(tick);if(s.playing())postDelayed(tick,1000);
  }
  private void tint(Integer color){
