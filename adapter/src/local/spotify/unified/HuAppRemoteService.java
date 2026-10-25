@@ -25,13 +25,23 @@ public final class HuAppRemoteService extends Service {
  private final List<Client> clients=new ArrayList<>();private Messenger messenger;private HuSession session;private boolean foreground;
  public void onCreate(){super.onCreate();session=HuSession.get(this);messenger=new Messenger(new Handler(Looper.getMainLooper(),this::handshake));}
  /**
-  * The SDK starts the service with startForegroundService: it has to show its notification at
-  * once. Started without a client connecting soon, it stops again.
+  * The SDK starts the service with startForegroundService: every start has to put it in the
+  * foreground at once, even when it is there already. Started without a client connecting soon,
+  * it stops again; a client that leaves often comes straight back (Waze reconnects when it opens),
+  * so the last one's leaving stops it only a little later.
   */
- public int onStartCommand(Intent intent,int flags,int id){notification(null);main.removeCallbacks(idle);main.postDelayed(idle,20000);return START_NOT_STICKY;}
+ public int onStartCommand(Intent intent,int flags,int id){lastStart=id;foreground=false;notification(null);main.removeCallbacks(idle);main.postDelayed(idle,20000);return START_NOT_STICKY;}
  private final Handler main=new Handler(Looper.getMainLooper());
- private final Runnable idle=()->{if(clients.isEmpty())stop();};
- private void stop(){if(foreground){stopForeground(STOP_FOREGROUND_REMOVE);foreground=false;}stopSelf();}
+ private final Runnable idle=()->{if(clients.isEmpty())stop();};private int lastStart;
+ /**
+  * Stops unless a client is connected or a newer start has come meanwhile (Android ends the
+  * process when a service is brought down before a pending foreground start is answered).
+  */
+ private void stop(){
+  if(!clients.isEmpty())return;
+  if(foreground){stopForeground(STOP_FOREGROUND_REMOVE);foreground=false;}
+  if(lastStart!=0)stopSelfResult(lastStart);else stopSelf();
+ }
  public IBinder onBind(Intent intent){return messenger.getBinder();}
  public boolean onUnbind(Intent intent){for(Client c:new ArrayList<>(clients))c.close();return false;}
  public void onDestroy(){main.removeCallbacks(idle);for(Client c:new ArrayList<>(clients))c.close();super.onDestroy();}
@@ -60,7 +70,7 @@ public final class HuAppRemoteService extends Service {
    if(foreground)nm.notify(NOTIFICATION,n);else{startForeground(NOTIFICATION,n);foreground=true;}
   }catch(RuntimeException e){Log.w("SpotifyHU","App Remote: no foreground ("+e.getClass().getSimpleName()+")");}
  }
- private void closed(Client c){clients.remove(c);if(clients.isEmpty())stop();}
+ private void closed(Client c){clients.remove(c);if(clients.isEmpty()){main.removeCallbacks(idle);main.postDelayed(idle,3000);}}
 
  /** One connected app: its subscriptions and what they were last sent. */
  private final class Client implements HuSession.Listener,IBinder.DeathRecipient {
@@ -86,14 +96,21 @@ public final class HuAppRemoteService extends Service {
   private void dispatch(List<Object> m){
    int type=(int)number(m,0);
    switch(type){
-    case HELLO:if(!hello){hello=true;send(welcome(1+new Random().nextInt(1<<30)));session.add(this);}break;
-    case GOODBYE:send(goodbye());close();break;
-    case SUBSCRIBE:{long sub=++subscriptions;String topic=string(m,3);topics.put(sub,topic==null?"":topic);send(subscribed(number(m,1),sub));publish(sub);break;}
+    case HELLO:if(!hello){hello=true;Log.i("SpotifyHU","App Remote: hello from "+pkg+" "+describe(m));send(welcome(1+new Random().nextInt(1<<30)));session.add(this);}break;
+    case GOODBYE:Log.i("SpotifyHU","App Remote: goodbye from "+pkg+" ("+string(m,2)+")");send(goodbye());close();break;
+    case SUBSCRIBE:{long sub=++subscriptions;String topic=string(m,3);Log.i("SpotifyHU","App Remote: subscribe "+topic);topics.put(sub,topic==null?"":topic);send(subscribed(number(m,1),sub));publish(sub);break;}
     case UNSUBSCRIBE:{long sub=number(m,2);topics.remove(sub);sent.remove(sub);send(unsubscribed(number(m,1)));break;}
-    case CALL:call(number(m,1),string(m,3),argument(m));break;
+    case CALL:Log.i("SpotifyHU","App Remote: call "+number(m,1)+" "+string(m,3)+" "+argument(m).keySet()+(String.valueOf(string(m,3)).contains("root_items")?" "+argument(m):""));call(number(m,1),string(m,3),argument(m));break;
     case CANCEL:break;
     default:Log.w("SpotifyHU","App Remote: message type "+type+" ignored");
    }
+  }
+  /** The client's name, category, SDK version and required features from its HELLO (no account data). */
+  @SuppressWarnings("unchecked")
+  private String describe(List<Object> m){
+   Object d=m.size()>2?m.get(2):null;Object info=d instanceof Map?((Map<String,Object>)d).get("info"):null;
+   if(!(info instanceof Map))return "";Map<String,Object> i=(Map<String,Object>)info;
+   return i.get("name")+" / "+i.get("category")+" / "+i.get("version")+" / "+i.get("required_features");
   }
   public void changed(HuSession s){if(!closed)for(Long sub:new ArrayList<>(topics.keySet()))publish(sub);}
   /** The subscription's present value, when it differs from the last one sent. */
@@ -187,6 +204,7 @@ public final class HuAppRemoteService extends Service {
   }
   private void send(String json){
    if(closed)return;
+   if(json.startsWith("[8,"))Log.w("SpotifyHU","App Remote: error sent "+json);
    Bundle b=new Bundle();b.putByteArray(BODY,json.getBytes(StandardCharsets.UTF_8));Message m=Message.obtain(null,DATA);m.setData(b);
    try{out.send(m);}catch(RemoteException e){close();}
   }

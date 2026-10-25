@@ -204,8 +204,19 @@ if DEBUG:E.SubElement(q,'package',{A+'name':'hu.appremote'})
 svc=E.SubElement(app,'service',{A+'name':'local.spotify.unified.HuAppRemoteService',A+'process':':bydui',A+'exported':'true'})
 f=E.SubElement(svc,'intent-filter')
 for action in ('com.spotify.mobile.appprotocol.action.START_APP_PROTOCOL_SERVICE','com.spotify.mobile.appprotocol.action.BIND_PROTOCOL_SERVICE'):E.SubElement(f,'action',{A+'name':action})
+# Waze's Audio SDK (HuWazeLink): Waze's call to register when Spotify is picked in its audio panel.
+# In the backend's process, which Waze's media browser connection keeps alive.
+r=E.SubElement(app,'receiver',{A+'name':'local.spotify.unified.HuWazeLink',A+'exported':'true'})
+f=E.SubElement(r,'intent-filter');E.SubElement(f,'action',{A+'name':'com.waze.sdk.audio.ACTION_INIT'})
 m.write(p,encoding='utf-8',xml_declaration=True)
-print('App Remote: exported service for Spotify SDK clients, allowed-client visibility')
+# Waze's Spotify panel shows its heart and shuffle buttons only for the phone app's names of the
+# session's custom actions. The backend's session commands (tb/b) take those names instead of
+# their own; the same commands both publish the actions and match the ones sent back (bd/c).
+p=out/'smali/tb/b.smali';s=(stable/'smali/tb/b.smali').read_text()
+for old,new in (('shuffle','TURN_SHUFFLE_ON'),('disable-shuffle','TURN_SHUFFLE_OFF'),('like','ADD_TO_COLLECTION'),('unlike','REMOVE_FROM_COLLECTION')):
+ s,count=re.subn(r'(const-string \w+, )"'+re.escape(old)+'"',r'\1"'+new+'"',s);assert count==1,old
+p.write_text(s)
+print('App Remote: exported service for Spotify SDK clients, allowed-client visibility; Waze Audio SDK receiver')
 
 # Home-screen widgets (HuWidgets): two providers in the interface process, their XML in our own
 # resources (placeholders, see prepare.py), a private receiver for their buttons, and the media

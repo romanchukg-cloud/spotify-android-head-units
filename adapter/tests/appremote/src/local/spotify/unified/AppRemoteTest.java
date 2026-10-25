@@ -88,6 +88,7 @@ public final class AppRemoteTest {
   String own="a29d95f7a8eda7508dd97fa0c7c6889a65677050e69e4c0f14123d42d33dc2b1";
   ok("hu.appremote".equals(AppRemoteAccess.client(10200,10050,true,"com.spotify.music",new String[]{"hu.appremote"},pk->new String[]{own})),"test client in debug builds");
   ok(AppRemoteAccess.client(10200,10050,false,"com.spotify.music",new String[]{"hu.appremote"},pk->new String[]{own})==null,"no test client in release builds");
+  ok("com.waze".equals(AppRemoteAccess.client(10100,10050,true,"com.spotify.music",new String[]{"com.waze"},pk->new String[]{own})) && AppRemoteAccess.client(10100,10050,false,"com.spotify.music",new String[]{"com.waze"},pk->new String[]{own})==null,"diagnostic Waze in debug builds only");
   System.out.println("App Remote checks passed: "+passed);
  }
 }

@@ -185,18 +185,22 @@ final class HuSession {
  /** The backend's own texts for signing in: its message and the button label (either may be null). */
  String errorMessage(){CharSequence m=state==null?null:state.getErrorMessage();return m==null?null:m.toString();}
  String signInLabel(){Bundle e=state==null?null:state.getExtras();return e==null?null:e.getString("android.media.extras.ERROR_RESOLUTION_ACTION_LABEL");}
- /** A session custom action by its ids (for example "like" / "unlike"), or null. */
+ /**
+  * A session custom action by its ids, or null. The backend's actions carry the phone app's names,
+  * which Waze knows (patch_headunit.py): ADD_TO_COLLECTION / REMOVE_FROM_COLLECTION and
+  * TURN_SHUFFLE_ON / TURN_SHUFFLE_OFF.
+  */
  PlaybackStateCompat.CustomAction custom(String... ids){
   if(state==null || state.getCustomActions()==null)return null;
   for(PlaybackStateCompat.CustomAction a:state.getCustomActions())for(String id:ids)if(id.equals(a.getAction()))return a;
   return null;
  }
- /** Liked: the session offers "unlike" for a track in Liked Songs. */
- PlaybackStateCompat.CustomAction like(){return custom("like","unlike");}
- boolean liked(){PlaybackStateCompat.CustomAction a=like();return a!=null && "unlike".equals(a.getAction());}
- /** Shuffle is on when the session offers "disable-shuffle". */
- PlaybackStateCompat.CustomAction shuffle(){return custom("shuffle","disable-shuffle");}
- boolean shuffled(){PlaybackStateCompat.CustomAction a=shuffle();return a!=null && "disable-shuffle".equals(a.getAction());}
+ /** Liked: the session offers to remove a track in Liked Songs. */
+ PlaybackStateCompat.CustomAction like(){return custom("ADD_TO_COLLECTION","REMOVE_FROM_COLLECTION");}
+ boolean liked(){PlaybackStateCompat.CustomAction a=like();return a!=null && "REMOVE_FROM_COLLECTION".equals(a.getAction());}
+ /** Shuffle is on when the session offers to turn it off. */
+ PlaybackStateCompat.CustomAction shuffle(){return custom("TURN_SHUFFLE_ON","TURN_SHUFFLE_OFF");}
+ boolean shuffled(){PlaybackStateCompat.CustomAction a=shuffle();return a!=null && "TURN_SHUFFLE_OFF".equals(a.getAction());}
 
  private MediaControllerCompat.TransportControls controls(){return controller==null?null:controller.getTransportControls();}
  void playPause(){MediaControllerCompat.TransportControls t=controls();if(t==null)return;if(playing()){HeadUnitRuntime.explicitPause(app);t.pause();}else t.play();}
