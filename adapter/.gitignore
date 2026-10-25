@@ -30,5 +30,8 @@ incremental/
 stub-classes/
 tests/downloads/out/
 tests/panel/out/
+tests/connect/out/
+tests/appremote/out/
+tests/appremote/client/out/
 hu-res/
 hu-refs.json

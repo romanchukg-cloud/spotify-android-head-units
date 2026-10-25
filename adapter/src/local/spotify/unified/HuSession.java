@@ -205,4 +205,10 @@ final class HuSession {
  void seek(long position){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.seekTo(position);}
  void send(PlaybackStateCompat.CustomAction a){MediaControllerCompat.TransportControls t=controls();if(t!=null && a!=null)t.sendCustomAction(a.getAction(),a.getExtras()==null?new Bundle():a.getExtras());}
  void cycleRepeat(){MediaControllerCompat.TransportControls t=controls();if(t!=null)t.setRepeatMode(repeat==REPEAT_NONE?REPEAT_ALL:repeat==REPEAT_ALL?REPEAT_ONE:REPEAT_NONE);}
+ /** A repeat mode (REPEAT_NONE, REPEAT_ONE, REPEAT_ALL), as the App Remote's set_repeat asks for it. */
+ void setRepeat(int mode){MediaControllerCompat.TransportControls t=controls();if(t!=null && mode>=REPEAT_NONE && mode<=REPEAT_ALL)t.setRepeatMode(mode);}
+ /** Pause (counted as the user's own, as the player's button does) and play, for other apps' controls. */
+ void pause(){MediaControllerCompat.TransportControls t=controls();if(t!=null && playing()){HeadUnitRuntime.explicitPause(app);t.pause();}}
+ void resume(){MediaControllerCompat.TransportControls t=controls();if(t!=null && !playing())t.play();}
+ String album(){return text("android.media.metadata.ALBUM");}
 }

@@ -193,6 +193,20 @@ if DEBUG:E.SubElement(app,'activity',{A+'name':'local.spotify.unified.WidgetTest
 m.write(p,encoding='utf-8',xml_declaration=True)
 print('Panel provider: exported service, allowed-host visibility'+(', debug test host' if DEBUG else ''))
 
+# App Remote (HuAppRemoteService): the Spotify app's own service for apps on the Spotify Android
+# SDK, such as Waze's audio player; the Automotive backend has none. Exported without a
+# permission: every client's sending uid is checked against the allowed clients in code
+# (AppRemoteAccess), whose packages are declared visible.
+p=out/'AndroidManifest.xml';m=E.parse(p);root=m.getroot();app=root.find('application')
+q=E.SubElement(root,'queries');E.SubElement(q,'package',{A+'name':'com.waze'})
+# Debug builds only: the test client on Spotify's own SDK (tests/appremote/client).
+if DEBUG:E.SubElement(q,'package',{A+'name':'hu.appremote'})
+svc=E.SubElement(app,'service',{A+'name':'local.spotify.unified.HuAppRemoteService',A+'process':':bydui',A+'exported':'true'})
+f=E.SubElement(svc,'intent-filter')
+for action in ('com.spotify.mobile.appprotocol.action.START_APP_PROTOCOL_SERVICE','com.spotify.mobile.appprotocol.action.BIND_PROTOCOL_SERVICE'):E.SubElement(f,'action',{A+'name':action})
+m.write(p,encoding='utf-8',xml_declaration=True)
+print('App Remote: exported service for Spotify SDK clients, allowed-client visibility')
+
 # Home-screen widgets (HuWidgets): two providers in the interface process, their XML in our own
 # resources (placeholders, see prepare.py), a private receiver for their buttons, and the media
 # session's metadata, which the backend's process passes on to them.

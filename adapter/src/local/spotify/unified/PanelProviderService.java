@@ -50,7 +50,7 @@ public final class PanelProviderService extends Service {
   return PanelAccess.host(uid,android.os.Process.myUid(),HeadUnitBuild.DEBUG,getPackageName(),packages,p->signers(pm,p));
  }
  /** SHA-256 of the package's current signing certificates; null when it is not visible. */
- private static String[] signers(PackageManager pm,String pkg){
+ static String[] signers(PackageManager pm,String pkg){
   try{
    SigningInfo info=pm.getPackageInfo(pkg,PackageManager.GET_SIGNING_CERTIFICATES).signingInfo;if(info==null)return null;
    Signature[] all;
