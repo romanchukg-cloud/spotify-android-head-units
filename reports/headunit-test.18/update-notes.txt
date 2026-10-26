@@ -1,0 +1,1 @@
+Spotify in Waze's audio panel: what is playing and its controls, Home, Recents, Browse and Library, the heart, and shuffle where Spotify allows it. Experimental prerelease.

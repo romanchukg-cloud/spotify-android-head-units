@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 18,
+  "version": "test.18",
+  "version_code": 95495,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.18/Spotify-5.5.0-HeadUnit-test.18.apk",
+  "sha256": "114962299a487d7459481567a196f969fe3d76a67e720dca483fce344863467d",
+  "size": 48419954,
+  "notes": "Spotify in Waze's audio panel: what is playing and its controls, Home, Recents, Browse and Library, the heart, and shuffle where Spotify allows it. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.18",
+  "min_sdk": 28
+}

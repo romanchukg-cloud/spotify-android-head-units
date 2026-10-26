@@ -1,0 +1,17 @@
+{
+  "file": "Spotify-5.5.0-HeadUnit-test.18.apk",
+  "sha256": "114962299a487d7459481567a196f969fe3d76a67e720dca483fce344863467d",
+  "size": 48419954,
+  "package": "com.spotify.music",
+  "versionCode": 95495,
+  "versionName": "5.5.0.16251",
+  "minSdk": 28,
+  "targetSdk": 33,
+  "certificateSha256": "a29d95f7a8eda7508dd97fa0c7c6889a65677050e69e4c0f14123d42d33dc2b1",
+  "published": false,
+  "installedOnCar": false,
+  "releaseUrl": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.18",
+  "sourceCommit": "447b97f4771322f6300049c3e993318fda4f6cd1",
+  "base": "Spotify-5.5.0-HeadUnit-test.17.apk",
+  "build": "adapter/build.sh (full reference build)"
+}
