@@ -447,4 +447,4 @@ Checked on the Android 12 emulator (network off): the SDK client's 14 checks pas
 
 The rail (the bar on portrait screens) lay on the window's background, so it did not read as a panel. It is now a card like the content and the mini-player: the same colour and 22 dp corners, with the same 6 dp gap to the content (on the side of the stage with left- or right-hand drive and in Arabic). The pill uses the theme's control colour and 16 dp corners, concentric with the card at its 6 dp padding.
 
-Checked on an Android 13 emulator by day, by night and in portrait. Not yet checked in a car.
+Checked on an Android 13 emulator by day, by night, in portrait and in Arabic. Not yet checked in a car or with right-hand drive.

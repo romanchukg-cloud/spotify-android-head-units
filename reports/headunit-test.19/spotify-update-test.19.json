@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 19,
+  "version": "test.19",
+  "version_code": 95496,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.19/Spotify-5.5.0-HeadUnit-test.19.apk",
+  "sha256": "5f3930efb748097a8792834c09e5b3bb2e293c33775c0275cd115ad1c94c8860",
+  "size": 48419954,
+  "notes": "The navigation now sits on a card of its own, like the content and the mini-player. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.19",
+  "min_sdk": 28
+}
