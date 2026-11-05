@@ -442,3 +442,9 @@ Apps built on the Spotify Android SDK connect through Spotify's App Remote: the 
 Tests: `tests/appremote/run.sh` runs 66 plain-JVM checks of the frames, JSON and allowed clients. `tests/appremote/client` is a test client built on Spotify's own SDK (App Remote 0.8.0, Apache 2.0, not kept in this repository: `SPOTIFY_APP_REMOTE_AAR` and `GSON_JAR` point at it), with a `DebugSpotifyLocator` in place of the SDK's check for Spotify's own certificate. Against our debug build it connects, reads the player state (event and call), status, capabilities, the root and a page of children, a cover, a library state, gets a clean error for an unsupported call and disconnects; it plays nothing and changes no library. A client on the SDK Waze embeds (0.6.1) also reads a player state with a track, the root, children and the track's cover. `../tools/apk_audit.py` has two `App Remote /` checks.
 
 Checked on the Android 12 emulator (network off): the SDK client's 14 checks pass; started as a foreground service from adb, the service shows its notification and stops itself 20 s later without a crash. In the car Waze connected and subscribed (before the Audio SDK route existed), which is how the problems above were found.
+
+## After test.18: the navigation on a card (owner's request)
+
+The rail (the bar on portrait screens) lay on the window's background, so it did not read as a panel. It is now a card like the content and the mini-player: the same colour and 22 dp corners, with the same 6 dp gap to the content (on the side of the stage with left- or right-hand drive and in Arabic). The pill uses the theme's control colour and 16 dp corners, concentric with the card at its 6 dp padding.
+
+Checked on an Android 13 emulator by day, by night and in portrait. Not yet checked in a car.

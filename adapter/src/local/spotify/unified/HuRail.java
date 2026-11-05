@@ -17,9 +17,9 @@ final class HuRail extends LinearLayout {
  private View chosen;private float moved=1;private android.animation.ValueAnimator slide;
  HuRail(HuUi ui,boolean bar,Pick pick,Runnable settings){
   super(ui.activity);this.ui=ui;setOrientation(bar?HORIZONTAL:VERTICAL);setGravity(bar?Gravity.CENTER_VERTICAL:Gravity.CENTER_HORIZONTAL);
-  int pad=ui.dp(bar?6:10);setPadding(pad,pad,pad,pad);pill.setColor(ui.dark?0xff2a2a2a:0xffebebeb);
-  // The rail lies on the window's background (black by night, light grey by day) next to the
-  // content cards, without a card of its own or a gap.
+  // A card like the content and the mini-player; the pill's corners follow the card's (22 - 6 dp).
+  setBackground(HuUi.round(ui.card,ui.dp(22)));
+  int pad=ui.dp(6);setPadding(pad,pad,pad,pad);pill.setColor(ui.control);
   for(int i=0;i<=PAGES.length;i++){
    // The pages, then settings: an item like the others, with its label, that opens a screen.
    String key=i<PAGES.length?PAGES[i]:"settings_short";
@@ -28,8 +28,8 @@ final class HuRail extends LinearLayout {
    TextView label=ui.label(HuText.get(key),15,ui.secondary,false);label.setGravity(Gravity.CENTER);label.setPadding(0,ui.dp(6),0,0);label.setSingleLine(true);label.setEllipsize(android.text.TextUtils.TruncateAt.END);item.addView(label);
    item.setContentDescription(HuText.get(i<PAGES.length?key:"settings"));
    addView(item,bar?new LayoutParams(0,-1,1):new LayoutParams(-1,0,1));
-   if(i==PAGES.length){item.setBackground(ui.pressable(0x00000000,ui.dp(18)));icon.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_gears_24",ui.secondary));item.setOnClickListener(v->settings.run());break;}
-   item.setBackground(ui.pressable(0x00000000,ui.dp(18)));item.setOnClickListener(v->pick.page(key));items.put(key,item);icons.put(key,icon);labels.put(key,label);
+   if(i==PAGES.length){item.setBackground(ui.pressable(0x00000000,ui.dp(16)));icon.setImageDrawable(HuControls.icon(ui.activity,"encore_icon_gears_24",ui.secondary));item.setOnClickListener(v->settings.run());break;}
+   item.setBackground(ui.pressable(0x00000000,ui.dp(16)));item.setOnClickListener(v->pick.page(key));items.put(key,item);icons.put(key,icon);labels.put(key,label);
   }
  }
  void select(String key){
@@ -57,7 +57,7 @@ final class HuRail extends LinearLayout {
   if(chosen!=null && chosen.getWidth()>0){
    float l=chosen.getLeft(),t=chosen.getTop(),r=chosen.getRight(),b=chosen.getBottom(),m=moved;
    if(m<1){l=from.left+(l-from.left)*m;t=from.top+(t-from.top)*m;r=from.right+(r-from.right)*m;b=from.bottom+(b-from.bottom)*m;}
-   drawn.set(l,t,r,b);float radius=ui.dp(18);c.drawRoundRect(drawn,radius,radius,pill);
+   drawn.set(l,t,r,b);float radius=ui.dp(16);c.drawRoundRect(drawn,radius,radius,pill);
   }
   super.dispatchDraw(c);
  }
