@@ -8,9 +8,10 @@
   "minSdk": 28,
   "targetSdk": 33,
   "certificateSha256": "a29d95f7a8eda7508dd97fa0c7c6889a65677050e69e4c0f14123d42d33dc2b1",
-  "published": false,
+  "published": true,
   "installedOnCar": false,
   "releaseUrl": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.21-alongside",
   "sourceCommit": "9250030a04c623af8ba0f5295fefccdddba3f8bf",
-  "build": "HU_EDITION=alongside adapter/build.sh (full reference build)"
+  "build": "HU_EDITION=alongside adapter/build.sh (full reference build)",
+  "publishedAt": "2026-11-06T17:30:15Z"
 }
