@@ -78,12 +78,13 @@ def patch_package(raw,delta):
  lib=struct.pack('<HHII',0x203,12,272,1)+struct.pack('<I',126)+name+b'\0'*(256-len(name))
  b+=lib;struct.pack_into('<I',b,4,len(b))
  return bytes(b)
-def merge(backend,ui,transform):
- """backend: the Spotify resources.arsc; ui: our compiled one (package 0x7f); transform: for its strings (file paths)."""
+def merge(backend,ui,transform,rename={}):
+ """backend: the Spotify resources.arsc; ui: our compiled one (package 0x7f); transform: for its strings (file paths); rename: backend strings to replace."""
  bc=list(chunks(backend,U16(backend,2)));uc=list(chunks(ui,U16(ui,2)))
  bs=next(backend[p:p+n] for p,t,h,n in bc if t==1);us=next(ui[p:p+n] for p,t,h,n in uc if t==1)
  bss,bso,bsd=strings(bs);uss,uso,usd=strings(us);assert not uso and not usd
- merged=pool(bss+[transform(s) for s in uss],bso,bsd,utf8(bs))
+ assert all(bss.count(s)==1 for s in rename),rename
+ merged=pool([rename.get(s,s) for s in bss]+[transform(s) for s in uss],bso,bsd,utf8(bs))
  body=merged+b''.join(add_library(backend[p:p+n]) if t==0x200 else backend[p:p+n] for p,t,h,n in bc if t!=1)+b''.join(patch_package(ui[p:p+n],len(bss)) for p,t,h,n in uc if t==0x200)
  return struct.pack('<HHII',2,12,12+len(body),U32(backend,8)+U32(ui,8))+body
 def xml(raw,transform,mapper=remap):
@@ -101,3 +102,10 @@ def xml(raw,transform,mapper=remap):
   elif t==0x104:patch_value(part,20,mapper=mapper)
   body+=part
  return struct.pack('<HHI',3,8,8+len(body))+body
+def rename_package(arsc,old,new):
+ """The edition's resource table: getIdentifier looks resources up by the app's package name."""
+ b=bytearray(arsc);field=lambda s:s.encode('utf-16-le').ljust(256,b'\0');done=0
+ for p,t,h,n in chunks(b,U16(b,2)):
+  if t==0x200 and b[p+12:p+268]==field(old):b[p+12:p+268]=field(new);done+=1
+ assert done==1,done
+ return bytes(b)

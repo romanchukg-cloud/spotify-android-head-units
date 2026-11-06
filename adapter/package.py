@@ -1,7 +1,7 @@
 from pathlib import Path
 import os,zipfile,json,subprocess,hashlib
-from build_config import BUILD
-from merge_resources import merge,xml
+from build_config import BUILD,EDITION,PACKAGE,TABLE_STRINGS
+from merge_resources import merge,rename_package,xml
 b=Path(__file__).resolve().parent;p=b.parent/'spotify55-adaptation';bt=Path(os.environ.get('ANDROID_SDK_ROOT',os.environ.get('ANDROID_HOME',str(Path.home()/'Library/Android/sdk'))))/'build-tools'/os.environ.get('BUILD_TOOLS_VERSION','35.0.0')
 # Our interface's typeface (HuUi.font) and its licence.
 FONTS={'assets/hu_fonts/Figtree-wght.ttf':b/'fonts/figtree/Figtree-wght.ttf','assets/hu_fonts/OFL.txt':b/'fonts/figtree/OFL.txt'}
@@ -21,7 +21,9 @@ with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as sdk,zipfile.ZipFile(b
   data=sdk.read(n)
   if n=='classes.dex':data=built.read(n)
   if n=='AndroidManifest.xml':data=xml(built.read(n),lambda s:s,lambda v:refs.get(v,v))
-  if n=='resources.arsc':data=merge(data,HU.read('resources.arsc'),hu_path)
+  if n=='resources.arsc':
+   data=merge(data,HU.read('resources.arsc'),hu_path,TABLE_STRINGS)
+   if EDITION:data=rename_package(data,'com.spotify.music',PACKAGE)
   out.writestr(info,data)
  for info in HU.infolist():
   n=info.filename

@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.*;
 import android.util.Log;
 public final class TaskGuardService extends Service {
-  private static final Uri CONTROL=Uri.parse("content://com.spotify.music.local.closecontrol");
+  private static final Uri CONTROL=Uri.parse("content://"+local.spotify.unified.HeadUnitBuild.PACKAGE+".local.closecontrol");
   private static final IBinder UI_LEASE=new Binder();
   public static void opened(Context c) {
     try {

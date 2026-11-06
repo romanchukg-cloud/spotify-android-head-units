@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.*;
 /** Independent lightweight process survives restarting backend and UI. */
 public final class ProfilesActivity extends Activity {
- private static final Uri ENDPOINT=Uri.parse("content://com.spotify.music.local.profiles");
+ private static final Uri ENDPOINT=Uri.parse("content://"+HeadUnitBuild.PACKAGE+".local.profiles");
  private final ExecutorService worker=Executors.newSingleThreadExecutor();
  private final Handler main=new Handler(Looper.getMainLooper());
  private LinearLayout root,rows;private TextView status;private Button retry;private boolean busy,destroyed;private int tries;

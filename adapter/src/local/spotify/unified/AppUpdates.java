@@ -52,6 +52,7 @@ public final class AppUpdates {
  static void stopJob(){jobStopped=true;if(automaticJob)cancel=true;}
  /** One persisted job: the next daily check or the next automatic download attempt, whichever is earlier. */
  static void schedule(){
+  if(HeadUnitBuild.ALONGSIDE)return; // No update feed for this edition yet: it is installed by hand.
   try{
    JobScheduler jobs=app.getSystemService(JobScheduler.class);long now=System.currentTimeMillis(),next=Long.MAX_VALUE;
    if(prefs.getBoolean("automatic_check",true)){long last=prefs.getLong("checked",0);next=last>now?now:last+DAY;}

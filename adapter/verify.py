@@ -1,7 +1,7 @@
 from pathlib import Path
 import zipfile,json,struct
 from merge_resources import chunks,strings,U16,U32
-from build_config import BUILD
+from build_config import BUILD,EDITION,PACKAGE,TABLE_STRINGS
 b=Path(__file__).resolve().parent;p=b.parent/'spotify55-adaptation'
 CHANGED=('classes.dex','classes2.dex','AndroidManifest.xml','resources.arsc','stamp-cert-sha256')
 with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as old,zipfile.ZipFile(b/BUILD['apk_name']) as new:
@@ -20,8 +20,15 @@ with zipfile.ZipFile(p/'SpotifySDK-5.5.0-BYD-test.apk') as old,zipfile.ZipFile(b
  assert len(lib)==1 and U32(lib[0],8)==1 and U32(lib[0],12)==0x7e
  restored=bytearray(np[:U16(np,2)]+b''.join(np[q:q+n] for q,t,h,n in chunks(np,U16(np,2)) if t!=0x203))
  struct.pack_into('<I',restored,4,len(restored))
+ # The edition renames only the package and its account type (merge_resources.rename_package).
+ if EDITION:
+  name=lambda s:s.encode('utf-16-le').ljust(256,b'\0')
+  assert restored[12:268]==name(PACKAGE);restored[12:268]=name('com.spotify.music')
  assert op==restored,'Original backend resource chunks changed'
  os_,oo,od=strings(next(ot[q:q+n] for q,t,h,n in oc if t==1));ns,no,nd=strings(next(nt[q:q+n] for q,t,h,n in nc if t==1))
+ if EDITION:
+  for was,now in TABLE_STRINGS.items():
+   assert ns.count(now)==1 and was not in ns;ns[ns.index(now)]=was
  assert ns[:len(os_)]==os_ and oo==no and od==nd
  assert U32(nt,8)==2 and any(t==0x200 and U32(nt,q+8)==0x7e for q,t,h,n in nc)
  # Added: our DEX, the interface typeface, the widgets' resources.

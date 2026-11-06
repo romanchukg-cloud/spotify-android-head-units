@@ -449,6 +449,18 @@ The rail (the bar on portrait screens) lay on the window's background, so it did
 
 Checked on an Android 13 emulator by day, by night, in portrait and in Arabic. Not yet checked in a car or with right-hand drive.
 
+## The edition next to a built-in Spotify
+
+Cars with Spotify as a system app, such as European BYDs, refuse the regular build: Android does not let another signature replace a system app with the same package. `HU_EDITION=alongside ./build.sh` builds `Spotify-5.5.0-HeadUnit-test.N-alongside.apk`, which installs next to it.
+
+- **Manifest** (`prepare.py`): the package `io.github.romanchukgcloud.spotifyhu`, its own provider authorities and custom permissions, the launcher name "Spotify HU".
+- **Resource table** (`package.py`, `merge_resources.py`): the same package name, because `getIdentifier` looks resources up by it. Two strings change with `TABLE_STRINGS` in `build_config.py`: the account type, which belongs to the first app that declares it, and the image provider's authority, from which the backend builds its cover URIs.
+- **Code:** `HeadUnitBuild.PACKAGE` for our provider URIs; `HeadUnitBuild.ALONGSIDE` turns the in-app updates off and hides their tile, because the shared server accepts only `com.spotify.music` for this project.
+- **Not available:** the Waze panel, because Waze recognises only the package `com.spotify.music`. BYD's media card lists players by package too, so it may not show this edition.
+- **Audit and checks:** `verify.py` allows only these table changes, and `../tools/apk_audit.py --package` checks that no authority or permission still names `com.spotify.music`.
+
+Checked on an Android 13 emulator next to the original Spotify from the Play Store: see `reports/headunit-test.21-alongside.md`.
+
 ## After test.20: the sign-in record on the login screen in use
 
 test.20's record did not work on the screen people see. `QrCodeLoginActivityV2` and `PinLoginActivityV2` word their errors themselves in `yc.p.f`, using `error_unknown`, whose text is the same as `login_error_unknown`. They never ask `n5.r.d`, which only the older `QrCodeLoginActivity` uses. So "Unknown error." still left nothing in Settings or in reports.

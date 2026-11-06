@@ -21,4 +21,5 @@ python3 package.py
 python3 verify.py
 APK_NAME=$(python3 -c 'from build_config import BUILD;print(BUILD["apk_name"])')
 AUDIT_FLAGS=();[ "${HU_DEBUG:-}" = 1 ] && AUDIT_FLAGS=(--debug-build)
-python3 ../tools/apk_audit.py "$APK_NAME" --min-api 28 "${AUDIT_FLAGS[@]}"
+PACKAGE=$(python3 -c 'from build_config import PACKAGE;print(PACKAGE)')
+python3 ../tools/apk_audit.py "$APK_NAME" --min-api 28 --package "$PACKAGE" "${AUDIT_FLAGS[@]}"

@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * and the subscription follows it.
  */
 public final class HeadUnitConnect {
- static final Uri CHANGED=Uri.parse("content://com.spotify.music.local.headunit/connect");
+ static final Uri CHANGED=Uri.parse("content://"+HeadUnitBuild.PACKAGE+".local.headunit/connect");
  private static final String SERVICE="sp://esperanto/spotify.connect.esperanto.proto.ConnectService/";
  private static volatile Object callback;
  private static Object router,lifetime;private static Context app;

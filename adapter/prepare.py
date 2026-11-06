@@ -32,3 +32,12 @@ m.write(out/'AndroidManifest.xml',encoding='utf-8',xml_declaration=True)
 y=(out/'apktool.yml').read_text();y=re.sub(r'targetSdkVersion: \d+','targetSdkVersion: 33',y);y=re.sub(r'versionCode: \d+','versionCode: '+str(BUILD['version_code']),y);(out/'apktool.yml').write_text(y)
 
 exec((base/"patch_headunit.py").read_text(),{"__file__":str(base/"patch_headunit.py")})
+
+# The edition next to a built-in Spotify: Android refuses a second app with the same package,
+# provider authorities or custom permissions. Its launcher name tells the two apps apart.
+from build_config import EDITION,PACKAGE
+if EDITION:
+ p=out/'AndroidManifest.xml';t=p.read_text()
+ t,n=re.subn(r'"com\.spotify\.music(\.[^"]*)?"',lambda v:'"'+PACKAGE+(v[1] or '')+'"',t);assert n>=12,n
+ t,n=re.subn(r'(<application [^>]*android:label=")@string/app_name"',r'\1Spotify HU"',t);assert n==1
+ p.write_text(t)

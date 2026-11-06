@@ -5,7 +5,7 @@ This checks structure and guarded call sites, not runtime SDK/API compatibility 
 import argparse, hashlib, os, re, shutil, subprocess, sys, tempfile, zipfile
 from pathlib import Path
 import xml.etree.ElementTree as ET
-p=argparse.ArgumentParser();p.add_argument('apk',type=Path);p.add_argument('--min-api',type=int,default=28);p.add_argument('--decoded',type=Path);p.add_argument('--debug-build',action='store_true',help='the HU_DEBUG=1 variant with the panel test host');args=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('apk',type=Path);p.add_argument('--min-api',type=int,default=28);p.add_argument('--decoded',type=Path);p.add_argument('--debug-build',action='store_true',help='the HU_DEBUG=1 variant with the panel test host');p.add_argument('--package',default='com.spotify.music',help='the app package; another one means the edition next to a built-in Spotify');args=p.parse_args()
 checks=[]
 def check(name,ok,detail=''):
  checks.append(bool(ok));print(('PASS' if ok else 'FAIL')+' '+name+(' — '+detail if detail else ''))
@@ -22,7 +22,7 @@ sdk=Path(os.environ.get('ANDROID_SDK_ROOT',os.environ.get('ANDROID_HOME',str(Pat
 badging=run([str(bt/'aapt2'),'dump','badging',str(apk)]);package=re.search(r"package: name='([^']+)'",badging)
 # apktool moves SDK numbers into apktool.yml.
 yaml=(root/'apktool.yml').read_text();minimum=re.search(r'minSdkVersion: [\'\"]?(\d+)',yaml)
-check('Package / minimum API',package and package[1]=='com.spotify.music' and minimum and int(minimum[1])==args.min_api,f'minSdk={minimum[1] if minimum else "unknown"}')
+check('Package / minimum API',package and package[1]==args.package and minimum and int(minimum[1])==args.min_api,f'minSdk={minimum[1] if minimum else "unknown"}')
 feature=next((n for n in m.findall('uses-feature') if n.get(A+'name')=='android.hardware.type.automotive'),None)
 check('Optional automotive feature',feature is not None and feature.get(A+'required')=='false')
 check('Legacy Back dispatch',app.get(A+'enableOnBackInvokedCallback')=='false')
@@ -88,13 +88,18 @@ check('BYD legacy UI trust gated',all('HeadUnitProfile;->isByd()Z' in x for x in
 blocked=[k for k in ('Lbd/j;','Landroid/support/v4/media/session/MediaSessionCompat$Callback$MediaSessionCallbackApi21;') if 'PlaybackGate;->blocked()Z' in files.get(k,'')]
 check('Explicit transport commands unblocked',not blocked and 'PlaybackGate;->userPlay()V' in files.get('Lbd/j;',''))
 profiles=component('provider','local.spotify.unified.ProfilesProvider');coordinator=component('activity','local.spotify.unified.ProfilesActivity')
-check('Private accounts / isolated coordinator',profiles is not None and profiles.get(A+'exported')=='false' and coordinator is not None and coordinator.get(A+'exported')=='false' and coordinator.get(A+'process')==':profiles' and coordinator.get(A+'taskAffinity')=='com.spotify.music.profiles' and app.get(A+'allowBackup')=='false')
+check('Private accounts / isolated coordinator',profiles is not None and profiles.get(A+'exported')=='false' and coordinator is not None and coordinator.get(A+'exported')=='false' and coordinator.get(A+'process')==':profiles' and coordinator.get(A+'taskAffinity')==args.package+'.profiles' and app.get(A+'allowBackup')=='false')
 check('Account storage / settings entry','DriverProfiles;->bindCandidate(' in files.get('Lca/c;','') and 'Llocal/spotify/unified/ProfilesActivity;' in files.get('Llocal/spotify/unified/HeadUnitSettingsActivity;','') and 'Landroid/security/keystore/KeyGenParameterSpec$Builder;' in files.get('Llocal/spotify/unified/ProfileVault;',''))
 android_id=[k for k,v in files.items() if not k.startswith('Llocal/') and '"android_id"' in v]
 check('Sign-in / pinned device ID',bool(android_id) and all('HeadUnitIdentity;->secureString(' in files[k] and 'Settings$Secure;->getString(' not in files[k] for k in android_id) and 'headunit_identity_v1' in files.get('Llocal/spotify/unified/HeadUnitIdentity;',''),f'{len(android_id)} SDK call sites')
 accounts='Llocal/spotify/unified/HeadUnitAccounts;->'
 check('Sign-in / reasons and stale account removals',all(accounts+h in files.get(k,'') for k,h in (('Lzb/a;','loggedIn('),('Lzb/a;','loggedOut('),('Lzb/a;','deprecated()V'),('Lzb/a;','androidAccount('),('Lac/j;','logoutRequested('),('Lvr/e;','logoutRequested('),('Lza/d;','tokenError('),('Lis/e;','serverRejected()V'),('Lcom/spotify/automotive/accountmanagerv2/AccountRemovedBroadcastReceiver;','ignoreRemoval('))))
 check('Sign-in / failed sign-ins recorded, SDK fields present',accounts+'loginFailed(' in files.get('Ln5/r;','') and accounts+'loginFailed(' in files.get('Lyc/p;','') and sum('Lur/d;' in t and 'instance-of' in t and accounts+'loginFailed(' not in t and k not in ('Lvr/e;','Lac/j;','Lur/d;') and bool(re.search(r'instance-of \S+ \S+ Lur/d;',t)) for k,t in files.items())==0 and accounts+'loginStatus(' in files.get('Lvr/e;','') and 'final j:I' in files.get('Lls/a;','') and 'final k:Ljava/util/Map;' in files.get('Lls/a;','') and 'final a:Lls/a;' in files.get('Lur/b;',''))
+if args.package!='com.spotify.music':
+ # Next to a built-in Spotify: anything shared with it is refused at install or breaks the sign-in.
+ values=re.findall(r'(?:authorities|permission|taskAffinity)="([^"]+)"|<(?:permission|uses-permission) [^>]*android:name="([^"]+)"',(root/'AndroidManifest.xml').read_text())
+ table=run([str(bt/'aapt2'),'dump','resources',str(apk)])
+ check('Edition / own authorities, permissions and account type',not any('com.spotify.music' in v for pair in values for v in pair) and re.search(r'string/account_type[^\n]*\n\s*\(\)\s*"spotifyhu\.a"',table) and re.search(r'string/media_provider_authority[^\n]*\n\s*\(\)\s*"'+re.escape(args.package)+r'\.mediaapi"',table))
 check('Sign-in / one recovery per boot',all(accounts+'beforeStartupRead(' in files.get(k,'') for k in ('Lac/j;','Lvr/e;')) and all(v in files.get('Llocal/spotify/unified/HeadUnitAccounts;','') for v in ('recovery_boot','DriverProfiles;->restoreSaved(','expected_empty')))
 check('Account transition transport guards',all('PlaybackGate;->accountTransition()Z' in files.get(k,'') for k in ('Lbd/j;','Landroid/support/v4/media/session/MediaSessionCompat$Callback$MediaSessionCallbackApi21;','Llocal/spotify/unified/HeadUnitPlaybackService;')))
 runtime=files.get('Llocal/spotify/unified/HeadUnitRuntime;','')
