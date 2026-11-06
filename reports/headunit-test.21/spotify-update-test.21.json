@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 21,
+  "version": "test.21",
+  "version_code": 95498,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.21/Spotify-5.5.0-HeadUnit-test.21.apk",
+  "sha256": "53fd303ec658625f8f6651de4ca19a679424632515a5fadd1fbb95f80ca0a1a7",
+  "size": 48424050,
+  "notes": "Fixes the record of why a sign-in failed: test.20 kept it only on an older login screen. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.21",
+  "min_sdk": 28
+}

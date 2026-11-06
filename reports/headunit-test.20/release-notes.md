@@ -1,3 +1,5 @@
+**Correction:** this record worked only on an older login screen, not on the one people see. test.21 fixes that.
+
 Test.20 helps find out why a sign-in fails.
 
 - **Settings:** after a failed sign-in, the "Last sign-in event" line at the bottom of Settings says what kind of failure it was, with the status from Spotify's server, for example "(403 some_code)". This stays on the head unit, and a later successful sign-in clears it.

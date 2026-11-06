@@ -1,5 +1,7 @@
 # HeadUnit test.20 — Why a sign-in failed
 
+**Correction (test.21):** this record worked only on the older `QrCodeLoginActivity`. The login screen in use, `QrCodeLoginActivityV2`, recorded nothing until test.21.
+
 Signed test.20 prerelease. [Release](https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.20).
 
 ## Build identity and update compatibility
