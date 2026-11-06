@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 22,
+  "version": "test.22",
+  "version_code": 95499,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.22/Spotify-5.5.0-HeadUnit-test.22.apk",
+  "sha256": "e478389a92c73bb4d86f8ab3f2edc1344a66b1b5e314a1973779508586e8ee40",
+  "size": 48424050,
+  "notes": "Says on the login screen when Spotify asks for Premium, instead of \"Unknown error.\". Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.22",
+  "min_sdk": 28
+}

@@ -1,0 +1,1 @@
+Says on the login screen when Spotify asks for Premium, instead of "Unknown error.". Experimental prerelease.
