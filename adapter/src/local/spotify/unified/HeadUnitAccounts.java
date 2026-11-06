@@ -13,6 +13,7 @@ public final class HeadUnitAccounts {
  private static volatile Context context;
  private static volatile String tokenError;
  private static volatile boolean serverRejected,removalPending,removalEcho;
+ private static volatile int lastStatus=-1;
  private static boolean recoveryTried;
  private static final ScheduledExecutorService worker=Executors.newSingleThreadScheduledExecutor();
  public static void init(Context c){if(context==null)context=c.getApplicationContext();}
@@ -24,7 +25,10 @@ public final class HeadUnitAccounts {
  public static void loggedIn(String user){
   Context c=context;if(c==null || user==null || user.isEmpty())return;
   tokenError=null;serverRejected=false;removalPending=false;removalEcho=false;
-  prefs(c).edit().putString("active_user",user).remove("expected_empty").commit();
+  SharedPreferences.Editor signedIn=prefs(c).edit().putString("active_user",user).remove("expected_empty");
+  // A failed attempt is over once a sign-in has worked.
+  if(String.valueOf(prefs(c).getString("last_reason",null)).startsWith("login_"))signedIn.remove("last_reason").remove("last_detail").remove("last_time");
+  signedIn.commit();
   // Keep the saved copy current so a later storage loss can be repaired.
   worker.schedule(()->DriverProfiles.syncActive(c),20,TimeUnit.SECONDS);
  }
@@ -53,6 +57,40 @@ public final class HeadUnitAccounts {
   if(removal)return "account_removed";
   if(server)return "INVALID_CREDENTIALS".equals(code)?"invalid_credentials":"NOT_ALLOWED".equals(code)?"not_allowed":"UNSUPPORTED_LOGIN_PROTOCOL".equals(code)?"unsupported_protocol":"forced_logout";
   return "USER_INITIATED".equals(reason)?"user_logout":reason.toLowerCase(Locale.ROOT);
+ }
+
+ /** vr.e: the status of a sign-in response, which the SDK drops when it does not succeed. */
+ public static void loginStatus(int status){lastStatus=status;}
+ /** n5.r.d: a sign-in has failed and the login screen asks for its message. Never in the sign-in's way. */
+ public static void loginFailed(Object result){
+  Context c=context;if(c==null || result==null)return;
+  try{
+   String[] facts=loginFacts(result,lastStatus);lastStatus=-1;int status=Integer.parseInt(facts[1]);
+   String reason=loginReason(facts[0],status,facts[2]);
+   // The login screen's own text already explains the known errors; they are no technical failure.
+   if(reason!=null)record(c,reason,!"login_known".equals(reason),loginDetail(reason,status,facts[2]));
+  }catch(ReflectiveOperationException | RuntimeException e){Log.w("SpotifyHU","Sign-in error unreadable");}
+ }
+ /** The result's class, status and server message: ur.b holds a server error (ls.a: status j, fields k); the others only the response's status. */
+ static String[] loginFacts(Object result,int response)throws ReflectiveOperationException{
+  String type=result.getClass().getName();
+  if(!"ur.b".equals(type))return new String[]{type,String.valueOf(response),null};
+  Object error=result.getClass().getField("a").get(result);
+  Object message=((java.util.Map<?,?>)error.getClass().getField("k").get(error)).get("message");
+  return new String[]{type,String.valueOf(error.getClass().getField("j").getInt(error)),message==null?null:String.valueOf(message)};
+ }
+ /** Which failure it was; null for results that are none (ur.c signed in) or recorded elsewhere (ur.e, deprecated). */
+ static String loginReason(String type,int status,String message){
+  switch(type){
+   case "ur.b":return status==429?"rate_limited".equals(message)?"login_known":"login_unknown_server":status==401 && java.util.Arrays.asList("auth_bad_credentials","login_region_mismatch","auth_network","ap_network_disabled").contains(message)?"login_known":"login_unknown_server";
+   case "ur.d":return status>=200 && status<300?"login_not_saved":"login_failed";
+   default:return null;
+  }
+ }
+ /** For the settings screen only: the status and a code-like server message, never free text. */
+ static String loginDetail(String reason,int status,String message){
+  if("login_not_saved".equals(reason) || status<=0)return null;
+  return message!=null && message.matches("[A-Za-z0-9_.-]{1,40}")?status+" "+message:String.valueOf(status);
  }
 
  /** AccountRemovedBroadcastReceiver: true skips Spotify's sign-out for this broadcast. */
@@ -106,24 +144,25 @@ public final class HeadUnitAccounts {
   // User actions stay local; automatic reports cover measured technical failures only.
   record(c,reason,!"user_logout".equals(reason) && !"account_removed".equals(reason));
  }
- private static void record(Context c,String reason,boolean failure){
-  prefs(c).edit().putString("last_reason",reason).putLong("last_time",System.currentTimeMillis()).apply();
-  Log.i("SpotifyHU","Sign-in event: "+reason);
+ private static void record(Context c,String reason,boolean failure){record(c,reason,failure,null);}
+ private static void record(Context c,String reason,boolean failure,String detail){
+  prefs(c).edit().putString("last_reason",reason).putString("last_detail",detail).putLong("last_time",System.currentTimeMillis()).apply();
+  Log.i("SpotifyHU","Sign-in event: "+reason+(detail==null?"":" ("+detail+")"));
   if(failure)DiagnosticLog.failureCode("auth",code(reason));
  }
  /** Maps a sign-out reason onto the shared diagnostics schema's failure codes. */
  static String code(String reason){
   switch(reason){
    case "invalid_credentials":case "not_allowed":case "forced_logout":case "remote_logout":return "permission_denied";
-   case "unsupported_protocol":case "deprecated":return "schema_mismatch";
-   case "account_removed":return "unavailable";
+   case "unsupported_protocol":case "deprecated":case "login_unknown_server":return "schema_mismatch";
+   case "account_removed":case "login_not_saved":return "unavailable";
    default:return "internal_error";
   }
  }
  /** Settings screen summary; read in the backend through the private settings provider. */
  static Bundle summary(Context c){
   SharedPreferences p=prefs(c);Bundle b=new Bundle();
-  b.putString("auth_reason",p.getString("last_reason",null));b.putLong("auth_time",p.getLong("last_time",0));b.putLong("device_id_changed",p.getLong("device_id_changed",0));
+  b.putString("auth_reason",p.getString("last_reason",null));b.putString("auth_detail",p.getString("last_detail",null));b.putLong("auth_time",p.getLong("last_time",0));b.putLong("device_id_changed",p.getLong("device_id_changed",0));
   return b;
  }
 }

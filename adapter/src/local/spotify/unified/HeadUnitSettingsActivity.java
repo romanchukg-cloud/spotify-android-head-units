@@ -27,7 +27,7 @@ public final class HeadUnitSettingsActivity extends Activity {
  private void openSpotify(){startActivity(new Intent().setClassName(getPackageName(),"com.spotify.automotive.settingspage.SettingsPageActivity"));}
  private void footer(Bundle b,int color){
   String reason=b.getString("auth_reason");
-  if(reason!=null){TextView signIn=new TextView(this);signIn.setText(SignInText.get("label")+": "+SignInText.get(reason)+" · "+java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(new java.util.Date(b.getLong("auth_time"))));signIn.setTextColor(color);signIn.setPadding(0,dp(16),0,0);list.addView(signIn);}
+  if(reason!=null){TextView signIn=new TextView(this);signIn.setText(SignInText.get("label")+": "+SignInText.get(reason)+(b.getString("auth_detail")==null?"":" ("+b.getString("auth_detail")+")")+" · "+java.text.DateFormat.getDateTimeInstance(java.text.DateFormat.SHORT,java.text.DateFormat.SHORT).format(new java.util.Date(b.getLong("auth_time"))));signIn.setTextColor(color);signIn.setPadding(0,dp(16),0,0);list.addView(signIn);}
   if(b.getLong("device_id_changed")>0){TextView id=new TextView(this);id.setText(SignInText.get("device_id"));id.setTextColor(color);id.setPadding(0,dp(8),0,0);list.addView(id);}
   TextView profile=new TextView(this);profile.setText("5.5.0 · "+HeadUnitBuild.LABEL+" · "+HeadUnitBuild.VERSION_CODE+" · "+b.getString("profile"));profile.setTextColor(color);profile.setPadding(0,dp(16),0,0);list.addView(profile);
  }

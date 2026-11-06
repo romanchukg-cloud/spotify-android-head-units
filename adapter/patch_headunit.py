@@ -102,9 +102,13 @@ device_id=(r'(const-string (\w+), "android_id"\n\n    )invoke-static \{(\w+), \2
 signin('ib/c.smali',[device_id]);signin('v5/q.smali',[device_id])
 signin('za/d.smali',[(r'(invoke-virtual \{\w+\}, Lcom/spotify/authentication/login5esperanto/EsAccessTokenClient\$ErrorResponse;->j\(\)Lfb/b;\n\n    move-result-object (\w+)\n)',lambda m:m[1]+'\n    invoke-static {'+m[2]+'}, '+H+'tokenError(Ljava/lang/Object;)V\n')])
 signin('is/e.smali',[(r'(    const-string \w+, "Auth response: InvalidCredentials\. logging out user\.\.\."\n)',lambda m:'    invoke-static {}, '+H+'serverRejected()V\n\n'+m[1])])
+# The status of a sign-in response, which vr.e drops when it does not succeed.
+login_status=(r'(TypedResponse;->getStatus\(\)I\n\n    move-result p1\n)',lambda m:m[1]+'\n    invoke-static {p1}, '+H+'loginStatus(I)V\n')
 for rel in ['ac/j.smali','vr/e.smali']:
  signin(rel,[(r'(\.method public constructor <init>\((?:(?!\.end method).)*?)(    invoke-virtual \{(\w+)\}, Lca/c;->d\(\)Lio/reactivex/rxjava3/core/Single;)',lambda m:m[1]+'    invoke-static {'+m[3]+'}, '+H+'beforeStartupRead(Ljava/lang/Object;)V\n\n'+m[2]),
-  at_entry('public final d(Leb/a;Llu/i;)Ljava/lang/Object;','invoke-static {p1}, '+H+'logoutRequested(Ljava/lang/Object;)V')])
+  at_entry('public final d(Leb/a;Llu/i;)Ljava/lang/Object;','invoke-static {p1}, '+H+'logoutRequested(Ljava/lang/Object;)V')]+([login_status] if rel=='vr/e.smali' else []))
+# A failed sign-in, as the login screen asks for its message.
+signin('n5/r.smali',[at_entry('public static final d(Lur/f;)I','invoke-static {p0}, '+H+'loginFailed(Ljava/lang/Object;)V')])
 signin('zb/a.smali',[at_entry('public final a()V','invoke-static {}, '+H+'deprecated()V'),
  at_entry('public final b(Ljava/lang/String;)V','invoke-static {p1}, '+H+'androidAccount(Ljava/lang/String;)V'),
  at_entry('public final c(Ljava/lang/String;)V','invoke-static {p1}, '+H+'loggedIn(Ljava/lang/String;)V'),

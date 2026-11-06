@@ -448,3 +448,13 @@ Checked on the Android 12 emulator (network off): the SDK client's 14 checks pas
 The rail (the bar on portrait screens) lay on the window's background, so it did not read as a panel. It is now a card like the content and the mini-player: the same colour and 22 dp corners, with the same 6 dp gap to the content (on the side of the stage with left- or right-hand drive and in Arabic). The pill uses the theme's control colour and 16 dp corners, concentric with the card at its 6 dp padding.
 
 Checked on an Android 13 emulator by day, by night, in portrait and in Arabic. Not yet checked in a car or with right-hand drive.
+
+## After test.19: failed sign-ins in the diagnostics
+
+A failed sign-in left no trace: the login screen showed "Unknown error." and reports said nothing about it. That text is possible only once Spotify has issued the sign-in tokens, for example after the QR code is approved: the sign-in request then fails with a server error the app does not recognise, its response is refused, or the signed-in account cannot be saved. Without a connection the login screen shows its own message, and that path is not recorded here.
+
+- **Hooks:** `n5.r.d` (the login screen asks for the error's text) calls `HeadUnitAccounts.loginFailed`; `vr.e` passes the response's status, which it otherwise drops, to `loginStatus`. A successful sign-in only stores that number.
+- **Settings:** the last sign-in event shows the kind with the status and a code-like server message, for example "(403 some_code)". Free text never appears. A later successful sign-in clears it. This stays on the head unit.
+- **Reports:** the shared server accepts only its fixed failure codes, so reports carry the kind, not the status: `auth / schema_mismatch` (a server error the app does not recognise), `auth / internal_error` (refused or no response seen), `auth / unavailable` (accepted but not saved). As technical failures they also send an automatic report when automatic sending is on. Errors the login screen explains itself (wrong login, another region, too many tries, no connection) are recorded in Settings only.
+
+`tests/signin/run.sh` checks the decisions and reads the results from fixtures shaped like the SDK's classes; `../tools/apk_audit.py` checks the hooks and the SDK's fields. Checked on an Android 13 emulator: the app starts, and the Settings line shows a record written by hand. Not yet seen with a real failed sign-in.
