@@ -1,0 +1,16 @@
+{
+  "file": "Spotify-5.5.0-HeadUnit-test.21-alongside.apk",
+  "sha256": "a723b2086628735bed69910e34db2a8597a6c10fddc6f1f44088b8ace1cf3c94",
+  "size": 48424050,
+  "package": "io.github.romanchukgcloud.spotifyhu",
+  "versionCode": 95498,
+  "versionName": "5.5.0.16251",
+  "minSdk": 28,
+  "targetSdk": 33,
+  "certificateSha256": "a29d95f7a8eda7508dd97fa0c7c6889a65677050e69e4c0f14123d42d33dc2b1",
+  "published": false,
+  "installedOnCar": false,
+  "releaseUrl": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.21-alongside",
+  "sourceCommit": "9250030a04c623af8ba0f5295fefccdddba3f8bf",
+  "build": "HU_EDITION=alongside adapter/build.sh (full reference build)"
+}
