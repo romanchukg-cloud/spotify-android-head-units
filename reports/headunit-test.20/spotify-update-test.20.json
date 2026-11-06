@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "project_id": "spotify-android-head-units",
+  "build": 20,
+  "version": "test.20",
+  "version_code": 95497,
+  "package_name": "com.spotify.music",
+  "apk_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/download/v5.5.0-headunit-test.20/Spotify-5.5.0-HeadUnit-test.20.apk",
+  "sha256": "29bab616a4f690f63db7d50c5e15bbb826cafd2e30d6bfc31839b6e51b567691",
+  "size": 48424050,
+  "notes": "Shows why a sign-in failed: the kind and status in Settings, the kind in diagnostics reports. Experimental prerelease.",
+  "notes_url": "https://github.com/romanchukg-cloud/spotify-android-head-units/releases/tag/v5.5.0-headunit-test.20",
+  "min_sdk": 28
+}
