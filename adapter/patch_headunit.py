@@ -109,6 +109,8 @@ for rel in ['ac/j.smali','vr/e.smali']:
   at_entry('public final d(Leb/a;Llu/i;)Ljava/lang/Object;','invoke-static {p1}, '+H+'logoutRequested(Ljava/lang/Object;)V')]+([login_status] if rel=='vr/e.smali' else []))
 # A failed sign-in, as the login screen asks for its message.
 signin('n5/r.smali',[at_entry('public static final d(Lur/f;)I','invoke-static {p0}, '+H+'loginFailed(Ljava/lang/Object;)V')])
+# The newer login screen (QrCodeLoginActivityV2) words its errors itself and never asks n5.r.
+signin('yc/p.smali',[(r'(    :cond_b\n)(    new-instance v3, Lyc/g;\n)',lambda m:m[1]+'    invoke-static {p2}, '+H+'loginFailed(Ljava/lang/Object;)V\n\n'+m[2])])
 signin('zb/a.smali',[at_entry('public final a()V','invoke-static {}, '+H+'deprecated()V'),
  at_entry('public final b(Ljava/lang/String;)V','invoke-static {p1}, '+H+'androidAccount(Ljava/lang/String;)V'),
  at_entry('public final c(Ljava/lang/String;)V','invoke-static {p1}, '+H+'loggedIn(Ljava/lang/String;)V'),

@@ -449,6 +449,15 @@ The rail (the bar on portrait screens) lay on the window's background, so it did
 
 Checked on an Android 13 emulator by day, by night, in portrait and in Arabic. Not yet checked in a car or with right-hand drive.
 
+## After test.20: the sign-in record on the login screen in use
+
+test.20's record did not work on the screen people see. `QrCodeLoginActivityV2` and `PinLoginActivityV2` word their errors themselves in `yc.p.f`, using `error_unknown`, whose text is the same as `login_error_unknown`. They never ask `n5.r.d`, which only the older `QrCodeLoginActivity` uses. So "Unknown error." still left nothing in Settings or in reports.
+
+- **Hook:** the failure branch of `yc.p.f` now also calls `HeadUnitAccounts.loginFailed`. `yc.p` and `n5.r` are the only classes that read the kinds of failure.
+- **Audit:** `../tools/apk_audit.py` also fails if any class that branches on `ur.d` does not call the record.
+
+Checked on an Android 13 emulator: on the login screen opened the normal way, a one-off instrumentation called the real `yc.p.f` with a made-up token. Spotify's server refused it with `401 auth_pre_authentication_failed`, Settings showed that, and the private log got `auth / schema_mismatch`. Automatic sending was off, so nothing was uploaded.
+
 ## After test.19: failed sign-ins in the diagnostics
 
 A failed sign-in left no trace: the login screen showed "Unknown error." and reports said nothing about it. That text is possible only once Spotify has issued the sign-in tokens, for example after the QR code is approved: the sign-in request then fails with a server error the app does not recognise, its response is refused, or the signed-in account cannot be saved. Without a connection the login screen shows its own message, and that path is not recorded here.
