@@ -108,9 +108,14 @@ for rel in ['ac/j.smali','vr/e.smali']:
  signin(rel,[(r'(\.method public constructor <init>\((?:(?!\.end method).)*?)(    invoke-virtual \{(\w+)\}, Lca/c;->d\(\)Lio/reactivex/rxjava3/core/Single;)',lambda m:m[1]+'    invoke-static {'+m[3]+'}, '+H+'beforeStartupRead(Ljava/lang/Object;)V\n\n'+m[2]),
   at_entry('public final d(Leb/a;Llu/i;)Ljava/lang/Object;','invoke-static {p1}, '+H+'logoutRequested(Ljava/lang/Object;)V')]+([login_status] if rel=='vr/e.smali' else []))
 # A failed sign-in, as the login screen asks for its message.
-signin('n5/r.smali',[at_entry('public static final d(Lur/f;)I','invoke-static {p0}, '+H+'loginFailed(Ljava/lang/Object;)V')])
+# Spotify asks for Premium with a code the login screens do not word: both would say "Unknown error."
+login_text=H+'loginText(Ljava/lang/Object;I)I'
+signin('n5/r.smali',[at_entry('public static final d(Lur/f;)I','invoke-static {p0}, '+H+'loginFailed(Ljava/lang/Object;)V'),
+ (r'(\.method public static final d\(Lur/f;\)I\n    \.locals )2\n',lambda m:m[1]+'3\n\n    move-object v2, p0\n'),
+ (r'(\.method public static final d\(Lur/f;\)I\n(?:(?!\.end method).)*?    :cond_5\n)    return v1\n',lambda m:m[1]+'    invoke-static {v2, v1}, '+login_text+'\n\n    move-result v0\n\n    return v0\n')])
 # The newer login screen (QrCodeLoginActivityV2) words its errors itself and never asks n5.r.
-signin('yc/p.smali',[(r'(    :cond_b\n)(    new-instance v3, Lyc/g;\n)',lambda m:m[1]+'    invoke-static {p2}, '+H+'loginFailed(Ljava/lang/Object;)V\n\n'+m[2])])
+signin('yc/p.smali',[(r'(    :cond_b\n)(    new-instance v3, Lyc/g;\n)',lambda m:m[1]+'    invoke-static {p2}, '+H+'loginFailed(Ljava/lang/Object;)V\n\n'+m[2]),
+ (r'(    :goto_6\n)    move v6, v7\n',lambda m:m[1]+'    invoke-static {p2, v7}, '+login_text+'\n\n    move-result v6\n')])
 signin('zb/a.smali',[at_entry('public final a()V','invoke-static {}, '+H+'deprecated()V'),
  at_entry('public final b(Ljava/lang/String;)V','invoke-static {p1}, '+H+'androidAccount(Ljava/lang/String;)V'),
  at_entry('public final c(Ljava/lang/String;)V','invoke-static {p1}, '+H+'loggedIn(Ljava/lang/String;)V'),

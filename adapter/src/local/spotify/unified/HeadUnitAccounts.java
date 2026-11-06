@@ -61,6 +61,9 @@ public final class HeadUnitAccounts {
 
  /** vr.e: the status of a sign-in response, which the SDK drops when it does not succeed. */
  public static void loginStatus(int status){lastStatus=status;}
+ private static final String NEEDS_PREMIUM="login_needs_premium";
+ /** The backend's string error_message_premium_account_required (its resource IDs never change). */
+ static final int PREMIUM_TEXT=0x7f11009d;
  /** n5.r.d: a sign-in has failed and the login screen asks for its message. Never in the sign-in's way. */
  public static void loginFailed(Object result){
   Context c=context;if(c==null || result==null)return;
@@ -70,6 +73,10 @@ public final class HeadUnitAccounts {
    // The login screen's own text already explains the known errors; they are no technical failure.
    if(reason!=null)record(c,reason,!"login_known".equals(reason),loginDetail(reason,status,facts[2]));
   }catch(ReflectiveOperationException | RuntimeException e){Log.w("SpotifyHU","Sign-in error unreadable");}
+ }
+ /** n5.r.d, yc.p.f: the text for a failure that would read "Unknown error.". The backend has the words but never uses them. */
+ public static int loginText(Object result,int unknown){
+  try{return NEEDS_PREMIUM.equals(loginFacts(result,-1)[2])?PREMIUM_TEXT:unknown;}catch(ReflectiveOperationException | RuntimeException e){return unknown;}
  }
  /** The result's class, status and server message: ur.b holds a server error (ls.a: status j, fields k); the others only the response's status. */
  static String[] loginFacts(Object result,int response)throws ReflectiveOperationException{
@@ -82,7 +89,7 @@ public final class HeadUnitAccounts {
  /** Which failure it was; null for results that are none (ur.c signed in) or recorded elsewhere (ur.e, deprecated). */
  static String loginReason(String type,int status,String message){
   switch(type){
-   case "ur.b":return status==429?"rate_limited".equals(message)?"login_known":"login_unknown_server":status==401 && java.util.Arrays.asList("auth_bad_credentials","login_region_mismatch","auth_network","ap_network_disabled").contains(message)?"login_known":"login_unknown_server";
+   case "ur.b":return status==429?"rate_limited".equals(message)?"login_known":"login_unknown_server":status==401 && java.util.Arrays.asList("auth_bad_credentials","login_region_mismatch","auth_network","ap_network_disabled",NEEDS_PREMIUM).contains(message)?"login_known":"login_unknown_server";
    case "ur.d":return status>=200 && status<300?"login_not_saved":"login_failed";
    default:return null;
   }

@@ -37,11 +37,16 @@ public final class SignInLogicTest {
    check("text "+r,!SignInText.get(r).equals(SignInText.get("other")));
   // Failed sign-ins: the SDK's result objects, as the fixtures ur.b and ur.d shape them.
   try{
+   check("Premium has its text",HeadUnitAccounts.loginText(new ur.b(401,"login_needs_premium"),7)==HeadUnitAccounts.PREMIUM_TEXT);
+   check("other server errors keep the login screen's text",HeadUnitAccounts.loginText(new ur.b(401,"something_new"),7)==7);
+   check("no server message keeps the text",HeadUnitAccounts.loginText(new ur.b(500,null),7)==7);
+   check("refused response keeps the text",HeadUnitAccounts.loginText(new ur.d(),7)==7);
+   check("no result keeps the text",HeadUnitAccounts.loginText(null,7)==7);
    check("server error facts",Arrays.equals(HeadUnitAccounts.loginFacts(new ur.b(403,"auth_device_blocked"),200),new String[]{"ur.b","403","auth_device_blocked"}));
    check("server error without a message",Arrays.equals(HeadUnitAccounts.loginFacts(new ur.b(500,null),-1),new String[]{"ur.b","500",null}));
    check("other results keep the response's status",Arrays.equals(HeadUnitAccounts.loginFacts(new ur.d(),403),new String[]{"ur.d","403",null}));
   }catch(ReflectiveOperationException e){throw new AssertionError(e);}
-  for(String[] known:new String[][]{{"401","auth_bad_credentials"},{"401","login_region_mismatch"},{"401","auth_network"},{"401","ap_network_disabled"},{"429","rate_limited"}})
+  for(String[] known:new String[][]{{"401","auth_bad_credentials"},{"401","login_region_mismatch"},{"401","auth_network"},{"401","ap_network_disabled"},{"401","login_needs_premium"},{"429","rate_limited"}})
    check("known "+known[1],"login_known".equals(HeadUnitAccounts.loginReason("ur.b",Integer.parseInt(known[0]),known[1])));
   check("known text with another status","login_unknown_server".equals(HeadUnitAccounts.loginReason("ur.b",403,"auth_network")));
   check("unknown server error","login_unknown_server".equals(HeadUnitAccounts.loginReason("ur.b",401,"something_new")));

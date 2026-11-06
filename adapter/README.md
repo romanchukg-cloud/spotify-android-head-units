@@ -449,6 +449,15 @@ The rail (the bar on portrait screens) lay on the window's background, so it did
 
 Checked on an Android 13 emulator by day, by night, in portrait and in Arabic. Not yet checked in a car or with right-hand drive.
 
+## After test.21: when Spotify asks for Premium
+
+A real sign-in on a car with test.21 showed why people saw "Unknown error.": Spotify's server answered `401 login_needs_premium`, which neither login screen words, though the backend has the text (`error_message_premium_account_required`).
+
+- **Text:** `n5.r.d` and `yc.p.f` ask `HeadUnitAccounts.loginText` before they fall back to the unknown error. It changes only this one code.
+- **Record:** the code now counts as explained by the screen, so it sends no automatic report. The Settings line still shows the status and code.
+
+The same account type signed in on an emulator, so the server's reason for asking is not known: it could be the country, the car or the account. `tests/signin/run.sh` checks the decisions and `../tools/apk_audit.py` the hooks and the resource.
+
 ## The edition next to a built-in Spotify
 
 Cars with Spotify as a system app, such as European BYDs, refuse the regular build: Android does not let another signature replace a system app with the same package. `HU_EDITION=alongside ./build.sh` builds `Spotify-5.5.0-HeadUnit-test.N-alongside.apk`, which installs next to it.
